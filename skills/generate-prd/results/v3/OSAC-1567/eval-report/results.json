@@ -1,0 +1,120 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "artifacts/eval-v3-results/OSAC-1567/enhancements/OSAC-1567-secret-management/prd.md",
+  "gold_path": "artifacts/eval-dataset-v2/cases/OSAC-1567/gold-prd.md",
+  "overall_pass": false,
+  "grade": "C",
+  "total_passed": 5,
+  "total_criteria": 8,
+  "total_score": 11,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All 4 OSAC personas are explicitly addressed with user stories, including Cloud Infrastructure Admin who has 3 stories covering encryption at rest, key rotation, and CLI configuration.",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "### Cloud Provider Admin",
+        "### Tenant Admin",
+        "### Tenant User"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories correctly map to their personas: encryption/key rotation/CLI config under Cloud Infrastructure Admin, backend selection under Cloud Provider Admin, secrets API management under Tenant Admin, and credential retrieval under Tenant User; no internal system stories exist and no sanitization stories appear under Cloud Provider Admin.",
+      "quotes": [
+        "As a Cloud Infrastructure Admin, I want secrets encrypted at rest",
+        "As a Cloud Provider Admin, I want to select between database-backed storage",
+        "As a Tenant Admin, I want to store and manage secrets"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document's In Scope and Out of Scope sections differ significantly from the gold standard: it omits many gold In Scope items (service coverage scope, installation, E2E testing, documentation, self-service secret creation, automatic secret creation, tenant-scoped privilege isolation) and incorrectly places items like 'External secret manager integration (Vault)' in Out of Scope when gold treats Vault as a prerequisite In Scope item; it also adds scope-creep items not in gold (CLI support for encryption key configuration, per-project encryption key management).",
+      "quotes": [
+        "Installation \u2014 cloud provider must deploy and configure a Vault-compatible secret store as a prerequisite",
+        "E2E testing \u2014 secret CRUD",
+        "External secret manager integration (e.g., HashiCorp Vault) \u2014 deferred to a future enhancement"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; references to 'OPA policies', 'envelope encryption', 'hub secret backend', and 'SecretReference type' are borderline but represent acceptable product-level vocabulary rather than internal implementation specifics.",
+      "quotes": [
+        "hub (Kubernetes) secret backend",
+        "SecretReference type used to replace ad-hoc secret retrieval RPCs",
+        "OPA policies"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain (unencrypted storage, database exposure, ad-hoc RPCs, forced bespoke implementations) and cost of inaction (credential exposure on compromise, bespoke work for new secret types), with no solution language.",
+      "quotes": [
+        "stored as unencrypted fields within resource database tables",
+        "any database compromise exposes all tenant credentials",
+        "forcing every consuming service to implement its own retrieval mechanism"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "Neither the In Scope section nor the User Stories address async status visibility, progress tracking, or failure reason visibility for secret creation operations.",
+      "quotes": [
+        "Dedicated secret resource with full CRUD operations",
+        "As a Tenant Admin, I want to store and manage secrets",
+        "As a Tenant User, I want to retrieve cluster kubeconfigs"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) and one optional section (Dependencies), with no extra disallowed sections present.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document covers core concepts (encryption at rest, pluggable backends, uniform API, tenant isolation) but misses several substantive items: explicit service scope (BMaaS, CaaS, VMaaS, MaaS, Enclave), automatic secret creation during provisioning, self-service SSH key/OIDC secret creation, RBAC for tenant secret access control, E2E testing and documentation requirements, Vault-compatible store as the backend dependency, and multiple Tenant User stories (update, delete, list metadata).",
+      "quotes": [
+        "Applies to all OSAC services (BMaaS, CaaS, VMaaS, MaaS, Enclave)",
+        "Automatic secret creation during resource provisioning",
+        "E2E testing \u2014 secret CRUD, automatic secret creation during provisioning"
+      ]
+    }
+  ]
+}

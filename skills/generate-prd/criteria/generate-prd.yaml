@@ -1,0 +1,105 @@
+skill: generate-prd
+description: "PRD generation quality criteria based on 7 gaps identified in the Forge experiment"
+
+gold_standard_file: gold-prd.md
+generated_file_patterns:
+  - "enhancements/*/prd.md"
+  - ".artifacts/prd/*/03-prd.md"
+
+judge_model: claude-sonnet-4-6
+
+criteria:
+  - id: persona-coverage
+    name: "Persona Coverage"
+    weight: critical
+    prompt: |
+      Check if all 4 OSAC personas are addressed (Cloud Provider Admin,
+      Cloud Infrastructure Admin, Tenant Admin, Tenant User). Each must
+      have user stories or an explicit "Not affected" note.
+      Pay special attention to Cloud Infrastructure Admin — if the feature
+      automates a process they currently perform, they MUST have stories.
+
+  - id: persona-alignment
+    name: "Persona-Story Alignment"
+    weight: critical
+    prompt: |
+      For each user story, verify the capability matches the persona's role:
+      - Infrastructure ops (sanitization, hardware lifecycle) → Cloud Infrastructure Admin
+      - Tenant management (quotas, catalogs, cross-tenant visibility) → Cloud Provider Admin
+      - Self-service provisioning → Tenant User
+      - Org config, IDP, org users → Tenant Admin
+      - Internal system stories ("As the CaaS system...") should not exist
+      A sanitization story under Cloud Provider Admin is a misattribution.
+
+  - id: scope-accuracy
+    name: "In Scope / Out of Scope Accuracy"
+    weight: important
+    prompt: |
+      Compare In Scope and Out of Scope items against the gold standard.
+      Flag items in the wrong section (e.g., billing In Scope when gold
+      has it Out of Scope). Flag missing items that appear in the gold.
+      Flag items the generated added that the gold doesn't have — are they
+      accurate or scope creep?
+
+  - id: design-leakage
+    name: "Design Leakage"
+    weight: critical
+    prompt: |
+      Check for internal implementation details that don't belong in a PRD:
+      controller names, reconciler logic, finalizer behavior, playbook
+      parameters, CRD field names, internal conditions, agent/InfraEnv
+      terminology, AAP job parameters. Platform vocabulary (ClusterOrder,
+      BareMetalInstance, Hosted Control Planes) is acceptable.
+
+  - id: problem-statement
+    name: "Problem Statement Quality"
+    weight: important
+    prompt: |
+      The Problem Statement should describe user pain and cost of inaction
+      only. It should NOT describe the solution, what the feature introduces,
+      or how it works. Check for solution language — sentences starting with
+      "This feature introduces...", "The X eliminates...", etc.
+
+  - id: status-visibility
+    name: "Async Status Visibility"
+    weight: important
+    prompt: |
+      If the feature involves asynchronous resource creation, check that
+      status/progress visibility is addressed in In Scope or User Stories.
+      The user should be able to see the current state and failure reasons.
+
+  - id: template-compliance
+    name: "Template Compliance"
+    weight: important
+    prompt: |
+      The OSAC PRD template allows these sections ONLY: Problem Statement,
+      In Scope, Out of Scope, User Stories, Assumptions (optional),
+      Dependencies (optional). Assumptions and Dependencies may be omitted
+      if not needed — that is NOT a failure.
+      Check the GENERATED document for:
+      1. Extra sections not in the template (Risks, Acceptance Criteria,
+         Open Questions, Terminology, Milestone, Related Features,
+         Provenance, OSAC Dimensions). Any extra section is a failure.
+      2. Missing REQUIRED sections (Problem Statement, In Scope, Out of
+         Scope, User Stories must always be present).
+      Ignore section differences in the gold standard — evaluate the
+      generated document against the template spec above, not against
+      whatever sections the gold standard happens to have.
+
+  - id: completeness
+    name: "Content Completeness"
+    weight: important
+    prompt: |
+      Compare the SUBSTANCE of the generated PRD against the gold standard.
+      Focus on whether the same capabilities, requirements, and scope items
+      are covered — NOT on section structure or formatting differences.
+      The gold and generated may use different section names or organize
+      content differently (e.g., numbered FR-N requirements vs In Scope
+      bullets, Goals/Non-Goals vs In Scope/Out of Scope). These are style
+      differences, not content gaps.
+      What key requirements or capabilities are present in the gold but
+      missing in the generated? What did the generated add that the gold
+      doesn't have? Only flag substantive content gaps.
+
+pass_threshold: 6
+fail_on_critical: true

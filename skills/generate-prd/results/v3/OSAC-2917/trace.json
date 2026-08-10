@@ -1,0 +1,181 @@
+{
+  "ticket_key": "OSAC-2917",
+  "skill": "generate-prd",
+  "model": "claude-opus-4-6",
+  "elapsed_seconds": 90.0,
+  "iterations": 8,
+  "total_input_tokens": 170135,
+  "total_output_tokens": 5024,
+  "trace": [
+    {
+      "iteration": 1,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/SKILL.md"
+          }
+        }
+      ],
+      "input_tokens": 2545,
+      "output_tokens": 74
+    },
+    {
+      "iteration": 2,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/prd-template.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/osac-context.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/section-guidance.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/scoring-rubric.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/review-patterns.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/osac-dimensions.md"
+          }
+        }
+      ],
+      "input_tokens": 4134,
+      "output_tokens": 371
+    },
+    {
+      "iteration": 3,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "glob",
+          "input": {
+            "pattern": "*",
+            "path": "/opt/forge/skills/osac/generate-prd/context/exemplars"
+          }
+        }
+      ],
+      "input_tokens": 18205,
+      "output_tokens": 86
+    },
+    {
+      "iteration": 4,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1269-prd.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1270-prd.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/generate.md"
+          }
+        }
+      ],
+      "input_tokens": 18367,
+      "output_tokens": 210
+    },
+    {
+      "iteration": 5,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/review.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/revise.md"
+          }
+        }
+      ],
+      "input_tokens": 27454,
+      "output_tokens": 132
+    },
+    {
+      "iteration": 6,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now I have all the context needed. Let me generate the PRD draft, then self-review and revise it.\n\n**Analysis:**\n- **Service**: VMaaS\n- **Personas affected**: Cloud Provider Admin (defines InstanceTypes with GPU fields), Tenant User (selects GPU-enabled InstanceTypes, creates ComputeInstances)\n- **Personas NOT affected**: Cloud Infrastructure Admin (no infrastructure-level GPU operations described), Tenant Admin (no org-scoped catalog or admin work described)\n- **User pain**: Tenants cannot request GPU hardware for AI/ML workloads through the self-service ComputeInstance flow\n- **Scope**: Extend InstanceTypes with GPU type/count, tenant selection, provisioning with GPU hardware attached\n- **Out of scope**: GPU discovery, quotas, MIG/vGPU, live migration, billing, etc. (explicitly deferred to OSAC-1839)\n- **Dependencies**: OSAC-42 (GPU passthrough plumbing), OSAC-58/OSAC-1205 (GPU fields on InstanceType)\n- **Async status**: ComputeInstance provisioning is async \u2014 need status visibility story\n\nLet me draft and write the PRD:"
+      ],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/dev/stdout/prd_draft.md",
+            "content": "# GPU-Enabled InstanceTypes for ComputeInstances (MVP)\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Tzif Morgenshtern |\n| Jira        | [OSAC-2917](https://issues.redhat.com/browse/OSAC-2917) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nOSAC tenants running AI/ML workloads need GPU-equipped virtual machines but have no way to request GPU hardware through the self-service ComputeInstance flow. The InstanceType resource only models CPU cores, memory, and disk \u2014 there is no mechanism to express GPU requirements. Without GPU support, tenants must provision GPU workloads outside OSAC, bypassing tenant isolation and self-service workflows that the platform provides for CPU-based VMs.\n\n## In Scope\n\n- InstanceTypes extended with GPU type and GPU count, allowing Cloud Provider Admins to define GPU-enabled configurations alongside existing CPU/memory/disk specifications\n- GPU-enabled ComputeInstances follow the same networking, storage, lifecycle model, and tenant isolation as non-GPU ComputeInstances\n- GPU type is a free-text string with no platform-side validation \u2014 correctness is the Cloud Provider Admin's responsibility, consistent with how CPU and memory values are managed today\n- Single VMaaS cluster \u2014 no cross-cluster GPU placement\n- Tenant Users can see the current provisioning status and any failure reasons for GPU-enabled ComputeInstances\n\n## Out of Scope\n\n- GPU discovery API for programmatic detection of available GPU hardware \u2014 deferred to [OSAC-1839](https://issues.redhat.com/browse/OSAC-1839)\n- Per-tenant GPU quotas \u2014 deferred to OSAC-1839\n- MIG / vGPU partitioning support \u2014 deferred to OSAC-1839\n- GPU VM live migration \u2014 deferred to OSAC-1839\n- GPU-compatible boot image filtering \u2014 deferred to OSAC-1839\n- Multi-cluster GPU placement \u2014 deferred to OSAC-1839\n- GPU type validation against actual hardware \u2014 deferred to OSAC-1839\n- Cost estimation and billing for GPU resources \u2014 deferred to OSAC-1839\n- Preemptible VMs \u2014 deferred to OSAC-1839\n\n## User Stories\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to define InstanceTypes that include a GPU type and GPU count so that tenants can select GPU configurations when creating ComputeInstances.\n- As a Cloud Provider Admin, I want to update or retire GPU-enabled InstanceTypes when the underlying GPU hardware changes so that the catalog reflects currently available hardware.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n### Tenant Admin\n\nNot affected by this feature.\n\n### Tenant User\n\n- As a Tenant User, I want to see which InstanceTypes include GPU hardware when browsing available configurations so that I can choose the right InstanceType for my workload.\n- As a Tenant User, I want to create a ComputeInstance using a GPU-enabled InstanceType so that my VM is provisioned with GPU hardware attached.\n- As a Tenant User, I want GPU-enabled ComputeInstances to support the same lifecycle operations (start, stop, restart, delete) as non-GPU ComputeInstances so that I manage them the same way.\n- As a Tenant User, I want to see the current provisioning status and any failure reasons for my GPU-enabled ComputeInstance so that I can track progress and troubleshoot issues.\n\n## Assumptions\n\n- GPU passthrough via KubeVirt is functional on the target VMaaS cluster \u2014 the Cloud Infrastructure Admin has configured the underlying host hardware and drivers before GPU-enabled InstanceTypes are offered to tenants. [Jira: OSAC-42]\n\n## Dependencies\n\n- **OSAC-42 (GPU passthrough plumbing):** Provides the infrastructure-level GPU passthrough capability that this feature relies on to attach GPU hardware to provisioned VMs. Must be in place before GPU-enabled InstanceTypes can be used.\n- **OSAC-58 / OSAC-1205 (InstanceType GPU fields):** Extends the existing InstanceType resource with GPU type and count fields. This feature depends on those fields being available in the InstanceType definition.\n"
+          }
+        }
+      ],
+      "input_tokens": 31609,
+      "output_tokens": 1359
+    },
+    {
+      "iteration": 7,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now let me self-review against all checks:\n\n**Rubric scoring:**\n1. **WHAT (2/2):** Clear user-facing need. VMaaS identified. Two affected personas (Cloud Provider Admin, Tenant User) have concrete user stories. Two unaffected personas noted.\n2. **WHY (2/2):** Problem statement names the pain (tenants can't request GPU hardware), the gap (InstanceType doesn't model GPUs), and cost of inaction (tenants must go outside OSAC, bypassing isolation).\n3. **User-Facing Focus (2/2):** No controllers, reconcilers, finalizers, playbooks mentioned. \"KubeVirt\" is platform vocabulary. \"passthrough\" describes a user-observable provisioning outcome.\n4. **Right-Sized (2/2):** Tightly coupled \u2014 GPU fields on InstanceType + GPU ComputeInstance creation are inseparable.\n5. **Testability (2/2):** Every story is PM-verifiable: create InstanceType with GPU fields, browse InstanceTypes, create ComputeInstance, verify lifecycle ops work, check status.\n\n**Total: 10/10, no zeros. Pass.**\n\n**Inline checks:**\n1. **Section count:** Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies = 6 \u2713\n2. **Persona coverage:** Cloud Provider Admin (stories), Cloud Infrastructure Admin (not affected), Tenant Admin (not affected), Tenant User (stories) \u2713\n3. **Leakage check:** No reconciler, reconciliation, finalizer, playbook, env var, AAP job, CRD field, osac-operator, osac-aap, ansible role, controller \u2713\n4. **Length check:** ~55 non-blank lines, within 15-120, within target 40-80 \u2713\n5. **Persona ownership check:** Cloud Infrastructure Admin \u2014 the Jira says \"Cloud Provider Admin defines InstanceTypes\" not CIA. CIA handles underlying hardware/drivers (OSAC-42, already delivered). Tenant Admin \u2014 no org-scoped catalog work mentioned. \u2713\n6. **Persona-story alignment:** CPA stories about defining InstanceTypes (global catalog) \u2713. TU stories about self-service provisioning \u2713.\n7. **Problem Statement solution check:** No \"introduces\", \"eliminates\", \"provides\", \"enables\" describing the feature \u2713\n8. **Async status check:** ComputeInstance provisioning is async \u2192 In Scope has status visibility bullet \u2713, User Stories has status/failure story \u2713\n9. **Jira completeness check:** All DoD items covered. All out-of-scope items from Jira present in Out of Scope \u2713\n10. **Scope creep check:** All In Scope items trace to Jira \u2713\n11. **Persona separation check:** CPA and TU have separate headings \u2713\n\nAll checks pass. Writing final output:"
+      ],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/home/user/enhancements/OSAC-2917-gpu-enabled-instancetypes/prd.md",
+            "content": "# GPU-Enabled InstanceTypes for ComputeInstances (MVP)\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Tzif Morgenshtern |\n| Jira        | [OSAC-2917](https://issues.redhat.com/browse/OSAC-2917) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nOSAC tenants running AI/ML workloads need GPU-equipped virtual machines but have no way to request GPU hardware through the self-service ComputeInstance flow. The InstanceType resource only models CPU cores, memory, and disk \u2014 there is no mechanism to express GPU requirements. Without GPU support, tenants must provision GPU workloads outside OSAC, bypassing tenant isolation and self-service workflows that the platform provides for CPU-based VMs.\n\n## In Scope\n\n- InstanceTypes extended with GPU type and GPU count, allowing Cloud Provider Admins to define GPU-enabled configurations alongside existing CPU/memory/disk specifications\n- GPU-enabled ComputeInstances follow the same networking, storage, lifecycle model, and tenant isolation as non-GPU ComputeInstances\n- GPU type is a free-text string with no platform-side validation \u2014 correctness is the Cloud Provider Admin's responsibility, consistent with how CPU and memory values are managed today\n- Single VMaaS cluster \u2014 no cross-cluster GPU placement\n- Tenant Users can see the current provisioning status and any failure reasons for GPU-enabled ComputeInstances\n\n## Out of Scope\n\n- GPU discovery API for programmatic detection of available GPU hardware \u2014 deferred to [OSAC-1839](https://issues.redhat.com/browse/OSAC-1839)\n- Per-tenant GPU quotas \u2014 deferred to OSAC-1839\n- MIG / vGPU partitioning support \u2014 deferred to OSAC-1839\n- GPU VM live migration \u2014 deferred to OSAC-1839\n- GPU-compatible boot image filtering \u2014 deferred to OSAC-1839\n- Multi-cluster GPU placement \u2014 deferred to OSAC-1839\n- GPU type validation against actual hardware \u2014 deferred to OSAC-1839\n- Cost estimation and billing for GPU resources \u2014 deferred to OSAC-1839\n- Preemptible VMs \u2014 deferred to OSAC-1839\n\n## User Stories\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to define InstanceTypes that include a GPU type and GPU count so that tenants can select GPU configurations when creating ComputeInstances.\n- As a Cloud Provider Admin, I want to update or retire GPU-enabled InstanceTypes when the underlying GPU hardware changes so that the catalog reflects currently available hardware.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n### Tenant Admin\n\nNot affected by this feature.\n\n### Tenant User\n\n- As a Tenant User, I want to see which InstanceTypes include GPU hardware when browsing available configurations so that I can choose the right InstanceType for my workload.\n- As a Tenant User, I want to create a ComputeInstance using a GPU-enabled InstanceType so that my VM is provisioned with GPU hardware attached.\n- As a Tenant User, I want GPU-enabled ComputeInstances to support the same lifecycle operations (start, stop, restart, delete) as non-GPU ComputeInstances so that I manage them the same way.\n- As a Tenant User, I want to see the current provisioning status and any failure reasons for my GPU-enabled ComputeInstance so that I can track progress and troubleshoot issues.\n\n## Assumptions\n\n- GPU passthrough via KubeVirt is functional on the target VMaaS cluster \u2014 the Cloud Infrastructure Admin has configured the underlying host hardware and drivers before GPU-enabled InstanceTypes are offered to tenants. [Jira: OSAC-42]\n\n## Dependencies\n\n- **OSAC-42 (GPU passthrough plumbing):** Provides the infrastructure-level GPU passthrough capability that this feature relies on to attach GPU hardware to provisioned VMs. Must be in place before GPU-enabled InstanceTypes can be used.\n- **OSAC-58 / OSAC-1205 (InstanceType GPU fields):** Extends the existing InstanceType resource with GPU type and count fields. This feature depends on those fields being available in the InstanceType definition.\n"
+          }
+        }
+      ],
+      "input_tokens": 32994,
+      "output_tokens": 1790
+    },
+    {
+      "iteration": 8,
+      "stop_reason": "end_turn",
+      "text": [
+        "# GPU-Enabled InstanceTypes for ComputeInstances (MVP)\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Tzif Morgenshtern |\n| Jira        | [OSAC-2917](https://issues.redhat.com/browse/OSAC-2917) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nOSAC tenants running AI/ML workloads need GPU-equipped virtual machines but have no way to request GPU hardware through the self-service ComputeInstance flow. The InstanceType resource only models CPU cores, memory, and disk \u2014 there is no mechanism to express GPU requirements. Without GPU support, tenants must provision GPU workloads outside OSAC, bypassing tenant isolation and self-service workflows that the platform provides for CPU-based VMs.\n\n## In Scope\n\n- InstanceTypes extended with GPU type and GPU count, allowing Cloud Provider Admins to define GPU-enabled configurations alongside existing CPU/memory/disk specifications\n- GPU-enabled ComputeInstances follow the same networking, storage, lifecycle model, and tenant isolation as non-GPU ComputeInstances\n- GPU type is a free-text string with no platform-side validation \u2014 correctness is the Cloud Provider Admin's responsibility, consistent with how CPU and memory values are managed today\n- Single VMaaS cluster \u2014 no cross-cluster GPU placement\n- Tenant Users can see the current provisioning status and any failure reasons for GPU-enabled ComputeInstances\n\n## Out of Scope\n\n- GPU discovery API for programmatic detection of available GPU hardware \u2014 deferred to [OSAC-1839](https://issues.redhat.com/browse/OSAC-1839)\n- Per-tenant GPU quotas \u2014 deferred to OSAC-1839\n- MIG / vGPU partitioning support \u2014 deferred to OSAC-1839\n- GPU VM live migration \u2014 deferred to OSAC-1839\n- GPU-compatible boot image filtering \u2014 deferred to OSAC-1839\n- Multi-cluster GPU placement \u2014 deferred to OSAC-1839\n- GPU type validation against actual hardware \u2014 deferred to OSAC-1839\n- Cost estimation and billing for GPU resources \u2014 deferred to OSAC-1839\n- Preemptible VMs \u2014 deferred to OSAC-1839\n\n## User Stories\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to define InstanceTypes that include a GPU type and GPU count so that tenants can select GPU configurations when creating ComputeInstances.\n- As a Cloud Provider Admin, I want to update or retire GPU-enabled InstanceTypes when the underlying GPU hardware changes so that the catalog reflects currently available hardware.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n### Tenant Admin\n\nNot affected by this feature.\n\n### Tenant User\n\n- As a Tenant User, I want to see which InstanceTypes include GPU hardware when browsing available configurations so that I can choose the right InstanceType for my workload.\n- As a Tenant User, I want to create a ComputeInstance using a GPU-enabled InstanceType so that my VM is provisioned with GPU hardware attached.\n- As a Tenant User, I want GPU-enabled ComputeInstances to support the same lifecycle operations (start, stop, restart, delete) as non-GPU ComputeInstances so that I manage them the same way.\n- As a Tenant User, I want to see the current provisioning status and any failure reasons for my GPU-enabled ComputeInstance so that I can track progress and troubleshoot issues.\n\n## Assumptions\n\n- GPU passthrough via KubeVirt is functional on the target VMaaS cluster \u2014 the Cloud Infrastructure Admin has configured the underlying host hardware and drivers before GPU-enabled InstanceTypes are offered to tenants. [Jira: OSAC-42]\n\n## Dependencies\n\n- **OSAC-42 (GPU passthrough plumbing):** Provides the infrastructure-level GPU passthrough capability that this feature relies on to attach GPU hardware to provisioned VMs. Must be in place before GPU-enabled InstanceTypes can be used.\n- **OSAC-58 / OSAC-1205 (InstanceType GPU fields):** Extends the existing InstanceType resource with GPU type and count fields. This feature depends on those fields being available in the InstanceType definition."
+      ],
+      "tool_calls": [],
+      "input_tokens": 34827,
+      "output_tokens": 1002
+    }
+  ]
+}

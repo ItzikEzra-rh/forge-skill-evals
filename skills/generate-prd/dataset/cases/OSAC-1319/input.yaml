@@ -1,0 +1,15 @@
+jira_key: OSAC-1319
+title: "BareMetal Instance UI"
+priority: High
+prompt: "# OSAC-1319: BaremetalInstance UI\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Undefined\n- **Assignee**: Rastislav Wagner\n- **Reporter**: Adrien Gentil\n- **Components**: BMaaS,\
+  \ UI\n- **Labels**: OSAC-UI-0.1\n\n## Description\n\nUI Expectations \u2014 BaremetalInstance\n\n  Based on the BareMetal Instance API EP ( https://github.com/osac-project/enhancement-proposals/pull/45\n\
+  \  https://github.com/osac-project/enhancement-proposals/pull/45 ) (PR #53 for latest revision).\n\n  *Scope:* Tenant-facing UI only. Cloud Provider Admin flows (template/catalog item management) are\
+  \ out of scope for\n  this epic.\n\n  *Screens / flows required:*\n\n  *1. BareMetalInstance catalog item browser*\n\n  \u2022 Read-only list: title, description (Markdown-rendered), hardware profile\
+  \ summary from field_definitions\n  \u2022 Entry point before provisioning \u2014 helps tenant choose the right profile\n  \u2022 No create/edit/delete controls (admin-only via private API)\n\n  *2. BareMetalInstance\
+  \ list*\n\n  \u2022 Columns: name, catalog item (linked), state badge (PROVISIONING / RUNNING / FAILED / DELETING), age\n  \u2022 Consistent with ComputeInstance list layout\n  \u2022 Create button \u2192\
+  \ opens Create form\n\n  *3. Create BareMetalInstance form*\n\n  \u2022 Catalog item \u2014 required, dropdown/selector populated from GET /api/fulfillment/v1/baremetal_instance_catalog_items;\n  shows\
+  \ title + description\n  \u2022 SSH public key \u2014 optional text field; validated as OpenSSH format client-side\n  \u2022 User data \u2014 optional textarea (cloud-init); client-side size guard (max\
+  \ 64 KB)\n  \u2022 Run strategy \u2014 radio: Always on (default) / Halted\n  \u2022 Submit \u2192 POST /api/fulfillment/v1/baremetal_instances\n\n  *4. BareMetalInstance detail*\n\n  \u2022 State badge\
+  \ + conditions list (for error details when FAILED)\n  \u2022 Spec summary: catalog item, run strategy, SSH key present/absent, user data present/absent\n  \u2022 Power toggle \u2014 Always \u2194 Halted\
+  \ via PATCH run_strategy; disabled while PROVISIONING or DELETING\n  \u2022 Restart \u2014 button sets restart_requested_at to now via PATCH; disabled unless state is RUNNING\n  \u2022 Delete \u2014 confirmation\
+  \ dialog; disabled while DELETING\n\n## Linked Issues\n\n- **OSAC-1277** (In Progress): BaremetalInstance UI\n- **OSAC-2429** (In Progress): CLONE - BaremetalInstance UI\n"

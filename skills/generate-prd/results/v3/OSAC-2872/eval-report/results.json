@@ -1,0 +1,121 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "artifacts/eval-v3-results/OSAC-2872/dev/output/enhancements/OSAC-2872-storage-control-plane/prd.md",
+  "gold_path": "artifacts/eval-dataset-v2/cases/OSAC-2872/gold-prd.md",
+  "overall_pass": false,
+  "grade": "D",
+  "total_passed": 5,
+  "total_criteria": 8,
+  "total_score": 9,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Cloud Infrastructure Admin has stories but Cloud Infrastructure Admin is not a standard OSAC persona \u2014 the gold standard has no Cloud Infrastructure Admin section and instead uses Cloud Provider Admin plus Tenant Admin/User; more critically, the generated doc has no explicit 'Not affected' note for any persona and merges Tenant Admin and Tenant User into separate sections while the gold standard combines them, but the real gap is that the generated doc includes a non-standard persona (Cloud Infrastructure Admin) instead of properly covering all four OSAC personas.",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "### Cloud Provider Admin",
+        "### Tenant Admin",
+        "### Tenant User"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Most attributions are correct, but the generated doc assigns 'automated storage deployment on tenant clusters' to Cloud Infrastructure Admin rather than Cloud Provider Admin (as in gold standard), and lacks sanitization stories entirely, so no misattribution there, but the deployment automation story is misplaced.",
+      "quotes": [
+        "As a Cloud Infrastructure Admin, I want to configure storage backends",
+        "As a Cloud Provider Admin, I want the storage driver...deployed automatically",
+        "As a Cloud Infrastructure Admin, I want to define which storage tiers"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document misclassifies several items and omits key out-of-scope items: volume resize and volume snapshots/clones are missing from Out of Scope; the generated doc incorrectly keeps 'Vendor REST adapters' in Out of Scope linked to OSAC-984 which is correct but combines UI integration incorrectly; more critically, In Scope items diverge significantly \u2014 the generated doc mentions multiple vendors (NetApp, VAST, Pure Storage) when gold standard specifies VAST-only for v0.2, and adds 'attachment information' and 'status visibility' items not structured as in gold, while missing key in-scope items like Private Volume API and Storage driver packaging.",
+      "quotes": [
+        "v0.2 supports VAST as the only vendor backend",
+        "Volume resize",
+        "Volume snapshots and clones",
+        "Private Volume API"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; platform vocabulary like ClusterOrder and BareMetalInstance is used acceptably.",
+      "quotes": [
+        "ClusterOrder provisioning must be functional",
+        "BareMetalInstance storage provisioning"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated Problem Statement contains solution language, explicitly stating 'The Storage Control Plane introduces a single storage driver that presents opaque storage tiers...' and 'OSAC cannot offer block storage as a platform service' mixes solution framing.",
+      "quotes": [
+        "Without a storage control plane, OSAC cannot offer block storage as a platform service",
+        "vendor credentials must be stored on tenant clusters",
+        "no central record of what volumes exist"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "Both In Scope and User Stories explicitly address status/progress visibility for async storage deployment, including readiness state and failure visibility.",
+      "quotes": [
+        "Tenants and admins can see whether storage is ready on a given cluster",
+        "As a Tenant User, I want to see whether storage is available and ready on my cluster",
+        "As a Cloud Provider Admin, I want to see whether storage is ready on any tenant cluster"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains exactly the allowed sections (Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies) with no extra sections.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Assumptions",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Generated covers most core capabilities but misses several substantive items: volume resize/snapshots/clones as explicit out-of-scope, the Private Volume API distinction, VAST as v0.2-specific vendor, StorageClass behavior for unconfigured tiers staying Pending, OSAC-917 dependency, and OSAC-1001/OSAC-1332 baseline dependencies.",
+      "quotes": [
+        "Private Volume API: Internal CRUD operations for volume records, consumed by platform services",
+        "OSAC-917 (Storage Framework): Delivers StorageBackend and StorageTier entities",
+        "PVC referencing an unconfigured StorageClass to stay Pending with a standard Kubernetes event"
+      ]
+    }
+  ]
+}

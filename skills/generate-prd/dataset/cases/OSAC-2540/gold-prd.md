@@ -1,0 +1,90 @@
+# DiskImage Resource
+
+| Field       | Value   |
+|-------------|---------|
+| Author(s)   | Marc Sluiter |
+| Jira        | https://redhat.atlassian.net/browse/OSAC-2540 |
+| Service     | VMaaS |
+| Date        | 2026-07-21 |
+
+## Problem Statement
+
+ComputeInstances reference images via raw OCI URLs, with no discoverability, no metadata, and no governance. Users must know exact OCI image references and registry tooling to create VMs. There is no curated list of available images, no access control over which images tenants can use, and no human-readable context for image selection. OS type is set per-instance rather than per-image, requiring users to specify it on every VM creation. The API and Kubernetes resource representations of OS type use different formats, creating inconsistency.
+
+## In Scope
+
+- DiskImage resource with CRUD operations (create, list, get, update, delete) via UI, CLI, and API
+- DiskImage-specific metadata: icon (optional), guest OS family (required, enum: linux, windows), architecture (required, one or more from: amd64, arm64). Display name and description are inherited from shared Metadata
+- DiskImage wraps an existing OCI artifact reference (source_type + source_ref), both immutable after creation
+- Two-tier visibility: provider-global images (available to all tenants) and tenant-scoped images (visible only within a tenant)
+- Image lifecycle management: deprecation to warn users, obsolescence to block new VM creation, and reactivation
+- ComputeInstance references a DiskImage instead of inline image fields
+- ComputeInstanceTemplate references a DiskImage instead of inline image fields
+- ComputeInstanceCatalogItem references a DiskImage for image defaults
+- Inline image fields removed from ComputeInstance and ComputeInstanceTemplate — all image metadata lives on DiskImage
+- OS type specified as an enum (linux, windows) replacing the current boolean Windows flag — consistent naming across API and Kubernetes resources
+- Deletion protection: DiskImage deletion blocked when referenced by active ComputeInstances, ComputeInstanceTemplates, or ComputeInstanceCatalogItems
+- UI views: image list page, image picker in VM creation flow, image detail page, and lifecycle management controls
+- API and CLI documentation for DiskImage operations
+
+## Out of Scope
+
+- Image upload API (binary upload through OSAC)
+- Image caching or performance optimization
+- VM snapshot/export
+- Image scanning or CVE detection
+- Image versioning/tagging
+- os_version field (deferred)
+- Minimum resource requirements field (deferred)
+- BareMetalInstance integration (follow-up under OSAC-1270)
+- Installation changes
+- Private registry authentication (pull credentials)
+- Registry restriction for tenant admin image references
+- Tenant admin filtering of global images (all global images visible to all tenants)
+
+## User Stories
+
+### Cloud Provider Admin
+
+- As a Cloud Provider Admin, I want to register an existing OCI image as a globally available DiskImage with display name, guest OS family, and architecture so that all tenants can discover and select it.
+- As a Cloud Provider Admin, I want to list all registered images — both global and tenant-scoped — so that I can audit what is available across the platform.
+- As a Cloud Provider Admin, I want to update mutable metadata (display name, description) of a global image so that I can keep the catalog accurate.
+- As a Cloud Provider Admin, I want to deprecate a global image so that tenants are warned to migrate before the image becomes unavailable.
+- As a Cloud Provider Admin, I want to mark a global image as obsolete so that new VM creation with that image is blocked while existing VMs remain unaffected.
+- As a Cloud Provider Admin, I want to reactivate a previously deprecated or obsolete image so that tenants can resume using it if circumstances change.
+- As a Cloud Provider Admin, I want to delete a global image that is no longer needed, with the system preventing deletion if active ComputeInstances, ComputeInstanceTemplates, or ComputeInstanceCatalogItems reference it.
+- As a Cloud Provider Admin, I want to reference a DiskImage in a ComputeInstanceTemplate so that VMs created from the template use approved images by default.
+- As a Cloud Provider Admin, I want to manage DiskImages through the UI console so that I can register, update, deprecate, and delete images without CLI or API tooling.
+
+### Cloud Infrastructure Admin
+
+- Not affected by this feature.
+
+### Tenant Admin
+
+- As a Tenant Admin, I want to register tenant-scoped DiskImages for my organization so that my users can select from our approved images.
+- As a Tenant Admin, I want to update mutable metadata and delete my tenant's images, with the system preventing deletion if active ComputeInstances, ComputeInstanceTemplates, or ComputeInstanceCatalogItems reference them.
+- As a Tenant Admin, I want to deprecate, obsolete, and reactivate my tenant's images so that I can manage my organization's image lifecycle.
+- As a Tenant Admin, I want to reference a DiskImage in a ComputeInstanceCatalogItem so that VMs created from the catalog item use my organization's approved images by default.
+- As a Tenant Admin, I want to manage my tenant's DiskImages through the UI console so that I can register, update, and delete images without CLI or API tooling.
+
+### Tenant User
+
+- As a Tenant User, I want to see only images available to my tenant (global and my tenant's own) so that I cannot access other tenants' images.
+- As a Tenant User, I want to browse available images with metadata (display name, description, guest OS family, architecture) so that I can choose the right image for my VM.
+- As a Tenant User, I want to search and filter images by guest OS family, architecture, or name so that I can quickly find what I need.
+- As a Tenant User, I want to reference a DiskImage when creating a ComputeInstance so that image source and OS type are resolved automatically.
+- As a Tenant User, I want to see a deprecation warning when selecting a deprecated image so that I know to choose a different image.
+- As a Tenant User, I want obsolete images hidden from the default image list so that I only see usable images, with the option to filter for obsolete images explicitly.
+- As a Tenant User, I want to browse and select DiskImages in the UI when creating a ComputeInstance so that I can choose the right image visually.
+
+## Assumptions
+
+- OSAC does not currently support upgrades, so backward compatibility for existing ComputeInstances using the current boolean Windows flag is not a concern.
+- OSAC does not validate the accessibility of the OCI artifact referenced by a DiskImage. If the image becomes unavailable in the registry, the error surfaces at VM provisioning time, not at DiskImage registration.
+- Using image digests rather than mutable tags is recommended for consistency, but not enforced by OSAC.
+
+## Dependencies
+
+- **[OSAC-2921](https://redhat.atlassian.net/browse/OSAC-2921): Standardized display_name and description in Metadata** — DiskImage uses the shared Metadata fields for display name and description rather than resource-specific fields.
+

@@ -1,0 +1,28 @@
+jira_key: OSAC-1330
+title: "Type-Safe Resource References"
+priority: High
+prompt: "# OSAC-1330: Type-safe resource references and local references in the API\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Major\n- **Assignee**: Haim Tayrie\n- **Reporter**: Juan\
+  \ Antonio Hernandez Fernandez\n- **Components**: Core\n- **Labels**: None\n\n## Description\n\n## Goal\n\n  Introduce type-safe reference and local reference message types in the protobuf API to replace\
+  \ raw string fields\n  currently used for inter-resource references. This improves type safety, enables automatic validation and resolution\n  of references, and prepares the API for the migration from\
+  \ id-based identification to the (tenant, project, name)\n  tuple.\n\n  ## Problem\n\n  Currently, when an API object references another object, the reference is stored as a plain string field with\n\
+  \  documentation explaining that it should contain the identifier (or name) of the target object. For example, a\n  cluster referencing a template uses:\n\n    string template = 1;\n\n  This approach\
+  \ has several shortcomings:\n\n  \u2022 **Not type-safe** : There is no way to know from the protobuf schema alone what type of object the string refers\n  to.\n  \u2022 **No automatic validation** :\
+  \ References cannot be automatically resolved or validated without custom per-field\n  logic.\n  \u2022 **No structured metadata** : The reference carries no information about the tenant or project context\
+  \ of the\n  target object.\n\n  ## Solution\n\n  ### 1. Define per-type reference messages\n\n  For each resource type, define two reference message types in the corresponding _type.proto file:\n\n  **Full\
+  \ reference** (cross-tenant/cross-project):\n\n    message \u276CType\u276DReference {\n      string tenant = 1;   // Tenant where the referenced object exists\n      string project = 2;  // Project where\
+  \ the referenced object exists\n      string name = 3;     // Name of the referenced object\n    }\n\n  **Local reference** (same tenant and project):\n\n    message \u276CType\u276DLocalReference {\n\
+  \      string name = 1;     // Name within the same tenant and project\n    }\n\n  The local reference should be the preferred choice when the referenced object is expected to be in the same tenant\n\
+  \  and project. The full reference should be used when the target may be in a different tenant or project (e.g.,\n  cluster templates that live in the shared tenant and are global).\n\n  These reference\
+  \ types must be **per-type, not generic** , because protobuf has no way to express the target type in\n  a\n  generic reference message. Type safety comes from having distinct message types for each resource.\n\
+  \n  ### 2. Backwards compatibility with id field\n\n  During the migration from id-based identification to (tenant, project, name), include an optional id field in the\n  reference messages:\n\n    message\
+  \ \u276CType\u276DReference {\n      string id = 1;       // Legacy identifier (to be removed after migration)\n      string tenant = 2;\n      string project = 3;\n      string name = 4;\n    }\n\n \
+  \ This field will be dropped once the migration to (tenant, project, name) is complete.\n\n  ### 3. Update all existing references\n\n  All places in the API (proto files) and the server code that currently\
+  \ use raw string fields for references must be\n  updated to use the new typed reference messages.\n\n  ### 4. Server-side generic reference resolution\n\n  Implement a generic server-side mechanism to\
+  \ validate and resolve references. This could be an interceptor that:\n\n  \u2022 Walks the incoming message using protoreflect\n  \u2022 Identifies fields that are reference types\n  \u2022 Validates\
+  \ that the referenced object exists\n  \u2022 Ensures consistency: if both id and name are provided, they must refer to the same object\n  \u2022 Auto-populates missing fields: if id is provided but not\
+  \ name , looks up the object and fills in name , and vice\n  versa\n\n  ## Scope\n\n  \u2022 Define reference and local reference message types for all existing resource types (ClusterTemplate,\n  VirtualNetwork,\
+  \ Subnet, SecurityGroup, ComputeInstance, PublicIPPool, PublicIP, Tenant, ClusterOrder, NetworkClass,\n  etc.)\n  \u2022 Update all proto files to use the new reference types instead of raw strings\n\
+  \  \u2022 Update server-side code to work with the new reference types\n  \u2022 Implement the generic reference resolution interceptor\n  \u2022 Update tests to cover reference validation and resolution\n\
+  \  \u2022 Update API documentation and OpenAPI specs\n\n  ## Design Considerations\n\n  \u2022 The choice between full reference and local reference is context-dependent and should be decided per field\
+  \ by the\n  API designer\n  \u2022 Go interfaces can be defined to handle references generically in server code, even though protobuf messages must\n  be specific per type\n  \u2022 Reference resolution\
+  \ should be a cross-cutting concern (interceptor/middleware), not duplicated in each service\n  handler\n"

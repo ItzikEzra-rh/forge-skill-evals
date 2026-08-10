@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSAC PRD Skill Evaluation Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&family=Rubik:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --ink: #e8e6e1;
+  --ink-muted: #9a9790;
+  --ink-dim: #6b6862;
+  --ink-faint: #3d3b37;
+  --paper: #141310;
+  --paper-raised: #1c1a16;
+  --paper-elevated: #24221d;
+  --paper-hover: #2a2824;
+  --rule: #2e2c27;
+  --accent: #e8a84c;
+  --accent-dim: rgba(232, 168, 76, 0.15);
+  --green: #7ec97e;
+  --green-bg: rgba(126, 201, 126, 0.1);
+  --green-bright: #a3e4a3;
+  --red: #e07070;
+  --red-bg: rgba(224, 112, 112, 0.08);
+  --blue: #7aaed4;
+  --blue-bg: rgba(122, 174, 212, 0.1);
+  --purple: #b89cdb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Assistant', 'Rubik', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.65;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+.container { max-width: 980px; margin: 0 auto; padding: 0 32px; }
+
+/* ── Navigation ── */
+nav {
+  position: sticky;
+  top: 0;
+  background: rgba(20, 19, 16, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+  z-index: 100;
+  padding: 12px 0;
+}
+nav .container {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s;
+}
+nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  padding: 80px 0 48px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+}
+.hero .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero .lede {
+  font-size: 18px;
+  color: var(--ink-muted);
+  max-width: 640px;
+  line-height: 1.6;
+}
+.hero .meta-row {
+  display: flex;
+  gap: 28px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.hero .meta-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.3px;
+}
+.hero .meta-item a { color: var(--blue); text-decoration: none; }
+.hero .meta-item a:hover { text-decoration: underline; }
+
+/* ── Sections ── */
+section { padding: 56px 0; border-bottom: 1px solid var(--rule); }
+section:last-of-type { border-bottom: none; }
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+h2 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+.section-desc {
+  color: var(--ink-muted);
+  font-size: 15px;
+  margin-bottom: 32px;
+  max-width: 600px;
+}
+
+/* ── Big stats row ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.stat {
+  background: var(--paper-raised);
+  padding: 24px 20px;
+  text-align: center;
+}
+.stat .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+.stat .value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.stat .note {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 4px;
+}
+.stat.up .value { color: var(--green); }
+.stat.down .value { color: var(--red); }
+.stat.neutral .value { color: var(--ink); }
+.stat.accent .value { color: var(--accent); }
+
+/* ── Timeline ── */
+.timeline { position: relative; padding-left: 40px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent), var(--rule) 80%, transparent);
+}
+.tl-item { position: relative; margin-bottom: 32px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -29px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--paper);
+}
+.tl-item.done::before { background: var(--accent); }
+.tl-item.current::before {
+  background: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 8px rgba(126, 201, 126, 0.4);
+}
+.tl-item .tl-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.5px;
+}
+.tl-item h4 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  margin: 2px 0 4px;
+}
+.tl-item p { font-size: 14px; color: var(--ink-muted); }
+.tl-item .link {
+  color: var(--blue);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+/* ── Tables ── */
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--rule);
+  white-space: nowrap;
+}
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14px;
+  vertical-align: top;
+}
+tr:hover td { background: var(--paper-hover); }
+.tc { text-align: center; }
+.tr { text-align: right; }
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dim { color: var(--ink-dim); }
+
+/* ── Grade badges ── */
+.grade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+.grade-A { background: var(--green-bg); color: var(--green); border: 1px solid rgba(126,201,126,0.2); }
+.grade-B { background: rgba(126,201,126,0.06); color: #8fd48f; border: 1px solid rgba(126,201,126,0.12); }
+.grade-C { background: rgba(232,168,76,0.08); color: var(--accent); border: 1px solid rgba(232,168,76,0.15); }
+.grade-D { background: var(--red-bg); color: var(--red); border: 1px solid rgba(224,112,112,0.15); }
+
+/* ── Score pills ── */
+.pill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+.pill-pass { background: var(--green-bg); color: var(--green); }
+.pill-fail { background: var(--red-bg); color: var(--red); }
+.pill-warn { background: rgba(232,168,76,0.1); color: var(--accent); }
+.pill-info { background: var(--blue-bg); color: var(--blue); }
+
+/* ── Heatmap ── */
+.heatmap {
+  display: grid;
+  gap: 2px;
+  margin: 16px 0;
+}
+.hm-cell {
+  padding: 7px 10px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 3px;
+}
+.hm-cell.s0 { background: rgba(224,112,112,0.15); color: var(--red); }
+.hm-cell.s1 { background: rgba(232,168,76,0.12); color: var(--accent); }
+.hm-cell.s2 { background: rgba(126,201,126,0.12); color: var(--green); }
+.hm-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding: 6px 10px;
+}
+.hm-label {
+  padding: 7px 10px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hm-label .w {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.w-crit { background: rgba(224,112,112,0.12); color: var(--red); }
+.w-imp { background: rgba(232,168,76,0.08); color: var(--ink-dim); }
+
+/* ── Delta bars ── */
+.delta-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 50px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.delta-label { font-size: 13px; text-align: right; }
+.delta-track {
+  height: 20px;
+  background: var(--paper-elevated);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+.delta-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.delta-bar.positive { background: linear-gradient(90deg, rgba(126,201,126,0.3), rgba(126,201,126,0.6)); }
+.delta-bar.negative { background: linear-gradient(90deg, rgba(224,112,112,0.6), rgba(224,112,112,0.3)); }
+.delta-bar.neutral { background: rgba(154,151,144,0.2); }
+.delta-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+.delta-value.up { color: var(--green); }
+.delta-value.down { color: var(--red); }
+.delta-value.flat { color: var(--ink-dim); }
+
+/* ── Callouts ── */
+.callout {
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+.callout h4 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.callout ul { margin: 8px 0 0 20px; font-size: 14px; color: var(--ink-muted); }
+.callout li { margin-bottom: 4px; }
+.callout-discovery {
+  background: var(--paper-elevated);
+  border-left: 3px solid var(--accent);
+}
+.callout-win {
+  background: var(--green-bg);
+  border-left: 3px solid var(--green);
+}
+.callout-issue {
+  background: var(--red-bg);
+  border-left: 3px solid var(--red);
+}
+
+/* ── Expandable cards ── */
+.card {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.card-header:hover { background: var(--paper-hover); }
+.card-header h4 {
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-body { display: none; padding: 0 18px 18px; }
+.card.open .card-body { display: block; }
+.card-toggle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  transition: transform 0.2s;
+}
+.card.open .card-toggle { transform: rotate(90deg); }
+
+/* ── Next steps grid ── */
+.next-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.next-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.next-card:hover { border-color: var(--ink-faint); }
+.next-card .priority {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.next-card .priority.p1 { color: var(--red); }
+.next-card .priority.p2 { color: var(--accent); }
+.next-card .priority.p3 { color: var(--ink-dim); }
+.next-card h4 { font-family: 'Rubik', sans-serif; font-size: 16px; font-weight: 400; margin-bottom: 6px; }
+.next-card p { font-size: 13px; color: var(--ink-muted); }
+
+/* ── Footer ── */
+footer {
+  padding: 32px 0;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.3px;
+}
+
+/* ── Process diagram ── */
+.process-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 24px 0;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+.pf-node {
+  background: var(--paper-elevated);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 13px;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 100px;
+}
+.pf-node .pf-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.pf-arrow {
+  color: var(--ink-faint);
+  font-size: 18px;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+/* ── Animated entrance ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+section { animation: fadeUp 0.5s ease both; }
+section:nth-child(2) { animation-delay: 0.05s; }
+section:nth-child(3) { animation-delay: 0.1s; }
+
+
+/* ── Cross-validation page styles ── */
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent-dim); color: var(--accent);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+  margin-right: 10px; flex-shrink: 0;
+}
+.step { display: flex; align-items: flex-start; margin-bottom: 20px; }
+.step-body { flex: 1; }
+.step-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.step-body p { font-size: 14px; color: var(--ink-muted); }
+.file-tree {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8;
+  padding: 16px 20px; background: var(--paper-raised);
+  border: 1px solid var(--rule); border-radius: 6px; margin: 12px 0 20px;
+}
+.file-tree .dir { color: var(--accent); }
+.file-tree .file { color: var(--ink-muted); }
+.file-tree .note { color: var(--ink-dim); font-size: 11px; }
+details { margin: 12px 0; }
+summary {
+  cursor: pointer; user-select: none;
+  font-family: 'Rubik', sans-serif; font-weight: 600; font-size: 14px;
+  padding: 12px 16px; background: var(--paper-raised);
+  border: 1px solid var(--rule); border-radius: 6px;
+  list-style: none; display: flex; justify-content: space-between; align-items: center;
+}
+summary:hover { background: rgba(232,168,76,0.04); }
+summary::after { content: '+'; font-family: 'JetBrains Mono', monospace; color: var(--ink-dim); font-size: 16px; }
+details[open] summary::after { content: '-'; }
+details[open] summary { border-radius: 6px 6px 0 0; border-bottom-color: transparent; }
+.details-body {
+  padding: 16px; background: var(--paper-raised); border: 1px solid var(--rule);
+  border-top: none; border-radius: 0 0 6px 6px; font-size: 14px; color: var(--ink-muted);
+}
+pre { background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 16px 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.6; color: var(--ink); margin: 12px 0 20px; }
+pre .comment { color: var(--ink-dim); }
+pre .cmd { color: var(--green); }
+pre .flag { color: var(--accent); }
+pre .path { color: var(--blue); }
+code { font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  background: var(--paper-elevated); padding: 2px 6px; border-radius: 3px; }
+.sec-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent);
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.sec-desc { color: var(--ink-muted); font-size: 15px; margin-bottom: 24px; max-width: 640px; }
+.callout-warn { background: rgba(232,168,76,0.06); border-left: 3px solid var(--accent); }
+.callout-info { background: var(--blue-bg); border-left: 3px solid var(--blue); }
+.callout-ok { background: var(--green-bg); border-left: 3px solid var(--green); }
+h3 { font-family: 'Rubik', sans-serif; font-size: 18px; font-weight: 600; margin: 28px 0 12px; }
+
+/* ── Page switcher ── */
+.page-tabs {
+  display: flex; gap: 0; border-bottom: 2px solid var(--rule);
+  margin-bottom: 0; padding: 0 32px;
+}
+.page-tab {
+  padding: 14px 24px; cursor: pointer; user-select: none;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+  letter-spacing: 0.3px; color: var(--ink-dim);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.page-tab:hover { color: var(--ink-muted); }
+.page-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.page-content { display: none; }
+.page-content.active { display: block; }
+
+</style>
+</head>
+<body>
+
+<!-- Page Tabs -->
+<div style="position:sticky;top:0;z-index:100;background:rgba(20,19,16,0.95);backdrop-filter:blur(12px)">
+  <div class="page-tabs" style="max-width:980px;margin:0 auto">
+    <div class="page-tab active" onclick="switchPage('report')">Report</div>
+    <div class="page-tab" onclick="switchPage('crossval')">Cross-Validation Guide</div>
+  </div>
+</div>
+
+<!-- PAGE 1: Report -->
+<div id="page-report" class="page-content active">
+
+
+<div class="hero">
+<div class="container">
+  <div class="eyebrow">OSAC-3774 / Forge Experiment</div>
+  <h1>Evaluating the <em>generate-prd</em> Skill</h1>
+  <p class="lede">A systematic evaluation of Forge's PRD generation skill across multiple OSAC features, with an automated LLM judge, iterative skill fixes, and measurable quality improvements.</p>
+  <div class="meta-row">
+    <span class="meta-item">Date: 2026-08-10</span>
+    <span class="meta-item">Model: claude-opus-4-6</span>
+    <span class="meta-item">Runner PR: <a href="https://github.com/forge-sdlc/forge/pull/297">forge#297</a></span>
+    <span class="meta-item">Skill fixes: <a href="https://github.com/ItzikEzra-rh/ai-skills/commits/fix/forge-prd-skill-gaps-osac-3774">ai-skills branch</a></span>
+    <span class="meta-item">Skill fix origin: <a href="https://github.com/eranco74/ai-skills/pull/1">eranco74/ai-skills#1</a></span>
+  </div>
+</div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- OVERVIEW -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="overview">
+  <div class="section-num">01 &mdash; Overview</div>
+  <h2>What We Did</h2>
+  <p class="section-desc">Built an end-to-end evaluation pipeline for Forge's generate-prd skill, ran 22 PRD generations across 11 OSAC features, and improved the skill through three fix iterations.</p>
+
+  <div class="stats-row">
+    <div class="stat accent">
+      <div class="label">Total Runs</div>
+      <div class="value">22</div>
+      <div class="note">across 3 rounds</div>
+    </div>
+    <div class="stat accent">
+      <div class="label">Features Tested</div>
+      <div class="value">11</div>
+      <div class="note">storage, cluster, compute, UI, API</div>
+    </div>
+    <div class="stat accent">
+      <div class="label">Skill Fixes</div>
+      <div class="value">3</div>
+      <div class="note">commits on branch</div>
+    </div>
+    <div class="stat up">
+      <div class="label">Quality Improvement</div>
+      <div class="value">+8%</div>
+      <div class="note">67% &rarr; 72% avg score</div>
+    </div>
+    <div class="stat neutral">
+      <div class="label">Total Cost</div>
+      <div class="value">~$90</div>
+      <div class="note">22 Opus runs + eval</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- INFRASTRUCTURE -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="infrastructure">
+  <div class="section-num">02 &mdash; Infrastructure</div>
+  <h2>Evaluation Pipeline</h2>
+  <p class="section-desc">Three tools built to enable repeatable, automated skill evaluation without the hosted Forge beta.</p>
+
+  <div class="process-flow">
+    <div class="pf-node">
+      <div class="pf-label">Input</div>
+      Jira YAML
+    </div>
+    <div class="pf-arrow">&rarr;</div>
+    <div class="pf-node" style="border-color:var(--accent)">
+      <div class="pf-label">Runner</div>
+      run.py
+    </div>
+    <div class="pf-arrow">&rarr;</div>
+    <div class="pf-node">
+      <div class="pf-label">Output</div>
+      PRD .md
+    </div>
+    <div class="pf-arrow">&rarr;</div>
+    <div class="pf-node" style="border-color:var(--accent)">
+      <div class="pf-label">Judge</div>
+      evaluate.py
+    </div>
+    <div class="pf-arrow">&rarr;</div>
+    <div class="pf-node">
+      <div class="pf-label">Report</div>
+      Score + Grade
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Component</th><th>Location</th><th>Status</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Test Runner</strong></td>
+        <td class="mono dim">devtools/test-skill/run.py</td>
+        <td><span class="pill pill-warn">Draft PR</span></td>
+        <td>Simulates Forge's agent context locally using <code>forge.prompts</code>. Runs skills via Anthropic API at ~$5/run vs $3-17 on hosted Forge.</td>
+      </tr>
+      <tr>
+        <td><strong>LLM Judge</strong></td>
+        <td class="mono dim">devtools/test-skill/evaluate.py</td>
+        <td><span class="pill pill-pass">Working</span></td>
+        <td>Scores generated PRDs against gold standards using Sonnet with 8 configurable criteria. Outputs terminal, JSON, and HTML reports.</td>
+      </tr>
+      <tr>
+        <td><strong>Eval Dataset</strong></td>
+        <td class="mono dim">eval/dataset/cases/</td>
+        <td><span class="pill pill-info">7 cases</span></td>
+        <td>Each case has <code>input.yaml</code> (Jira data) and <code>gold-prd.md</code> (merged, reviewer-approved PRD from enhancement-proposals).</td>
+      </tr>
+      <tr>
+        <td><strong>Criteria Config</strong></td>
+        <td class="mono dim">evaluators/criteria/generate-prd.yaml</td>
+        <td><span class="pill pill-pass">8 criteria</span></td>
+        <td>3 critical (persona coverage, persona alignment, design leakage) + 5 important. Sonnet judges each criterion independently.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-discovery" style="margin-top:24px">
+    <h4>The 8 Evaluation Criteria</h4>
+    <table style="margin-top:8px">
+      <thead><tr><th>Criterion</th><th>Weight</th><th>What It Checks</th></tr></thead>
+      <tbody>
+        <tr><td>Persona Coverage</td><td><span class="pill pill-fail">Critical</span></td><td>All 4 OSAC personas addressed (stories or "Not affected" note)</td></tr>
+        <tr><td>Persona-Story Alignment</td><td><span class="pill pill-fail">Critical</span></td><td>Each story's capability matches the persona's role</td></tr>
+        <tr><td>Design Leakage</td><td><span class="pill pill-fail">Critical</span></td><td>No controllers, reconcilers, finalizers, playbook names</td></tr>
+        <tr><td>Scope Accuracy</td><td><span class="pill pill-warn">Important</span></td><td>In Scope / Out of Scope items match gold standard</td></tr>
+        <tr><td>Problem Statement</td><td><span class="pill pill-warn">Important</span></td><td>Describes user pain only, no solution language</td></tr>
+        <tr><td>Async Status Visibility</td><td><span class="pill pill-warn">Important</span></td><td>Async resource creation includes status/progress stories</td></tr>
+        <tr><td>Template Compliance</td><td><span class="pill pill-warn">Important</span></td><td>Exactly 6 allowed sections, no extras</td></tr>
+        <tr><td>Content Completeness</td><td><span class="pill pill-warn">Important</span></td><td>Substantive content from gold is present (format-agnostic)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- JOURNEY -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="journey">
+  <div class="section-num">03 &mdash; Journey</div>
+  <h2>Timeline</h2>
+  <p class="section-desc">Three sessions of experimentation, each building on the previous.</p>
+
+  <div class="timeline">
+    <div class="tl-item done">
+      <div class="tl-label">Session 1 &mdash; Initial Experiment</div>
+      <h4>5-run PRD generation on OSAC-2135 (BMaaS)</h4>
+      <p>Ran the same feature through 5 skill configurations (Eran's original, with PR#1 fixes, unattended without fixes, unattended with fixes, unattended with all fixes via local runner). Identified 7 gap types. Best run fixed 6/7 gaps. Built the local test runner and PR'd to Forge.</p>
+    </div>
+    <div class="tl-item done">
+      <div class="tl-label">Session 2 &mdash; Head-to-Head Comparison</div>
+      <h4>Skill A (Eran's) vs Skill B (Unattended) across 4 features</h4>
+      <p>Ran OSAC-1110, 1269, 2872, 2917 through both skills. Skill A won all 4 (46/64 vs 28/64). Discovered the unattended skill's deeper research phase causes design leakage and problem statement contamination. Decision: invest in Skill A.</p>
+    </div>
+    <div class="tl-item done">
+      <div class="tl-label">Session 2 &mdash; Evaluator Fixes</div>
+      <h4>Fixed 6 JSON parse failures in the LLM judge</h4>
+      <p>Increased max_tokens 1024&rarr;2048, added regex JSON extraction fallback, stronger system prompt. Added grade tiers (A/B/C/D). Zero failures after fix.</p>
+    </div>
+    <div class="tl-item done">
+      <div class="tl-label">Session 3 &mdash; Clean Baseline</div>
+      <h4>Fresh dataset, contamination-free, format-consistent</h4>
+      <p>Discovered gold PRD format mismatch (2 of 4 golds used an old template format). Built fresh 7-case dataset using only new-template merged PRDs from enhancement-proposals. Removed exemplar contamination (2 test cases had their gold PRDs as skill exemplars). Fixed criteria to be format-agnostic.</p>
+    </div>
+    <div class="tl-item done">
+      <div class="tl-label">Session 3 &mdash; Fix Iteration 1</div>
+      <h4>Async status + Jira completeness checks</h4>
+      <p>Elevated async status from guidance to mandatory check with explicit resource triggers. Added Jira completeness cross-check to self-review. Result: async status 1.1&rarr;1.7/2.</p>
+    </div>
+    <div class="tl-item current">
+      <div class="tl-label">Session 3 &mdash; Fix Iteration 2</div>
+      <h4>Scope accuracy, completeness, persona separation</h4>
+      <p>Added no-scope-creep rule, scope inversion guard, scope creep self-review check, persona separation default. Result: +6 points total (67%&rarr;72%), but scope accuracy unchanged at 0.4/2.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- DISCOVERIES -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="discoveries">
+  <div class="section-num">04 &mdash; Key Discoveries</div>
+  <h2>What We Found Along the Way</h2>
+  <p class="section-desc">Several findings that changed how we evaluate and what we fix.</p>
+
+  <div class="callout callout-discovery">
+    <h4>Gold PRD template mismatch inflated failure rates</h4>
+    <ul>
+      <li>2 of the original 4 gold PRDs (OSAC-1110, OSAC-1269) used an <strong>old template format</strong> with numbered sections, "Goals and Non-Goals", FR-N requirements, Acceptance Criteria, and Risks</li>
+      <li>The skill correctly generates the <strong>current template</strong> (6 sections: Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies)</li>
+      <li>The judge penalized the skill for not matching the gold's format &mdash; template compliance scored 0.5/2 avg, but the skill was right</li>
+      <li>After switching to new-template gold PRDs: template compliance jumped to <strong>2.0/2 (7/7 perfect)</strong></li>
+    </ul>
+  </div>
+
+  <div class="callout callout-issue">
+    <h4>Exemplar contamination leaked answers to the agent</h4>
+    <ul>
+      <li>The skill directory contains exemplar PRDs that the agent reads before generating</li>
+      <li>Two test cases (OSAC-2872, OSAC-2917) had their gold PRDs as exemplars &mdash; OSAC-2917 was <strong>byte-identical</strong></li>
+      <li>Fixed by creating a clean skill copy with test-case exemplars removed for eval runs</li>
+      <li>This is important for Forge: if skills ship with exemplars, the eval dataset must not overlap with them</li>
+    </ul>
+  </div>
+
+  <div class="callout callout-discovery">
+    <h4>The unattended pipeline (Skill B) makes things worse, not better</h4>
+    <ul>
+      <li>Our multi-phase fork (ingest &rarr; exemplar selection &rarr; dimension triage &rarr; self-clarify &rarr; draft &rarr; review &rarr; revise) scored <strong>28/64 vs Eran's 46/64</strong></li>
+      <li>More research context caused <strong>design leakage</strong> (Helm charts, DaemonSets, protobuf conventions bleeding into the PRD)</li>
+      <li>Deeper context led to <strong>problem statement contamination</strong> (describing solutions instead of pain)</li>
+      <li>70% more expensive per run ($8.50 vs $5 avg)</li>
+      <li>Decision: invest improvements in Eran's simpler pipeline, not the unattended fork</li>
+    </ul>
+  </div>
+
+  <div class="callout callout-win">
+    <h4>The judge itself had bugs that skewed results</h4>
+    <ul>
+      <li>6 of 64 evaluations returned invalid JSON (Sonnet thinking out loud or response truncated)</li>
+      <li>All scored 0/2 by default, biasing results unpredictably</li>
+      <li>Fixed: max_tokens 1024&rarr;2048, regex JSON extraction fallback, stronger system prompt</li>
+      <li>After fix: <strong>zero failures across 120+ evaluations</strong></li>
+      <li>One case (OSAC-2872 Skill A) jumped from 10/16 to 15/16 (Grade A) after the judge fix</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- RESULTS -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="results">
+  <div class="section-num">05 &mdash; Results</div>
+  <h2>Current Scores</h2>
+  <p class="section-desc">Latest eval (v3): 7 features, clean gold PRDs, all skill fixes applied. Grading: A (&ge;90%, no critical fails), B (&ge;75%), C (&ge;60%), D (&lt;60%).</p>
+
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Jira</th><th class="tc">Pass</th><th class="tc">Score</th><th class="tc">Grade</th><th class="tc">v2&rarr;v3</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Bare Metal Instance UI</td><td class="mono dim">OSAC-1319</td>
+        <td class="tc">5/8</td><td class="tc mono">12/16</td><td class="tc"><span class="grade grade-C">C</span></td>
+        <td class="tc mono" style="color:var(--ink-dim)">12&rarr;12</td>
+      </tr>
+      <tr>
+        <td>Type-Safe Resource References</td><td class="mono dim">OSAC-1330</td>
+        <td class="tc">6/8</td><td class="tc mono">10/16</td><td class="tc"><span class="grade grade-C">C</span></td>
+        <td class="tc mono" style="color:var(--green)">8&rarr;10</td>
+      </tr>
+      <tr>
+        <td>CaaS Cluster Storage</td><td class="mono dim">OSAC-1332</td>
+        <td class="tc">4/8</td><td class="tc mono">10/16</td><td class="tc"><span class="grade grade-C">C</span></td>
+        <td class="tc mono" style="color:var(--ink-dim)">10&rarr;10</td>
+      </tr>
+      <tr>
+        <td>Secret Management</td><td class="mono dim">OSAC-1567</td>
+        <td class="tc">5/8</td><td class="tc mono">11/16</td><td class="tc"><span class="grade grade-C">C</span></td>
+        <td class="tc mono" style="color:var(--green)">9&rarr;11</td>
+      </tr>
+      <tr>
+        <td>DiskImage Resource</td><td class="mono dim">OSAC-2540</td>
+        <td class="tc">7/8</td><td class="tc mono">14/16</td><td class="tc"><span class="grade grade-B">B</span></td>
+        <td class="tc mono" style="color:var(--green)">12&rarr;14</td>
+      </tr>
+      <tr>
+        <td>Storage Control Plane</td><td class="mono dim">OSAC-2872</td>
+        <td class="tc">5/8</td><td class="tc mono">9/16</td><td class="tc"><span class="grade grade-D">D</span></td>
+        <td class="tc mono" style="color:var(--ink-dim)">9&rarr;9</td>
+      </tr>
+      <tr>
+        <td>GPU Instance Types</td><td class="mono dim">OSAC-2917</td>
+        <td class="tc">7/8</td><td class="tc mono">15/16</td><td class="tc"><span class="grade grade-A">A</span></td>
+        <td class="tc mono" style="color:var(--ink-dim)">15&rarr;15</td>
+      </tr>
+      <tr style="border-top:2px solid var(--rule);font-weight:600">
+        <td colspan="2">Average</td>
+        <td class="tc">5.6/8</td><td class="tc mono">11.6/16</td><td class="tc"></td>
+        <td class="tc mono" style="color:var(--green)">10.7&rarr;11.6</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CRITERIA DEEP DIVE -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="criteria">
+  <div class="section-num">06 &mdash; Criteria Deep Dive</div>
+  <h2>Per-Criterion Heatmap</h2>
+  <p class="section-desc">Score per criterion per feature (latest v3 run). 0 = fail, 1 = partial, 2 = full.</p>
+
+  <div class="heatmap" style="grid-template-columns: 200px repeat(7, 1fr);">
+    <div class="hm-header">Criterion</div>
+    <div class="hm-header tc">1319</div>
+    <div class="hm-header tc">1330</div>
+    <div class="hm-header tc">1332</div>
+    <div class="hm-header tc">1567</div>
+    <div class="hm-header tc">2540</div>
+    <div class="hm-header tc">2872</div>
+    <div class="hm-header tc">2917</div>
+
+    <div class="hm-label"><span class="w w-crit">C</span> Personas</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s1">1</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label"><span class="w w-crit">C</span> Alignment</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label"><span class="w w-imp">I</span> Scope</div>
+    <div class="hm-cell s0">0</div><div class="hm-cell s0">0</div><div class="hm-cell s0">0</div>
+    <div class="hm-cell s0">0</div><div class="hm-cell s1">1</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label"><span class="w w-crit">C</span> Design Leak</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label"><span class="w w-imp">I</span> Problem Stmt</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s2">2</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label"><span class="w w-imp">I</span> Async Status</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label"><span class="w w-imp">I</span> Template</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label"><span class="w w-imp">I</span> Completeness</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s1">1</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+  </div>
+
+  <div class="callout callout-discovery">
+    <h4>What the heatmap tells us</h4>
+    <ul>
+      <li><strong>Template compliance is solved</strong> (2.0/2, 7/7 perfect) &mdash; was 0.5/2 before we fixed the eval dataset</li>
+      <li><strong>Design leakage is strong</strong> (1.9/2) &mdash; the skill's leakage scan and PM/swap/code tests work well</li>
+      <li><strong>Scope accuracy is the #1 problem</strong> (0.4/2, only 1/7 gets a 2) &mdash; the model adds scope creep and inverts In/Out of Scope items despite explicit rules</li>
+      <li><strong>Completeness averages 1.1/2</strong> &mdash; the model misses specific capabilities from the Jira input</li>
+      <li><strong>Async status improved</strong> from 1.1 to 1.7/2 &mdash; the mandatory check with triggers works for features with obvious async resources</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FIX ITERATIONS -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="iterations">
+  <div class="section-num">07 &mdash; Fix Iterations</div>
+  <h2>What We Changed and What Moved</h2>
+  <p class="section-desc">Per-criterion averages across two fix iterations (v2 = baseline, v3 = latest).</p>
+
+  <div class="delta-row">
+    <div class="delta-label" style="font-weight:600;color:var(--ink-muted)">Criterion</div>
+    <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:1px;padding:0 4px">
+      <span>0</span><span>1.0</span><span>2.0</span>
+    </div>
+    <div class="delta-label" style="font-weight:600;color:var(--ink-muted);text-align:center">Delta</div>
+  </div>
+
+  <div class="delta-row">
+    <div class="delta-label">Template</div>
+    <div class="delta-track"><div class="delta-bar positive" style="width:100%"></div></div>
+    <div class="delta-value flat tc">2.0</div>
+  </div>
+  <div class="delta-row">
+    <div class="delta-label">Design Leak</div>
+    <div class="delta-track"><div class="delta-bar positive" style="width:95%"></div></div>
+    <div class="delta-value up tc">+0.2</div>
+  </div>
+  <div class="delta-row">
+    <div class="delta-label">Async Status</div>
+    <div class="delta-track"><div class="delta-bar positive" style="width:85%"></div></div>
+    <div class="delta-value up tc">+0.6</div>
+  </div>
+  <div class="delta-row">
+    <div class="delta-label">Alignment</div>
+    <div class="delta-track"><div class="delta-bar positive" style="width:80%"></div></div>
+    <div class="delta-value up tc">+0.2</div>
+  </div>
+  <div class="delta-row">
+    <div class="delta-label">Problem Stmt</div>
+    <div class="delta-track"><div class="delta-bar neutral" style="width:70%"></div></div>
+    <div class="delta-value flat tc">0.0</div>
+  </div>
+  <div class="delta-row">
+    <div class="delta-label">Personas</div>
+    <div class="delta-track"><div class="delta-bar neutral" style="width:70%"></div></div>
+    <div class="delta-value flat tc">0.0</div>
+  </div>
+  <div class="delta-row">
+    <div class="delta-label">Completeness</div>
+    <div class="delta-track"><div class="delta-bar neutral" style="width:55%"></div></div>
+    <div class="delta-value flat tc">0.0</div>
+  </div>
+  <div class="delta-row">
+    <div class="delta-label" style="color:var(--red)">Scope</div>
+    <div class="delta-track"><div class="delta-bar negative" style="width:20%"></div></div>
+    <div class="delta-value flat tc" style="color:var(--red)">0.4</div>
+  </div>
+
+  <h3 style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin:32px 0 16px">Commits on <code style="font-size:14px;color:var(--accent)">fix/forge-prd-skill-gaps-osac-3774</code></h3>
+
+  <div class="card open">
+    <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+      <h4><span class="mono dim" style="font-size:11px">aad1b2f</span> &nbsp;Fix 6 skill gaps from Forge experiment</h4>
+      <span class="card-toggle">&rsaquo;</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px;color:var(--ink-muted)">Origin: Session 1 findings from the 5-run experiment on OSAC-2135. Merged as <a href="https://github.com/eranco74/ai-skills/pull/1" style="color:var(--blue)">eranco74/ai-skills#1</a>.</p>
+      <ul style="font-size:13px;color:var(--ink-muted);margin:8px 0 0 20px">
+        <li>Persona ownership test: verify "Not affected" claims against manual process replacement</li>
+        <li>Lifecycle decomposition: enumerate all CRUD operations for new resources</li>
+        <li>Billing default: Out of Scope unless billing IS the feature's primary purpose</li>
+        <li>Persona-story alignment check in self-review</li>
+        <li>Problem statement solution check: reject "introduces", "eliminates", "provides"</li>
+        <li>Async status check in self-review</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+      <h4><span class="mono dim" style="font-size:11px">84f0e16</span> &nbsp;Strengthen async status and completeness checks</h4>
+      <span class="card-toggle">&rsaquo;</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px;color:var(--ink-muted)">Impact: Async status 1.1 &rarr; 1.7/2 (+0.6). Three new features now get status visibility stories.</p>
+      <ul style="font-size:13px;color:var(--ink-muted);margin:8px 0 0 20px">
+        <li>Elevated async status from guidance to mandatory check with explicit resource triggers</li>
+        <li>Named trigger resources: ComputeInstance, ClusterOrder, BareMetalInstance, storage volumes, CSI driver, GPU passthrough</li>
+        <li>Dual-condition: both In Scope bullet AND User Story required when triggers found</li>
+        <li>Added Jira completeness cross-check (self-review #9): re-read input line by line</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+      <h4><span class="mono dim" style="font-size:11px">80c2510</span> &nbsp;Fix scope accuracy, completeness, and persona separation</h4>
+      <span class="card-toggle">&rsaquo;</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px;color:var(--ink-muted)">Impact: +6 total points, two D grades upgraded to C, but scope accuracy unchanged at 0.4/2.</p>
+      <ul style="font-size:13px;color:var(--ink-muted);margin:8px 0 0 20px">
+        <li>No-scope-creep rule: every In Scope item must trace to Jira input</li>
+        <li>Scope inversion guard: if Jira says deferred, keep in Out of Scope</li>
+        <li>Scope creep self-review check (#10): verify each In Scope bullet has Jira source</li>
+        <li>Persona separation default: keep separate headings unless genuinely identical</li>
+        <li>Persona separation self-review check (#11)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- NEXT STEPS -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="next">
+  <div class="section-num">08 &mdash; Next Steps</div>
+  <h2>What's Left</h2>
+  <p class="section-desc">Scope accuracy is the stubborn one. The model reads the Jira and extrapolates logical capabilities despite explicit "don't add scope creep" rules.</p>
+
+  <div class="next-grid">
+    <div class="next-card">
+      <div class="priority p1">Priority 1 &mdash; Stubborn</div>
+      <h4>Scope accuracy (0.4/2)</h4>
+      <p>The model keeps adding In Scope items not in the Jira and inverting In/Out of Scope items. Rules didn't fix it &mdash; likely needs a <strong>structural pipeline change</strong>: have the agent explicitly list Jira requirements before drafting, then cross-check each In Scope item against that list. Or use exemplar-level calibration showing correct vs incorrect scope decisions.</p>
+    </div>
+    <div class="next-card">
+      <div class="priority p1">Priority 1</div>
+      <h4>Content completeness (1.1/2)</h4>
+      <p>The Jira completeness cross-check exists but the model still misses specific capabilities. May need the same structural fix as scope &mdash; an explicit extraction step before drafting where the agent lists every requirement from the Jira, then checks off each one after writing.</p>
+    </div>
+    <div class="next-card">
+      <div class="priority p2">Priority 2</div>
+      <h4>Persona coverage (1.4/2)</h4>
+      <p>Cloud Infrastructure Admin still gets dismissed as "Not affected" when the feature automates infrastructure work. The ownership test exists but the model doesn't always apply it. Could strengthen with feature-type-specific examples.</p>
+    </div>
+    <div class="next-card">
+      <div class="priority p2">Priority 2</div>
+      <h4>PR to eranco74/ai-skills</h4>
+      <p>The fixes on our branch are ready to PR once we're satisfied with scope accuracy. Current improvements: async status +0.6, template 0.5&rarr;2.0 (eval fix), overall 67%&rarr;72%.</p>
+    </div>
+    <div class="next-card">
+      <div class="priority p3">Priority 3</div>
+      <h4>Expand eval dataset</h4>
+      <p>14 new-template merged PRDs exist in enhancement-proposals. We test on 7. Adding more cases (especially networking features) would improve confidence in the fixes.</p>
+    </div>
+    <div class="next-card">
+      <div class="priority p3">Priority 3</div>
+      <h4>Merge test runner PR to Forge</h4>
+      <p><a href="https://github.com/forge-sdlc/forge/pull/297" style="color:var(--blue)">forge#297</a> is draft. Needs review from Ella/Eran. The evaluator fixes (grade tiers, JSON fallback) are already in the PR.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-discovery" style="margin-top:32px">
+    <h4>The big question for scope accuracy</h4>
+    <p style="font-size:14px;color:var(--ink-muted);margin-top:6px">
+      Instruction-level rules ("don't add scope creep", "trace each item to Jira") don't override the model's tendency to extrapolate. Two approaches to try:
+    </p>
+    <ul>
+      <li><strong>Structural:</strong> Add an explicit "requirement extraction" step before drafting &mdash; the agent lists every In Scope and Out of Scope item from the Jira, then uses only that list when writing. Scope creep becomes visible as items not on the list.</li>
+      <li><strong>Few-shot:</strong> Add calibration examples to the skill showing correct scope decisions vs common errors (e.g., "Jira says CRUD &mdash; scope is CRUD, not CRUD + monitoring + migration").</li>
+    </ul>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+
+
+<script>
+// Expand all cards on print
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+});
+</script>
+
+<footer>
+  OSAC PRD Skill Evaluation &mdash; Generated 2026-08-10 &mdash; Claude Code
+</footer>
+</div>
+
+<!-- PAGE 2: Cross-Validation -->
+<div id="page-crossval" class="page-content">
+
+<div class="hero">
+<div class="container">
+  <div class="eyebrow">Cross-Validation Guide</div>
+  <h1><em>generate-prd</em> Skill Evaluation</h1>
+  <p class="lede">Everything you need to reproduce, verify, and extend our evaluation of the generate-prd skill. Run these commands on your own machine to cross-validate every score.</p>
+</div>
+</div>
+
+
+
+
+
+<div class="container">
+
+<!-- ═══════════════════════════ SETUP ═══════════════════════════ -->
+<section id="setup">
+  <div class="sec-num">01 &mdash; Setup</div>
+  <h2>Prerequisites</h2>
+  <p class="sec-desc">The eval pipeline requires the Forge repo (for prompt templates), the ai-skills repo (the skill), and a few Python packages.</p>
+
+  <div class="step">
+    <span class="step-num">1</span>
+    <div class="step-body">
+      <h4>Clone the repos</h4>
+      <p>You need the Forge repo (for <code>forge.prompts</code>) and the ai-skills repo (the skill under test).</p>
+    </div>
+  </div>
+<pre><span class="comment"># Forge repo — needed for prompt templates (system prompt, user message format)</span>
+<span class="cmd">git clone</span> https://github.com/forge-sdlc/forge.git
+<span class="comment"># or if you already have it:</span>
+<span class="cmd">cd</span> forge && <span class="cmd">git pull</span>
+
+<span class="comment"># ai-skills repo — the generate-prd skill + eval dataset</span>
+<span class="cmd">git clone</span> https://github.com/eranco74/ai-skills.git
+<span class="comment"># To test Itzik's fixes:</span>
+<span class="cmd">git clone</span> https://github.com/ItzikEzra-rh/ai-skills.git <span class="flag">-b</span> fix/forge-prd-skill-gaps-osac-3774</pre>
+
+  <div class="step">
+    <span class="step-num">2</span>
+    <div class="step-body">
+      <h4>Install Python dependencies</h4>
+    </div>
+  </div>
+<pre><span class="cmd">pip install</span> anthropic pyyaml</pre>
+
+  <div class="step">
+    <span class="step-num">3</span>
+    <div class="step-body">
+      <h4>Set API credentials</h4>
+      <p>Either Vertex AI or direct Anthropic API. The runner auto-detects.</p>
+    </div>
+  </div>
+<pre><span class="comment"># Option A: Vertex AI (what we used)</span>
+<span class="cmd">export</span> ANTHROPIC_VERTEX_PROJECT_ID=<span class="flag">your-gcp-project</span>
+<span class="cmd">export</span> ANTHROPIC_VERTEX_REGION=<span class="flag">us-east5</span>
+
+<span class="comment"># Option B: Direct Anthropic API</span>
+<span class="cmd">export</span> ANTHROPIC_API_KEY=<span class="flag">sk-ant-...</span></pre>
+
+  <div class="step">
+    <span class="step-num">4</span>
+    <div class="step-body">
+      <h4>Locate the tools</h4>
+      <p>The runner and evaluator live in the Forge repo under <code>devtools/test-skill/</code> (<a href="https://github.com/forge-sdlc/forge/pull/297" style="color:var(--blue)">PR #297</a>).</p>
+    </div>
+  </div>
+<pre><span class="comment"># The tools are on the PR branch</span>
+<span class="cmd">cd</span> forge
+<span class="cmd">git fetch</span> origin pull/297/head:feat/test-skill
+<span class="cmd">git checkout</span> feat/test-skill
+
+<span class="comment"># Verify</span>
+<span class="cmd">ls</span> devtools/test-skill/
+<span class="comment"># run.py  evaluate.py  config.yaml  evaluators/  templates/</span></pre>
+
+  <div class="callout callout-info">
+    <h4>PYTHONPATH</h4>
+    <p style="font-size:14px;color:var(--ink-muted)">The runner imports <code>forge.prompts</code> from the Forge repo's <code>src/</code> directory. Set PYTHONPATH before every command:</p>
+<pre style="margin:8px 0 0;border:none;padding:8px 12px"><span class="cmd">export</span> PYTHONPATH=<span class="path">/path/to/forge/src</span>:$PYTHONPATH</pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ DATASET ═══════════════════════════ -->
+<section id="dataset">
+  <div class="sec-num">02 &mdash; Dataset</div>
+  <h2>Test Cases</h2>
+  <p class="sec-desc">7 OSAC features, each with a Jira-derived input and a gold-standard PRD taken from merged enhancement-proposals. All use the current 6-section OSAC template.</p>
+
+  <table>
+    <thead>
+      <tr><th>Case</th><th>Feature</th><th>Domain</th><th class="tc">Gold Lines</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">OSAC-1319</td><td>Bare Metal Instance UI</td><td>UI</td><td class="tc mono">55</td><td class="mono dim">enhancement-proposals/enhancements/OSAC-1319-*/prd.md</td></tr>
+      <tr><td class="mono">OSAC-1330</td><td>Type-Safe Resource References</td><td>API</td><td class="tc mono">61</td><td class="mono dim">enhancement-proposals/enhancements/OSAC-1330-*/prd.md</td></tr>
+      <tr><td class="mono">OSAC-1332</td><td>CaaS Cluster Storage</td><td>Storage</td><td class="tc mono">47</td><td class="mono dim">enhancement-proposals/enhancements/OSAC-1332-*/prd.md</td></tr>
+      <tr><td class="mono">OSAC-1567</td><td>Secret Management</td><td>Security</td><td class="tc mono">62</td><td class="mono dim">enhancement-proposals/enhancements/OSAC-1567-*/prd.md</td></tr>
+      <tr><td class="mono">OSAC-2540</td><td>DiskImage Resource</td><td>Compute</td><td class="tc mono">90</td><td class="mono dim">enhancement-proposals/enhancements/OSAC-2540-*/prd.md</td></tr>
+      <tr><td class="mono">OSAC-2872</td><td>Storage Control Plane</td><td>Storage</td><td class="tc mono">83</td><td class="mono dim">enhancement-proposals/enhancements/OSAC-2872-*/prd.md</td></tr>
+      <tr><td class="mono">OSAC-2917</td><td>GPU Instance Types</td><td>Compute</td><td class="tc mono">65</td><td class="mono dim">enhancement-proposals/enhancements/OSAC-2917-*/prd.md</td></tr>
+    </tbody>
+  </table>
+
+  <h3>File Structure per Case</h3>
+  <div class="file-tree">
+<span class="dir">eval/dataset/cases/OSAC-2917/</span>
+  <span class="file">input.yaml</span>     <span class="note">&larr; Jira feature data (key, title, description, acceptance criteria)</span>
+  <span class="file">gold-prd.md</span>    <span class="note">&larr; Merged PRD from enhancement-proposals (the answer)</span>
+  </div>
+
+  <details>
+    <summary>Example input.yaml (OSAC-2917)</summary>
+    <div class="details-body">
+<pre style="border:none;margin:0;padding:0">jira_key: OSAC-2917
+title: "GPU-Enabled Compute Instances"
+priority: High
+prompt: |
+  # OSAC-2917: GPU-Enabled InstanceTypes for ComputeInstances (MVP)
+
+  ## Metadata
+  - Status: In Progress
+  - Components: VMaaS
+  - Labels: customer:jio
+
+  ## Description
+  ## Feature Goal
+  Enable OSAC tenants to create ComputeInstances with GPU hardware
+  by extending InstanceTypes to include GPU specifications...
+  [full Jira description continues]</pre>
+    </div>
+  </details>
+
+  <div class="callout callout-warn">
+    <h4>Gold PRDs must use the current template</h4>
+    <ul>
+      <li>Required sections: Problem Statement, In Scope, Out of Scope, User Stories</li>
+      <li>Optional sections: Assumptions, Dependencies</li>
+      <li>Strip any extra sections (Acceptance Criteria, Provenance, Related Features, OSAC Dimensions, Risks) before using as gold</li>
+      <li>We dropped OSAC-1110 and OSAC-1269 because their merged PRDs use the old template (numbered sections, Goals and Non-Goals, FR-N requirements)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ RUN ═══════════════════════════ -->
+<section id="run">
+  <div class="sec-num">03 &mdash; Run</div>
+  <h2>Generate PRDs</h2>
+  <p class="sec-desc">The runner simulates Forge's agent context, copies the skill to a temp workspace, and runs the agent loop with tool emulation.</p>
+
+  <h3>Single case</h3>
+<pre><span class="cmd">python3</span> devtools/test-skill/run.py \
+  <span class="flag">--skill</span> generate-prd \
+  <span class="flag">--skill-dir</span> <span class="path">/path/to/ai-skills/forge-skills/osac/generate-prd</span> \
+  <span class="flag">--input</span> <span class="path">eval/dataset/cases/OSAC-2917/input.yaml</span> \
+  <span class="flag">--output</span> <span class="path">output/OSAC-2917/</span></pre>
+
+  <h3>All cases (batch)</h3>
+<pre><span class="cmd">python3</span> devtools/test-skill/run.py \
+  <span class="flag">--skill</span> generate-prd \
+  <span class="flag">--skill-dir</span> <span class="path">/path/to/ai-skills/forge-skills/osac/generate-prd</span> \
+  <span class="flag">--dataset</span> <span class="path">eval/dataset/cases/</span> \
+  <span class="flag">--output</span> <span class="path">output/batch-run/</span></pre>
+
+  <h3>What it produces</h3>
+  <div class="file-tree">
+<span class="dir">output/OSAC-2917/</span>
+  <span class="dir">enhancements/OSAC-2917-gpu-enabled-instancetypes/</span>
+    <span class="file">prd.md</span>            <span class="note">&larr; The generated PRD (what gets evaluated)</span>
+  <span class="file">trace.json</span>            <span class="note">&larr; Full agent trace (iterations, tool calls, tokens, timing)</span>
+  <span class="dir">skills/...</span>             <span class="note">&larr; Snapshot of skill files the agent read</span>
+  </div>
+
+  <div class="callout callout-info">
+    <h4>Cost &amp; timing</h4>
+    <ul>
+      <li>~$5 per run with Opus on Vertex AI (vs $3-17 on hosted Forge)</li>
+      <li>~90-120 seconds per run, 8-12 iterations</li>
+      <li>7-case batch takes ~12 minutes</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ EVALUATE ═══════════════════════════ -->
+<section id="evaluate">
+  <div class="sec-num">04 &mdash; Evaluate</div>
+  <h2>Score Against Gold</h2>
+  <p class="sec-desc">The evaluator runs 8 independent Sonnet judge calls, one per criterion, comparing the generated PRD against the gold standard.</p>
+
+  <h3>Single case</h3>
+<pre><span class="cmd">python3</span> devtools/test-skill/evaluate.py \
+  <span class="flag">--criteria</span> <span class="path">devtools/test-skill/evaluators/criteria/generate-prd.yaml</span> \
+  <span class="flag">--generated</span> <span class="path">output/OSAC-2917/enhancements/OSAC-2917-gpu-enabled-instancetypes/prd.md</span> \
+  <span class="flag">--gold</span> <span class="path">eval/dataset/cases/OSAC-2917/gold-prd.md</span> \
+  <span class="flag">--output</span> <span class="path">output/OSAC-2917/eval-report/</span></pre>
+
+  <h3>Batch (all cases from a run)</h3>
+<pre><span class="cmd">python3</span> devtools/test-skill/evaluate.py \
+  <span class="flag">--criteria</span> <span class="path">devtools/test-skill/evaluators/criteria/generate-prd.yaml</span> \
+  <span class="flag">--dataset</span> <span class="path">eval/dataset/cases/</span> \
+  <span class="flag">--results-dir</span> <span class="path">output/batch-run/</span> \
+  <span class="flag">--output</span> <span class="path">output/batch-run/eval/</span></pre>
+
+  <h3>What it produces</h3>
+  <div class="file-tree">
+<span class="dir">output/OSAC-2917/eval-report/</span>
+  <span class="file">results.json</span>       <span class="note">&larr; Machine-readable: per-criterion score, reasoning, quotes</span>
+  <span class="file">report.html</span>        <span class="note">&larr; Human-readable: color-coded report with pass/fail per criterion</span>
+  </div>
+
+  <h3>Grading</h3>
+  <table>
+    <thead><tr><th>Grade</th><th>Threshold</th><th>Condition</th></tr></thead>
+    <tbody>
+      <tr><td><span class="grade grade-A">A</span></td><td class="mono">&ge;90% (14-16/16)</td><td>AND no critical criterion failures</td></tr>
+      <tr><td><span class="grade grade-B">B</span></td><td class="mono">&ge;75% (12-13/16)</td><td>AND no critical criterion failures</td></tr>
+      <tr><td><span class="grade grade-C">C</span></td><td class="mono">&ge;60% (10-11/16)</td><td>Regardless of critical failures</td></tr>
+      <tr><td><span class="grade grade-D">D</span></td><td class="mono">&lt;60% (&lt;10/16)</td><td>Regardless of critical failures</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--ink-dim);margin-top:8px">Each criterion is scored 0 (fail), 1 (partial), or 2 (full) by an independent Sonnet judge call. Total max = 16.</p>
+</section>
+
+<!-- ═══════════════════════════ RESULTS ═══════════════════════════ -->
+<section id="results">
+  <div class="sec-num">05 &mdash; Our Results</div>
+  <h2>Latest Run (v3)</h2>
+  <p class="sec-desc">Skill: <code>ItzikEzra-rh/ai-skills</code> branch <code>fix/forge-prd-skill-gaps-osac-3774</code> at commit <code>80c2510</code>. Clean dataset, no exemplar contamination.</p>
+
+  <table>
+    <thead>
+      <tr><th>Case</th><th>Feature</th><th class="tc">Pass</th><th class="tc">Score</th><th class="tc">Grade</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">OSAC-1319</td><td>Bare Metal Instance UI</td><td class="tc">5/8</td><td class="tc mono">12/16</td><td class="tc"><span class="grade grade-C">C</span></td></tr>
+      <tr><td class="mono">OSAC-1330</td><td>Type-Safe Resource References</td><td class="tc">6/8</td><td class="tc mono">10/16</td><td class="tc"><span class="grade grade-C">C</span></td></tr>
+      <tr><td class="mono">OSAC-1332</td><td>CaaS Cluster Storage</td><td class="tc">4/8</td><td class="tc mono">10/16</td><td class="tc"><span class="grade grade-C">C</span></td></tr>
+      <tr><td class="mono">OSAC-1567</td><td>Secret Management</td><td class="tc">5/8</td><td class="tc mono">11/16</td><td class="tc"><span class="grade grade-C">C</span></td></tr>
+      <tr><td class="mono">OSAC-2540</td><td>DiskImage Resource</td><td class="tc">7/8</td><td class="tc mono">14/16</td><td class="tc"><span class="grade grade-B">B</span></td></tr>
+      <tr><td class="mono">OSAC-2872</td><td>Storage Control Plane</td><td class="tc">5/8</td><td class="tc mono">9/16</td><td class="tc"><span class="grade grade-D">D</span></td></tr>
+      <tr><td class="mono">OSAC-2917</td><td>GPU Instance Types</td><td class="tc">7/8</td><td class="tc mono">15/16</td><td class="tc"><span class="grade grade-A">A</span></td></tr>
+      <tr style="border-top:2px solid var(--rule);font-weight:600">
+        <td colspan="2">Average</td><td class="tc">5.6/8</td><td class="tc mono">11.6/16</td><td class="tc mono" style="color:var(--accent)">72%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Per-Criterion Heatmap</h3>
+  <div class="heatmap" style="grid-template-columns: 170px repeat(7, 1fr);">
+    <div class="hm-header">Criterion</div>
+    <div class="hm-header tc">1319</div><div class="hm-header tc">1330</div><div class="hm-header tc">1332</div>
+    <div class="hm-header tc">1567</div><div class="hm-header tc">2540</div><div class="hm-header tc">2872</div><div class="hm-header tc">2917</div>
+
+    <div class="hm-label">Personas <span class="pill pill-fail" style="font-size:9px">CRIT</span></div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s1">1</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label">Alignment <span class="pill pill-fail" style="font-size:9px">CRIT</span></div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label">Scope</div>
+    <div class="hm-cell s0">0</div><div class="hm-cell s0">0</div><div class="hm-cell s0">0</div>
+    <div class="hm-cell s0">0</div><div class="hm-cell s1">1</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label">Design Leak <span class="pill pill-fail" style="font-size:9px">CRIT</span></div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label">Problem Stmt</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s2">2</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label">Async Status</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s0">0</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label">Template</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+    <div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div><div class="hm-cell s2">2</div>
+
+    <div class="hm-label">Completeness</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s1">1</div><div class="hm-cell s1">1</div>
+    <div class="hm-cell s1">1</div><div class="hm-cell s2">2</div><div class="hm-cell s1">1</div><div class="hm-cell s2">2</div>
+  </div>
+
+  <div class="callout callout-ok">
+    <h4>To verify these scores yourself</h4>
+    <p style="font-size:14px;color:var(--ink-muted);margin-top:4px">Run the same skill + dataset + criteria. Your scores may differ slightly (LLM non-determinism in both the generator and the judge) but should be within &plusmn;1-2 points per criterion. If you see a &gt;3 point total difference, check: API model version, skill commit hash, gold PRD content.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ CRITERIA ═══════════════════════════ -->
+<section id="criteria">
+  <div class="sec-num">06 &mdash; Criteria</div>
+  <h2>Evaluation Criteria</h2>
+  <p class="sec-desc">The full criteria YAML that drives the judge. Each criterion gets an independent Sonnet call with the generated PRD, the gold standard, and this prompt.</p>
+
+  <details>
+    <summary>generate-prd.yaml (full criteria config)</summary>
+    <div class="details-body">
+<pre style="border:none;margin:0;padding:0">skill: generate-prd
+description: "PRD generation quality criteria"
+
+gold_standard_file: gold-prd.md
+generated_file_patterns:
+  - "enhancements/*/prd.md"
+  - ".artifacts/prd/*/03-prd.md"
+
+judge_model: claude-sonnet-4-6
+
+criteria:
+  - id: persona-coverage
+    weight: critical
+    prompt: |
+      Check if all 4 OSAC personas are addressed (Cloud Provider Admin,
+      Cloud Infrastructure Admin, Tenant Admin, Tenant User). Each must
+      have user stories or an explicit "Not affected" note.
+
+  - id: persona-alignment
+    weight: critical
+    prompt: |
+      For each user story, verify the capability matches the persona's role.
+      Infrastructure ops → CIA, Tenant mgmt → CPA, Self-service → TU,
+      Org config → TA. Misattributions are failures.
+
+  - id: scope-accuracy
+    weight: important
+    prompt: |
+      Compare In Scope / Out of Scope against gold standard.
+      Flag inversions, missing items, and scope creep.
+
+  - id: design-leakage
+    weight: critical
+    prompt: |
+      Check for controllers, reconcilers, finalizers, playbooks, CRD fields,
+      internal conditions. Platform vocabulary is acceptable.
+
+  - id: problem-statement
+    weight: important
+    prompt: |
+      Problem Statement = user pain + cost of inaction ONLY.
+      No solution language ("introduces", "eliminates", "provides").
+
+  - id: status-visibility
+    weight: important
+    prompt: |
+      If async resource creation exists, status/progress visibility
+      must be addressed in In Scope or User Stories.
+
+  - id: template-compliance
+    weight: important
+    prompt: |
+      Allowed sections ONLY: Problem Statement, In Scope, Out of Scope,
+      User Stories, Assumptions (optional), Dependencies (optional).
+      Evaluate against THIS spec, not the gold standard's structure.
+
+  - id: completeness
+    weight: important
+    prompt: |
+      Compare SUBSTANCE, not format. FR-N vs user stories is style.
+      Flag substantive content gaps only.
+
+pass_threshold: 6
+fail_on_critical: true</pre>
+    </div>
+  </details>
+
+  <div class="callout callout-warn">
+    <h4>Criteria we modified from the original</h4>
+    <ul>
+      <li><strong>template-compliance:</strong> Changed to evaluate against the OSAC template spec, not the gold standard's structure. Some gold PRDs used an older template format &mdash; the judge was penalizing correct behavior.</li>
+      <li><strong>completeness:</strong> Changed to be format-agnostic. "Missing FR-1 through FR-10" is a format difference, not a content gap, when the content exists as In Scope bullets.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ REASONING ═══════════════════════════ -->
+<section id="reasoning">
+  <div class="sec-num">07 &mdash; Judge Reasoning</div>
+  <h2>What the Judge Said</h2>
+  <p class="sec-desc">Expand any case to see the full per-criterion reasoning and quotes. This is what you'll cross-validate.</p>
+
+  <details id="r-1319">
+    <summary><span class="mono" style="color:var(--accent)">OSAC-1319</span> &nbsp;Bare Metal Instance UI &nbsp;<span class="grade grade-C" style="margin-left:8px">C</span> <span class="mono dim" style="margin-left:8px">12/16</span></summary>
+    <div class="details-body" id="detail-1319"></div>
+  </details>
+  <details id="r-1330">
+    <summary><span class="mono" style="color:var(--accent)">OSAC-1330</span> &nbsp;Type-Safe Resource Refs &nbsp;<span class="grade grade-C" style="margin-left:8px">C</span> <span class="mono dim" style="margin-left:8px">10/16</span></summary>
+    <div class="details-body" id="detail-1330"></div>
+  </details>
+  <details id="r-1332">
+    <summary><span class="mono" style="color:var(--accent)">OSAC-1332</span> &nbsp;CaaS Cluster Storage &nbsp;<span class="grade grade-C" style="margin-left:8px">C</span> <span class="mono dim" style="margin-left:8px">10/16</span></summary>
+    <div class="details-body" id="detail-1332"></div>
+  </details>
+  <details id="r-1567">
+    <summary><span class="mono" style="color:var(--accent)">OSAC-1567</span> &nbsp;Secret Management &nbsp;<span class="grade grade-C" style="margin-left:8px">C</span> <span class="mono dim" style="margin-left:8px">11/16</span></summary>
+    <div class="details-body" id="detail-1567"></div>
+  </details>
+  <details id="r-2540">
+    <summary><span class="mono" style="color:var(--accent)">OSAC-2540</span> &nbsp;DiskImage Resource &nbsp;<span class="grade grade-B" style="margin-left:8px">B</span> <span class="mono dim" style="margin-left:8px">14/16</span></summary>
+    <div class="details-body" id="detail-2540"></div>
+  </details>
+  <details id="r-2872">
+    <summary><span class="mono" style="color:var(--accent)">OSAC-2872</span> &nbsp;Storage Control Plane &nbsp;<span class="grade grade-D" style="margin-left:8px">D</span> <span class="mono dim" style="margin-left:8px">9/16</span></summary>
+    <div class="details-body" id="detail-2872"></div>
+  </details>
+  <details id="r-2917">
+    <summary><span class="mono" style="color:var(--accent)">OSAC-2917</span> &nbsp;GPU Instance Types &nbsp;<span class="grade grade-A" style="margin-left:8px">A</span> <span class="mono dim" style="margin-left:8px">15/16</span></summary>
+    <div class="details-body" id="detail-2917"></div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════ CONTAMINATION ═══════════════════════════ -->
+<section id="contamination">
+  <div class="sec-num">08 &mdash; Contamination</div>
+  <h2>Data Isolation</h2>
+  <p class="sec-desc">Steps we took to prevent the agent from seeing the answers. Verify these when adding new cases.</p>
+
+  <h3>Three contamination vectors</h3>
+  <table>
+    <thead><tr><th>Vector</th><th>Risk</th><th>Mitigation</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Exemplar PRDs</strong></td>
+        <td>The skill ships exemplar PRDs the agent reads before generating. If an exemplar matches a test case, the agent copies the answer.</td>
+        <td>Create a clean skill copy with test-case exemplars removed. Check: <code>ls context/exemplars/</code> should not contain any test case keys.</td>
+        <td><span class="pill pill-pass">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>Repo access</strong></td>
+        <td>On hosted Forge, the agent has access to cloned repos including enhancement-proposals (which contains the gold PRDs).</td>
+        <td>The local runner only gives the agent the skill directory. No repo cloning, no git access, no web access.</td>
+        <td><span class="pill pill-pass">Safe</span></td>
+      </tr>
+      <tr>
+        <td><strong>Context files</strong></td>
+        <td>Skill context files (osac-context.md, dimensions, review patterns) might reference test case content.</td>
+        <td>Verified: no test case keys appear in any context file.</td>
+        <td><span class="pill pill-pass">Safe</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>How to create a clean skill copy</h3>
+<pre><span class="comment"># Copy the skill directory</span>
+<span class="cmd">cp -r</span> <span class="path">forge-skills/osac/generate-prd</span> <span class="path">/tmp/eval-skill-clean</span>
+
+<span class="comment"># Remove the eval dataset (agent shouldn't see test data)</span>
+<span class="cmd">rm -rf</span> <span class="path">/tmp/eval-skill-clean/eval</span>
+
+<span class="comment"># Remove exemplars that overlap with test cases</span>
+<span class="cmd">for</span> case <span class="cmd">in</span> OSAC-1319 OSAC-1330 OSAC-1332 OSAC-1567 OSAC-2540 OSAC-2872 OSAC-2917; <span class="cmd">do</span>
+  <span class="cmd">rm -f</span> <span class="path">/tmp/eval-skill-clean/context/exemplars/${case}-prd.md</span>
+<span class="cmd">done</span>
+
+<span class="comment"># Use /tmp/eval-skill-clean as --skill-dir in the runner</span></pre>
+</section>
+
+<!-- ═══════════════════════════ ADD CASES ═══════════════════════════ -->
+<section id="add-cases">
+  <div class="sec-num">09 &mdash; Add Cases</div>
+  <h2>Adding New Test Cases</h2>
+  <p class="sec-desc">14 new-template merged PRDs exist in enhancement-proposals. We test on 7. Here's how to add more.</p>
+
+  <div class="step">
+    <span class="step-num">1</span>
+    <div class="step-body">
+      <h4>Find a merged PRD</h4>
+      <p>Check <code>enhancement-proposals/enhancements/</code> for PRDs using the current template (sections: Problem Statement, In Scope, Out of Scope, User Stories).</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2</span>
+    <div class="step-body">
+      <h4>Create the input.yaml</h4>
+      <p>Fetch the Jira feature data. The input needs: <code>jira_key</code>, <code>title</code>, <code>priority</code>, and <code>prompt</code> (the full Jira description).</p>
+    </div>
+  </div>
+<pre><span class="comment"># Fetch from Jira</span>
+<span class="cmd">jira issue view</span> OSAC-XXXX <span class="flag">--plain</span> > /tmp/jira-output.txt
+
+<span class="comment"># Create input.yaml with the Jira data</span>
+<span class="comment"># (manually format into the YAML structure)</span></pre>
+
+  <div class="step">
+    <span class="step-num">3</span>
+    <div class="step-body">
+      <h4>Prepare the gold PRD</h4>
+      <p>Copy the merged PRD and strip any non-template sections (Acceptance Criteria, Provenance, Related Features, OSAC Dimensions).</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">4</span>
+    <div class="step-body">
+      <h4>Check contamination</h4>
+      <p>Verify the new case doesn't appear in the skill's exemplars directory. If it does, add it to the exclusion list.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <h4>Available new-template PRDs not yet in the dataset</h4>
+    <table style="margin-top:8px">
+      <thead><tr><th>Case</th><th>Feature</th><th>Lines</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">OSAC-1061</td><td>Resource Names</td><td class="mono">125</td></tr>
+        <tr><td class="mono">OSAC-1339</td><td>BCM Backend</td><td class="mono">111</td></tr>
+        <tr><td class="mono">OSAC-1577</td><td>API Quality</td><td class="mono">62</td></tr>
+        <tr><td class="mono">OSAC-1710</td><td>Storage Tier Selection</td><td class="mono">75</td></tr>
+        <tr><td class="mono">OSAC-2506</td><td>Metering BMaaS</td><td class="mono">145</td></tr>
+        <tr><td class="mono">OSAC-2921</td><td>Metadata Display Name</td><td class="mono">59</td></tr>
+        <tr><td class="mono">OSAC-3149</td><td>Metering Bandwidth</td><td class="mono">124</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+
+
+
+
+
+<footer>
+  generate-prd Eval Cross-Validation Guide &mdash; 2026-08-10 &mdash; Claude Code
+</footer>
+</div>
+
+<script>
+function switchPage(page) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector('.page-tab[onclick*="' + page + '"]').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Expand cards
+document.querySelectorAll('.card-header').forEach(h => {
+  h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
+});
+
+// Print: expand all
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+  document.querySelectorAll('.page-content').forEach(p => p.classList.add('active'));
+});
+</script>
+
+<script>
+// Load judge reasoning into expandable details
+const evalData = {"OSAC-1319": {"score": 12, "max": 16, "passed": 5, "total": 8, "grade": "C", "criteria": {"persona-coverage": {"score": 1, "passed": false, "weight": "critical", "reasoning": "Tenant Admin and Tenant User are covered together, but Cloud Infrastructure Admin receives only 'Not affected' with no justification, and the gold standard shows no CIA stories either \u2014 however, the criterion requires explicit reasoning when a process is automated; additionally, Cloud Provider Admin's 'Not affected' lacks the specific rationale that catalog management is admin-only via private API (partially present).", "quotes": ["Cloud Infrastructure Admin\n\nNot affected by this feature.", "Cloud Provider Admin\n\nNot affected by this feature \u2014 catalog item management is out of scope."]}, "persona-alignment": {"score": 2, "passed": true, "weight": "critical", "reasoning": "All user stories are correctly attributed to Tenant Admin/Tenant User personas for self-service provisioning and lifecycle management; Cloud Provider Admin and Cloud Infrastructure Admin are correctly noted as not affected; no misattributed sanitization stories or internal system stories exist.", "quotes": ["Tenant Admin or Tenant User, I want to browse a read-only catalog", "Cloud Provider Admin\n\nNot affected by this feature"]}, "scope-accuracy": {"score": 0, "passed": false, "weight": "important", "reasoning": "Generated document misplaces several items and omits key scope details: inline row actions on list page are missing from In Scope, 'Milestone 0.1' is absent, tenant-scoped catalog item CRUD is missing from Out of Scope, and the navigation sidebar entry is omitted.", "quotes": ["Instance lifecycle actions (power toggle, restart, delete) available directly on the instance list page", "Tenant Admin catalog item CRUD: creating, editing, or deleting tenant-scoped"]}, "design-leakage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "The generated document uses only acceptable platform vocabulary (BareMetalInstance, ClusterOrder concepts) and avoids internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, InfraEnv/agent terminology, or AAP job parameters.", "quotes": ["BareMetalInstance fulfillment API endpoints", "catalog items and instance lifecycle"]}, "problem-statement": {"score": 2, "passed": true, "weight": "important", "reasoning": "The Problem Statement describes only user pain (no UI, forced to use API/CLI, slows adoption, inconsistent experience) without describing the solution or how features work.", "quotes": ["Tenants have no web console support for bare metal instances", "forces users who prefer click-ops to learn API tooling"]}, "status-visibility": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document explicitly addresses async status visibility in both In Scope ('surface provisioning state and error details so tenants can track progress and troubleshoot failures') and User Stories ('view instance details including state, error conditions...to diagnose failures').", "quotes": ["surface provisioning state and error details so tenants can track progress and troubleshoot failures", "view instance details including state, error conditions, spec summary"]}, "template-compliance": {"score": 2, "passed": true, "weight": "important", "reasoning": "All four required sections are present and no extra sections beyond the allowed template sections appear in the generated document.", "quotes": ["## Problem Statement", "## In Scope"]}, "completeness": {"score": 1, "passed": false, "weight": "important", "reasoning": "The generated document covers most core capabilities but is missing several substantive items: inline row actions on the list page (lifecycle actions without navigating to detail), OS image as an optional provisioning field, real-time state refresh without page reload, catalog item detail drawer that pre-selects the item for provisioning, and the 'Bare Metal' sidebar navigation section.", "quotes": ["Instance lifecycle actions... available directly on the instance list page (inline row actions)", "optionally specifying user data and OS image"]}}}, "OSAC-1330": {"score": 10, "max": 16, "passed": 6, "total": 8, "grade": "C", "criteria": {"persona-coverage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "All 4 OSAC personas are explicitly addressed with user stories in the generated document, and Cloud Infrastructure Admin has a relevant story about API rejection of invalid references.", "quotes": ["### Cloud Provider Admin", "### Cloud Infrastructure Admin"]}, "persona-alignment": {"score": 1, "passed": true, "weight": "critical", "reasoning": "User stories are mostly correctly attributed by persona, but the generated document is missing several stories (e.g., catalog management under Cloud Provider Admin, networking under Tenant Admin) and lacks the 'All Personas' category entirely, making coverage incomplete though not misattributed.", "quotes": ["Cloud Infrastructure Admin... reject requests that reference nonexistent resources", "Tenant Admin... reference resources within my tenant and project by name alone"]}, "scope-accuracy": {"score": 0, "passed": false, "weight": "important", "reasoning": "The generated document critically misclassifies scope: it includes backward compatibility/legacy ID transition as In Scope, while the gold standard explicitly places this Out of Scope; it omits key In Scope items like UI/CLI updates, API documentation, incremental delivery, and MaaS/Enclave services; and it adds scope creep items (backwards compatibility, auto-population of legacy IDs) that contradict the gold standard.", "quotes": ["No backward-compatible transition period \u2014 clean replacement of the current format", "Backward compatibility with the previous string-based reference format"]}, "design-leakage": {"score": 1, "passed": true, "weight": "critical", "reasoning": "The generated document contains some design leakage with references to 'auto-populates the missing form' and 'ID-based references are accepted and resolved' which hint at implementation behavior, but overall avoids heavy internal implementation details like controller names, reconciler logic, or CRD field names.", "quotes": ["the system auto-populates the missing form when one is provided", "legacy ID-based references are accepted and resolved"]}, "problem-statement": {"score": 1, "passed": true, "weight": "important", "reasoning": "The Problem Statement mostly describes user pain correctly, but contains mild solution-adjacent language such as 'the lack of structured references makes it impossible to evolve reference fields' which hints at the solution direction, though it stops short of describing how the feature works.", "quotes": ["the lack of structured references makes it impossible to evolve reference fields without breaking every consumer", "Invalid or mistyped references are only caught at provisioning time"]}, "status-visibility": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document addresses async status visibility adequately through immediate validation at submission time and descriptive error messages, covering both current state feedback and failure reasons in In Scope and User Stories.", "quotes": ["References are validated at submission time: invalid references...are rejected with descriptive errors", "I want the API to reject requests that reference nonexistent resources...with a descriptive error"]}, "template-compliance": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document contains exactly the required sections (Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies) with no extra sections outside the template spec.", "quotes": ["## Problem Statement", "## In Scope"]}, "completeness": {"score": 1, "passed": false, "weight": "important", "reasoning": "The generated document misses several substantive requirements: no backward compatibility transition (gold explicitly states clean replacement, no backward-compat period), UI/CLI updates are out of scope in generated but in scope in gold, incremental delivery requirement is absent, and the 'All Personas' user stories about UI display and CLI acceptance are missing.", "quotes": ["No backward-compatible transition period \u2014 clean replacement", "UI, CLI, and API all updated to support the new reference format"]}}}, "OSAC-1332": {"score": 10, "max": 16, "passed": 4, "total": 8, "grade": "C", "criteria": {"persona-coverage": {"score": 1, "passed": false, "weight": "critical", "reasoning": "Cloud Infrastructure Admin is marked 'Not affected' but the Assumptions section explicitly states they pre-configure the VIP Pool, meaning this feature directly affects their workflow and they need user stories.", "quotes": ["### Cloud Infrastructure Admin\n\nNot affected by this feature.", "A global VIP Pool has been pre-configured by the Cloud Infrastructure Admin"]}, "persona-alignment": {"score": 1, "passed": false, "weight": "critical", "reasoning": "The generated doc misattributes 'automatic storage provisioning' to Cloud Provider Admin instead of Tenant Admin/User, and the Cloud Provider Admin visibility story is acceptable but the primary self-service provisioning story belongs under Tenant Admin/User per the gold standard.", "quotes": ["As a Cloud Provider Admin, I want persistent storage to be automatically available", "As a Tenant Admin or Tenant User, I want persistent storage to be available on my CaaS cluster"]}, "scope-accuracy": {"score": 0, "passed": false, "weight": "important", "reasoning": "Multiple critical scope errors: generated adds items not in gold (per-tenant/tier storage views, global VIP Pool, E2E validation as In Scope; per-tenant VIP Pools, tenant quotas as Out of Scope), while missing gold's Out of Scope items (storage provider changes, storage UI, storage backend provisioning during tenant onboarding).", "quotes": ["A global VIP Pool is shared by all tenants for storage connectivity", "Per-tenant VIP Pools \u2014 all tenants share a single global VIP Pool"]}, "design-leakage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, playbook parameters, CRD field names, or agent/InfraEnv terminology; platform vocabulary like ClusterOrder is used acceptably.", "quotes": ["Storage readiness tracked independently from compute readiness on the ClusterOrder", "Per-tenant, per-cluster, per-tier storage views created on the VAST storage backend"]}, "problem-statement": {"score": 1, "passed": false, "weight": "important", "reasoning": "The problem statement mostly describes user pain but contains mild solution-adjacent language ('Without this work') and is otherwise clean; however, the In Scope section contains explicit solution descriptions that bleed into what should be a pure problem statement section, though the Problem Statement section itself is largely compliant.", "quotes": ["Without this work, CaaS clusters cannot support stateful workloads", "Automatic storage provisioning on CaaS clusters \u2014 when a cluster is provisioned and ready, the CSI driver and per-tenant, per-tier StorageClasses are installed"]}, "status-visibility": {"score": 2, "passed": true, "weight": "important", "reasoning": "Both In Scope and User Stories explicitly address status/progress visibility including failure reasons for async storage provisioning.", "quotes": ["Storage readiness tracked independently from compute readiness on the ClusterOrder", "I want to see whether storage is ready on my CaaS cluster so that I know when I can provision"]}, "template-compliance": {"score": 2, "passed": true, "weight": "important", "reasoning": "All four required sections are present and no extra sections outside the allowed template appear in the generated document.", "quotes": ["## Problem Statement", "## In Scope"]}, "completeness": {"score": 1, "passed": true, "weight": "important", "reasoning": "Generated covers the core capabilities (auto provisioning, storage readiness, cleanup, StorageClasses) but misses the gold's dependency on 'Tenant Storage Onboarding' framework, the user story about cleanup not affecting other clusters, and some out-of-scope items like Storage UI and storage backend provisioning during tenant onboarding.", "quotes": ["Tenant Storage Onboarding: Provides the storage automation framework", "Storage UI"]}}}, "OSAC-1567": {"score": 11, "max": 16, "passed": 5, "total": 8, "grade": "C", "criteria": {"persona-coverage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "All 4 OSAC personas are explicitly addressed with user stories, including Cloud Infrastructure Admin who has 3 stories covering encryption at rest, key rotation, and CLI configuration.", "quotes": ["### Cloud Infrastructure Admin", "### Cloud Provider Admin"]}, "persona-alignment": {"score": 2, "passed": true, "weight": "critical", "reasoning": "All user stories correctly map to their personas: encryption/key rotation/CLI config under Cloud Infrastructure Admin, backend selection under Cloud Provider Admin, secrets API management under Tenant Admin, and credential retrieval under Tenant User; no internal system stories exist and no sanitization stories appear under Cloud Provider Admin.", "quotes": ["As a Cloud Infrastructure Admin, I want secrets encrypted at rest", "As a Cloud Provider Admin, I want to select between database-backed storage"]}, "scope-accuracy": {"score": 0, "passed": false, "weight": "important", "reasoning": "The generated document's In Scope and Out of Scope sections differ significantly from the gold standard: it omits many gold In Scope items (service coverage scope, installation, E2E testing, documentation, self-service secret creation, automatic secret creation, tenant-scoped privilege isolation) and incorrectly places items like 'External secret manager integration (Vault)' in Out of Scope when gold treats Vault as a prerequisite In Scope item; it also adds scope-creep items not in gold (CLI support for encryption key configuration, per-project encryption key management).", "quotes": ["Installation \u2014 cloud provider must deploy and configure a Vault-compatible secret store as a prerequisite", "E2E testing \u2014 secret CRUD"]}, "design-leakage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; references to 'OPA policies', 'envelope encryption', 'hub secret backend', and 'SecretReference type' are borderline but represent acceptable product-level vocabulary rather than internal implementation specifics.", "quotes": ["hub (Kubernetes) secret backend", "SecretReference type used to replace ad-hoc secret retrieval RPCs"]}, "problem-statement": {"score": 2, "passed": true, "weight": "important", "reasoning": "The Problem Statement describes only user pain (unencrypted storage, database exposure, ad-hoc RPCs, forced bespoke implementations) and cost of inaction (credential exposure on compromise, bespoke work for new secret types), with no solution language.", "quotes": ["stored as unencrypted fields within resource database tables", "any database compromise exposes all tenant credentials"]}, "status-visibility": {"score": 0, "passed": false, "weight": "important", "reasoning": "Neither the In Scope section nor the User Stories address async status visibility, progress tracking, or failure reason visibility for secret creation operations.", "quotes": ["Dedicated secret resource with full CRUD operations", "As a Tenant Admin, I want to store and manage secrets"]}, "template-compliance": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) and one optional section (Dependencies), with no extra disallowed sections present.", "quotes": ["## Problem Statement", "## In Scope"]}, "completeness": {"score": 1, "passed": false, "weight": "important", "reasoning": "The generated document covers core concepts (encryption at rest, pluggable backends, uniform API, tenant isolation) but misses several substantive items: explicit service scope (BMaaS, CaaS, VMaaS, MaaS, Enclave), automatic secret creation during provisioning, self-service SSH key/OIDC secret creation, RBAC for tenant secret access control, E2E testing and documentation requirements, Vault-compatible store as the backend dependency, and multiple Tenant User stories (update, delete, list metadata).", "quotes": ["Applies to all OSAC services (BMaaS, CaaS, VMaaS, MaaS, Enclave)", "Automatic secret creation during resource provisioning"]}}}, "OSAC-2540": {"score": 14, "max": 16, "passed": 7, "total": 8, "grade": "B", "criteria": {"persona-coverage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "All four personas are explicitly addressed with user stories or an explicit 'Not affected' note, matching the gold standard structure.", "quotes": ["### Cloud Provider Admin", "### Cloud Infrastructure Admin\n\nNot affected by this feature."]}, "persona-alignment": {"score": 2, "passed": true, "weight": "critical", "reasoning": "All user stories in the generated document correctly match persona roles: Cloud Provider Admin handles global image catalog management, Tenant Admin handles org-scoped images, Tenant User handles self-service provisioning, Cloud Infrastructure Admin is noted as not affected, and no internal system stories exist.", "quotes": ["Cloud Infrastructure Admin: Not affected by this feature.", "As a Tenant Admin, I want to register tenant-scoped DiskImages"]}, "scope-accuracy": {"score": 1, "passed": false, "weight": "important", "reasoning": "Generated document is mostly accurate on scope but has notable issues: it adds 'image caching/performance optimization' and 'VM snapshot/export' as implicit omissions (not flagged as missing from Out of Scope), adds scope creep items like 'Users can see lifecycle state of image referenced by their ComputeInstance' and 'Image source reference is immutable after DiskImage creation' as separate bullets (partially correct but differently framed), and misses key In Scope items like 'Inline image fields removed from ComputeInstance/ComputeInstanceTemplate', 'OS type specified as enum replacing boolean Windows flag', 'API and CLI documentation', and 'CRUD via UI, CLI, and API' explicitly called out.", "quotes": ["Image source reference is immutable after DiskImage creation", "Inline image fields removed from ComputeInstance and ComputeInstanceTemplate"]}, "design-leakage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; all vocabulary used (DiskImage, ComputeInstance, ClusterOrder, etc.) is acceptable platform vocabulary.", "quotes": ["DiskImage as a managed resource", "ComputeInstanceTemplate reference a DiskImage"]}, "problem-statement": {"score": 2, "passed": true, "weight": "important", "reasoning": "The Problem Statement describes only user pain points (no discoverability, no metadata, no governance, repetitive OS input, opaque VM creation) without introducing solution language or describing how the feature works.", "quotes": ["There is no way to discover which images are available", "OS type must be specified per-instance rather than per-image"]}, "status-visibility": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document addresses async status visibility through the lifecycle states (active, deprecated, obsolete) and explicitly states users can see the lifecycle state of images referenced by their ComputeInstance.", "quotes": ["Users can see the lifecycle state of an image referenced by their ComputeInstance so they know when a referenced image has been deprecated or marked obsolete", "Image lifecycle management: active, deprecated (warns users but allows new VM creation), obsolete (blocks new VM creation)"]}, "template-compliance": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) and only the optional Assumptions and Dependencies sections \u2014 no extra sections outside the template.", "quotes": ["## Problem Statement", "## In Scope"]}, "completeness": {"score": 1, "passed": true, "weight": "important", "reasoning": "Generated covers most core capabilities but misses several substantive items: search/filter by OS family/architecture/name user story, tenant isolation user story (only seeing own tenant's images), API/CLI documentation requirement, backward compatibility assumption about Windows boolean flag, OCI artifact validation assumption, image digest recommendation assumption, and the OSAC-2921 Metadata standardization dependency. It adds a dependency on OSAC-979 not in gold standard.", "quotes": ["As a Tenant User, I want to search and filter images by guest OS family, architecture, or name", "OSAC does not validate the accessibility of the OCI artifact"]}}}, "OSAC-2872": {"score": 9, "max": 16, "passed": 5, "total": 8, "grade": "D", "criteria": {"persona-coverage": {"score": 1, "passed": false, "weight": "critical", "reasoning": "Cloud Infrastructure Admin has stories but Cloud Infrastructure Admin is not a standard OSAC persona \u2014 the gold standard has no Cloud Infrastructure Admin section and instead uses Cloud Provider Admin plus Tenant Admin/User; more critically, the generated doc has no explicit 'Not affected' note for any persona and merges Tenant Admin and Tenant User into separate sections while the gold standard combines them, but the real gap is that the generated doc includes a non-standard persona (Cloud Infrastructure Admin) instead of properly covering all four OSAC personas.", "quotes": ["### Cloud Infrastructure Admin", "### Cloud Provider Admin"]}, "persona-alignment": {"score": 1, "passed": true, "weight": "critical", "reasoning": "Most attributions are correct, but the generated doc assigns 'automated storage deployment on tenant clusters' to Cloud Infrastructure Admin rather than Cloud Provider Admin (as in gold standard), and lacks sanitization stories entirely, so no misattribution there, but the deployment automation story is misplaced.", "quotes": ["As a Cloud Infrastructure Admin, I want to configure storage backends", "As a Cloud Provider Admin, I want the storage driver...deployed automatically"]}, "scope-accuracy": {"score": 0, "passed": false, "weight": "important", "reasoning": "The generated document misclassifies several items and omits key out-of-scope items: volume resize and volume snapshots/clones are missing from Out of Scope; the generated doc incorrectly keeps 'Vendor REST adapters' in Out of Scope linked to OSAC-984 which is correct but combines UI integration incorrectly; more critically, In Scope items diverge significantly \u2014 the generated doc mentions multiple vendors (NetApp, VAST, Pure Storage) when gold standard specifies VAST-only for v0.2, and adds 'attachment information' and 'status visibility' items not structured as in gold, while missing key in-scope items like Private Volume API and Storage driver packaging.", "quotes": ["v0.2 supports VAST as the only vendor backend", "Volume resize"]}, "design-leakage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; platform vocabulary like ClusterOrder and BareMetalInstance is used acceptably.", "quotes": ["ClusterOrder provisioning must be functional", "BareMetalInstance storage provisioning"]}, "problem-statement": {"score": 0, "passed": false, "weight": "important", "reasoning": "The generated Problem Statement contains solution language, explicitly stating 'The Storage Control Plane introduces a single storage driver that presents opaque storage tiers...' and 'OSAC cannot offer block storage as a platform service' mixes solution framing.", "quotes": ["Without a storage control plane, OSAC cannot offer block storage as a platform service", "vendor credentials must be stored on tenant clusters"]}, "status-visibility": {"score": 2, "passed": true, "weight": "important", "reasoning": "Both In Scope and User Stories explicitly address status/progress visibility for async storage deployment, including readiness state and failure visibility.", "quotes": ["Tenants and admins can see whether storage is ready on a given cluster", "As a Tenant User, I want to see whether storage is available and ready on my cluster"]}, "template-compliance": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document contains exactly the allowed sections (Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies) with no extra sections.", "quotes": ["## Problem Statement", "## In Scope"]}, "completeness": {"score": 1, "passed": true, "weight": "important", "reasoning": "Generated covers most core capabilities but misses several substantive items: volume resize/snapshots/clones as explicit out-of-scope, the Private Volume API distinction, VAST as v0.2-specific vendor, StorageClass behavior for unconfigured tiers staying Pending, OSAC-917 dependency, and OSAC-1001/OSAC-1332 baseline dependencies.", "quotes": ["Private Volume API: Internal CRUD operations for volume records, consumed by platform services", "OSAC-917 (Storage Framework): Delivers StorageBackend and StorageTier entities"]}}}, "OSAC-2917": {"score": 15, "max": 16, "passed": 7, "total": 8, "grade": "C", "criteria": {"persona-coverage": {"score": 1, "passed": false, "weight": "critical", "reasoning": "Cloud Infrastructure Admin is marked 'Not affected' but the Assumptions section explicitly states they are responsible for GPU node configuration and passthrough setup, meaning they should have at least a note acknowledging their prerequisite role or a story.", "quotes": ["Cloud Infrastructure Admin: Not affected by this feature.", "the Cloud Infrastructure Admin has configured the underlying host hardware and drivers before GPU-enabled InstanceTypes are offered"]}, "persona-alignment": {"score": 2, "passed": true, "weight": "critical", "reasoning": "All user stories correctly match their persona roles: Cloud Provider Admin has catalog/InstanceType management stories, Cloud Infrastructure Admin is noted as not affected, Tenant Admin is not affected, and Tenant User has self-service provisioning stories; no sanitization stories appear under Cloud Provider Admin and no internal system stories exist.", "quotes": ["As a Cloud Provider Admin, I want to define InstanceTypes", "As a Tenant User, I want to create a ComputeInstance"]}, "scope-accuracy": {"score": 2, "passed": true, "weight": "important", "reasoning": "All Out of Scope items from the gold standard are present in the generated document; the In Scope items are accurately represented, though phrased differently; the only notable omission is 'GPU clusters with InfiniBand interconnect' but all other items match correctly, and added details like tenant isolation and status visibility are accurate extensions rather than scope creep.", "quotes": ["GPU discovery API for programmatic detection", "MIG / vGPU partitioning support"]}, "design-leakage": {"score": 2, "passed": true, "weight": "critical", "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, playbook parameters, CRD field names, or agent/InfraEnv terminology; all vocabulary used is platform-level.", "quotes": ["InstanceType resource only models CPU cores, memory, and disk", "GPU-enabled ComputeInstances follow the same networking, storage, lifecycle model"]}, "problem-statement": {"score": 2, "passed": true, "weight": "important", "reasoning": "The Problem Statement describes only user pain and cost of inaction without any solution language, feature introductions, or descriptions of how it works.", "quotes": ["no way to request GPU hardware through the self-service ComputeInstance flow", "tenants must provision GPU workloads outside OSAC, bypassing tenant isolation"]}, "status-visibility": {"score": 2, "passed": true, "weight": "important", "reasoning": "Both In Scope and User Stories explicitly address status/progress visibility for async GPU ComputeInstance creation.", "quotes": ["Tenant Users can see the current provisioning status and any failure reasons for GPU-enabled ComputeInstances", "I want to see the current provisioning status and any failure reasons for my GPU-enabled ComputeInstance so that I can track progress and troubleshoot issues"]}, "template-compliance": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document contains exactly the required sections (Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies) with no extra sections outside the template spec.", "quotes": ["## Problem Statement", "## In Scope"]}, "completeness": {"score": 2, "passed": true, "weight": "important", "reasoning": "The generated document covers all substantive requirements from the gold standard including GPU InstanceType fields, same lifecycle/networking model, out-of-scope items, user stories for all roles, assumptions about GPU passthrough, and dependencies on OSAC-42 and OSAC-58/1205.", "quotes": ["GPU-enabled ComputeInstances follow the same networking, storage, lifecycle model", "GPU type is a free-text string with no platform-side validation"]}}}};
+
+const criteriaNames = {
+  'persona-coverage': 'Persona Coverage',
+  'persona-alignment': 'Persona-Story Alignment',
+  'scope-accuracy': 'Scope Accuracy',
+  'design-leakage': 'Design Leakage',
+  'problem-statement': 'Problem Statement',
+  'status-visibility': 'Async Status Visibility',
+  'template-compliance': 'Template Compliance',
+  'completeness': 'Content Completeness'
+};
+
+const criteriaOrder = [
+  'persona-coverage','persona-alignment','scope-accuracy','design-leakage',
+  'problem-statement','status-visibility','template-compliance','completeness'
+];
+
+for (const [caseId, caseData] of Object.entries(evalData)) {
+  const num = caseId.replace('OSAC-','');
+  const el = document.getElementById(`detail-${num}`);
+  if (!el) continue;
+
+  let html = '';
+  for (const cid of criteriaOrder) {
+    const c = caseData.criteria[cid];
+    if (!c) continue;
+    const status = c.passed ? 'PASS' : 'FAIL';
+    const pillClass = c.score === 2 ? 'pill-pass' : (c.score === 1 ? 'pill-warn' : 'pill-fail');
+    const weight = c.weight === 'critical' ? '<span class="pill pill-fail" style="font-size:9px;margin-left:6px">CRIT</span>' : '';
+
+    html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--rule)">`;
+    html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">`;
+    html += `<strong>${criteriaNames[cid]}${weight}</strong>`;
+    html += `<span class="${pillClass} pill">${c.score}/2 ${status}</span>`;
+    html += `</div>`;
+    html += `<p style="font-size:13px;color:var(--ink-muted)">${escapeHtml(c.reasoning)}</p>`;
+    if (c.quotes && c.quotes.length > 0) {
+      html += `<div style="margin-top:8px">`;
+      for (const q of c.quotes) {
+        const short = q.replace(/\n/g, ' ').substring(0, 120);
+        html += `<div style="font-size:12px;color:var(--ink-dim);border-left:2px solid var(--rule);padding-left:10px;margin-top:4px;font-style:italic">"${escapeHtml(short)}..."</div>`;
+      }
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+</script>
+
+</body>
+</html>

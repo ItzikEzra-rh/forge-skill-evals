@@ -1,0 +1,22 @@
+jira_key: OSAC-2917
+title: "GPU-Enabled Compute Instances"
+priority: High
+prompt: "# OSAC-2917: GPU-Enabled InstanceTypes for ComputeInstances (MVP)\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Undefined\n- **Assignee**: Tzif Morgenshtern\n- **Reporter**: Tzif\
+  \ Morgenshtern\n- **Components**: VMaaS\n- **Labels**: customer:jio\n\n## Description\n\n## Feature Goal\n\n  Enable OSAC tenants to create ComputeInstances with GPU hardware by extending InstanceTypes\
+  \ with GPU type and count\n  fields. This is the minimum viable product for GPU support \u2014 tenants select a GPU-enabled InstanceType when creating\n  a VM, and the system provisions a VM with GPU\
+  \ hardware attached via KubeVirt passthrough.\n\n  ## Problem Statement\n\n  OSAC currently supports CPU/memory-based ComputeInstances via KubeVirt but has no way to request GPU hardware. The\n  ComputeInstance\
+  \ resource only models CPU cores, memory, and disk. Tenants need self-service access to GPU-equipped\n  VMs\n  for AI/ML workloads, with proper tenant isolation.\n\n  ## MVP Scope\n\n  \u2022 Cloud Provider\
+  \ Admin defines InstanceTypes that include GPU type (free text string) and GPU count\n  \u2022 Tenant User selects a GPU-enabled InstanceType when creating a ComputeInstance\n  \u2022 The resulting VM\
+  \ is provisioned with GPU hardware attached via KubeVirt passthrough\n  \u2022 GPU VMs use the same networking, storage, and lifecycle model as existing ComputeInstances\n  \u2022 GPU type is free text\
+  \ \u2014 no OSAC-side validation (Cloud Admin's responsibility, same as CPU/RAM)\n  \u2022 Single VMaaS cluster assumption \u2014 no cross-cluster placement\n\n  ## User Stories\n\n  \u2022 As a Cloud\
+  \ Provider Admin, I want to define InstanceTypes that include GPU type and count so that tenants can\n  select GPU configurations when creating VMs.\n  \u2022 As a Cloud Provider Admin, I want to retire\
+  \ or update GPU-enabled InstanceTypes when the underlying GPU hardware\n  changes.\n  \u2022 As a Tenant User, I want to see which InstanceTypes include GPU hardware so I can choose the right configuration\n\
+  \  for my workload.\n  \u2022 As a Tenant User, I want to create a ComputeInstance using a GPU-enabled InstanceType so my VM is provisioned with\n  GPU hardware attached.\n  \u2022 As a Tenant User, I\
+  \ want GPU VMs to behave the same as non-GPU VMs for lifecycle operations (start, stop, restart,\n  delete).\n\n  ## Out of Scope (deferred to OSAC-1839)\n\n  \u2022 GPU discovery API (programmatic detection\
+  \ of available GPU hardware)\n  \u2022 Per-tenant GPU quotas\n  \u2022 Preemptible VMs\n  \u2022 MIG / vGPU support\n  \u2022 GPU clusters with InfiniBand interconnect\n  \u2022 GPU VM live migration\n\
+  \  \u2022 GPU-compatible boot image filtering\n  \u2022 Multi-cluster GPU placement\n  \u2022 GPU type validation\n  \u2022 Cost estimation and billing\n\n  ## Dependencies\n\n  \u2022 OSAC-42: Ansible-level\
+  \ GPU passthrough plumbing already delivered in osac-aap\n  \u2022 OSAC-58 / OSAC-1205: GPU fields extend the existing InstanceType resource\n\n  ## Definition of Done\n\n  [ ] InstanceType supports GPU\
+  \ type (string) and GPU count fields\n  [ ] Tenant User can list InstanceTypes and identify which ones include GPU hardware\n  [ ] Tenant User can create a ComputeInstance using a GPU-enabled InstanceType\
+  \ and the VM has GPU hardware attached\n  [ ] GPU ComputeInstances support the same lifecycle operations as non-GPU ones\n  [ ] GPU ComputeInstances carry standard OSAC tenant isolation metadata\n  [\
+  \ ] Cloud Provider Admin can create, update, and delete GPU-enabled InstanceTypes\n\n## Linked Issues\n\n- **OSAC-3041** (In Progress): Slurm on VMaaS\n- **OSAC-1839** (In Progress): GPU-Enabled Compute\
+  \ Instances for Multitenant Environments\n"

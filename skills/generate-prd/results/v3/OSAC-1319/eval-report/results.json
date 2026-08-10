@@ -1,0 +1,119 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "artifacts/eval-v3-results/OSAC-1319/enhancements/OSAC-1319-baremetal-instance-ui/prd.md",
+  "gold_path": "artifacts/eval-dataset-v2/cases/OSAC-1319/gold-prd.md",
+  "overall_pass": false,
+  "grade": "C",
+  "total_passed": 5,
+  "total_criteria": 8,
+  "total_score": 12,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Tenant Admin and Tenant User are covered together, but Cloud Infrastructure Admin receives only 'Not affected' with no justification, and the gold standard shows no CIA stories either \u2014 however, the criterion requires explicit reasoning when a process is automated; additionally, Cloud Provider Admin's 'Not affected' lacks the specific rationale that catalog management is admin-only via private API (partially present).",
+      "quotes": [
+        "Cloud Infrastructure Admin\n\nNot affected by this feature.",
+        "Cloud Provider Admin\n\nNot affected by this feature \u2014 catalog item management is out of scope."
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories are correctly attributed to Tenant Admin/Tenant User personas for self-service provisioning and lifecycle management; Cloud Provider Admin and Cloud Infrastructure Admin are correctly noted as not affected; no misattributed sanitization stories or internal system stories exist.",
+      "quotes": [
+        "Tenant Admin or Tenant User, I want to browse a read-only catalog",
+        "Cloud Provider Admin\n\nNot affected by this feature",
+        "Cloud Infrastructure Admin\n\nNot affected by this feature"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "Generated document misplaces several items and omits key scope details: inline row actions on list page are missing from In Scope, 'Milestone 0.1' is absent, tenant-scoped catalog item CRUD is missing from Out of Scope, and the navigation sidebar entry is omitted.",
+      "quotes": [
+        "Instance lifecycle actions (power toggle, restart, delete) available directly on the instance list page",
+        "Tenant Admin catalog item CRUD: creating, editing, or deleting tenant-scoped",
+        "A 'Bare Metal' section in the tenant navigation sidebar"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document uses only acceptable platform vocabulary (BareMetalInstance, ClusterOrder concepts) and avoids internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, InfraEnv/agent terminology, or AAP job parameters.",
+      "quotes": [
+        "BareMetalInstance fulfillment API endpoints",
+        "catalog items and instance lifecycle",
+        "BareMetalInstance list is consistent with the existing ComputeInstance list"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain (no UI, forced to use API/CLI, slows adoption, inconsistent experience) without describing the solution or how features work.",
+      "quotes": [
+        "Tenants have no web console support for bare metal instances",
+        "forces users who prefer click-ops to learn API tooling",
+        "creates an inconsistent experience compared to ComputeInstance"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly addresses async status visibility in both In Scope ('surface provisioning state and error details so tenants can track progress and troubleshoot failures') and User Stories ('view instance details including state, error conditions...to diagnose failures').",
+      "quotes": [
+        "surface provisioning state and error details so tenants can track progress and troubleshoot failures",
+        "view instance details including state, error conditions, spec summary",
+        "I can understand the current configuration and diagnose failures"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All four required sections are present and no extra sections beyond the allowed template sections appear in the generated document.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Assumptions",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document covers most core capabilities but is missing several substantive items: inline row actions on the list page (lifecycle actions without navigating to detail), OS image as an optional provisioning field, real-time state refresh without page reload, catalog item detail drawer that pre-selects the item for provisioning, and the 'Bare Metal' sidebar navigation section.",
+      "quotes": [
+        "Instance lifecycle actions... available directly on the instance list page (inline row actions)",
+        "optionally specifying user data and OS image",
+        "without requiring a manual page refresh so that I am not working with stale information"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "artifacts/eval-v3-results/OSAC-2540/enhancements/OSAC-2540-diskimage-resource/prd.md",
+  "gold_path": "artifacts/eval-dataset-v2/cases/OSAC-2540/gold-prd.md",
+  "overall_pass": true,
+  "grade": "B",
+  "total_passed": 7,
+  "total_criteria": 8,
+  "total_score": 14,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All four personas are explicitly addressed with user stories or an explicit 'Not affected' note, matching the gold standard structure.",
+      "quotes": [
+        "### Cloud Provider Admin",
+        "### Cloud Infrastructure Admin\n\nNot affected by this feature.",
+        "### Tenant Admin",
+        "### Tenant User"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories in the generated document correctly match persona roles: Cloud Provider Admin handles global image catalog management, Tenant Admin handles org-scoped images, Tenant User handles self-service provisioning, Cloud Infrastructure Admin is noted as not affected, and no internal system stories exist.",
+      "quotes": [
+        "Cloud Infrastructure Admin: Not affected by this feature.",
+        "As a Tenant Admin, I want to register tenant-scoped DiskImages",
+        "As a Tenant User, I want to browse available DiskImages"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Generated document is mostly accurate on scope but has notable issues: it adds 'image caching/performance optimization' and 'VM snapshot/export' as implicit omissions (not flagged as missing from Out of Scope), adds scope creep items like 'Users can see lifecycle state of image referenced by their ComputeInstance' and 'Image source reference is immutable after DiskImage creation' as separate bullets (partially correct but differently framed), and misses key In Scope items like 'Inline image fields removed from ComputeInstance/ComputeInstanceTemplate', 'OS type specified as enum replacing boolean Windows flag', 'API and CLI documentation', and 'CRUD via UI, CLI, and API' explicitly called out.",
+      "quotes": [
+        "Image source reference is immutable after DiskImage creation",
+        "Inline image fields removed from ComputeInstance and ComputeInstanceTemplate",
+        "OS type specified as an enum (linux, windows) replacing the current boolean Windows flag"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; all vocabulary used (DiskImage, ComputeInstance, ClusterOrder, etc.) is acceptable platform vocabulary.",
+      "quotes": [
+        "DiskImage as a managed resource",
+        "ComputeInstanceTemplate reference a DiskImage",
+        "Two-tier visibility: global DiskImages"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain points (no discoverability, no metadata, no governance, repetitive OS input, opaque VM creation) without introducing solution language or describing how the feature works.",
+      "quotes": [
+        "There is no way to discover which images are available",
+        "OS type must be specified per-instance rather than per-image",
+        "VM creation remains opaque and error-prone"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document addresses async status visibility through the lifecycle states (active, deprecated, obsolete) and explicitly states users can see the lifecycle state of images referenced by their ComputeInstance.",
+      "quotes": [
+        "Users can see the lifecycle state of an image referenced by their ComputeInstance so they know when a referenced image has been deprecated or marked obsolete",
+        "Image lifecycle management: active, deprecated (warns users but allows new VM creation), obsolete (blocks new VM creation)"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) and only the optional Assumptions and Dependencies sections \u2014 no extra sections outside the template.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Assumptions",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Generated covers most core capabilities but misses several substantive items: search/filter by OS family/architecture/name user story, tenant isolation user story (only seeing own tenant's images), API/CLI documentation requirement, backward compatibility assumption about Windows boolean flag, OCI artifact validation assumption, image digest recommendation assumption, and the OSAC-2921 Metadata standardization dependency. It adds a dependency on OSAC-979 not in gold standard.",
+      "quotes": [
+        "As a Tenant User, I want to search and filter images by guest OS family, architecture, or name",
+        "OSAC does not validate the accessibility of the OCI artifact",
+        "OSAC-2921: Standardized display_name and description in Metadata"
+      ]
+    }
+  ]
+}

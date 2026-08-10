@@ -1,0 +1,118 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "artifacts/eval-v3-results/OSAC-1330/enhancements/OSAC-1330-type-safe-resource-references/prd.md",
+  "gold_path": "artifacts/eval-dataset-v2/cases/OSAC-1330/gold-prd.md",
+  "overall_pass": true,
+  "grade": "C",
+  "total_passed": 6,
+  "total_criteria": 8,
+  "total_score": 10,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All 4 OSAC personas are explicitly addressed with user stories in the generated document, and Cloud Infrastructure Admin has a relevant story about API rejection of invalid references.",
+      "quotes": [
+        "### Cloud Provider Admin",
+        "### Cloud Infrastructure Admin",
+        "### Tenant Admin",
+        "### Tenant User"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 1,
+      "reasoning": "User stories are mostly correctly attributed by persona, but the generated document is missing several stories (e.g., catalog management under Cloud Provider Admin, networking under Tenant Admin) and lacks the 'All Personas' category entirely, making coverage incomplete though not misattributed.",
+      "quotes": [
+        "Cloud Infrastructure Admin... reject requests that reference nonexistent resources",
+        "Tenant Admin... reference resources within my tenant and project by name alone",
+        "Tenant User... validate that referenced resources exist when I submit a request"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document critically misclassifies scope: it includes backward compatibility/legacy ID transition as In Scope, while the gold standard explicitly places this Out of Scope; it omits key In Scope items like UI/CLI updates, API documentation, incremental delivery, and MaaS/Enclave services; and it adds scope creep items (backwards compatibility, auto-population of legacy IDs) that contradict the gold standard.",
+      "quotes": [
+        "No backward-compatible transition period \u2014 clean replacement of the current format",
+        "Backward compatibility with the previous string-based reference format",
+        "UI, CLI, and API all updated to support the new reference format"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 1,
+      "reasoning": "The generated document contains some design leakage with references to 'auto-populates the missing form' and 'ID-based references are accepted and resolved' which hint at implementation behavior, but overall avoids heavy internal implementation details like controller names, reconciler logic, or CRD field names.",
+      "quotes": [
+        "the system auto-populates the missing form when one is provided",
+        "legacy ID-based references are accepted and resolved"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "The Problem Statement mostly describes user pain correctly, but contains mild solution-adjacent language such as 'the lack of structured references makes it impossible to evolve reference fields' which hints at the solution direction, though it stops short of describing how the feature works.",
+      "quotes": [
+        "the lack of structured references makes it impossible to evolve reference fields without breaking every consumer",
+        "Invalid or mistyped references are only caught at provisioning time",
+        "The API also cannot express whether a reference targets an object in the same tenant"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document addresses async status visibility adequately through immediate validation at submission time and descriptive error messages, covering both current state feedback and failure reasons in In Scope and User Stories.",
+      "quotes": [
+        "References are validated at submission time: invalid references...are rejected with descriptive errors",
+        "I want the API to reject requests that reference nonexistent resources...with a descriptive error",
+        "I receive immediate feedback instead of discovering errors at provisioning time"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains exactly the required sections (Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies) with no extra sections outside the template spec.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document misses several substantive requirements: no backward compatibility transition (gold explicitly states clean replacement, no backward-compat period), UI/CLI updates are out of scope in generated but in scope in gold, incremental delivery requirement is absent, and the 'All Personas' user stories about UI display and CLI acceptance are missing.",
+      "quotes": [
+        "No backward-compatible transition period \u2014 clean replacement",
+        "UI, CLI, and API all updated to support the new reference format",
+        "Incremental delivery \u2014 each chunk leaves the system fully functional"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+jira_key: OSAC-2872
+title: "OSAC Storage Control Plane"
+priority: High
+prompt: "# OSAC-2872: OSAC Storage Control Plane\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Major\n- **Assignee**: Akshay Nadkarni\n- **Reporter**: Akshay Nadkarni\n- **Components**: Storage\n\
+  - **Labels**: None\n\n## Description\n\n## Feature Goal\n\n  Deliver the storage architecture that lets tenants consume block storage through opaque tiers without seeing vendor\n  details, credentials,\
+  \ or backend addresses. This includes a CSI driver ( csi.osac.openshift.io ) that provides a\n  standard Kubernetes PVC interface, the control plane services that make storage decisions on behalf of that\
+  \ driver,\n  and the packaging and deployment to tenant clusters. The CSI driver delegates every storage decision to the control\n  plane and proxies volume operations to the appropriate vendor CSI controller.\
+  \ On the node side, mount operations\n  route to vendor node plugins using metadata embedded at provisioning time, requiring no further control plane calls.\n\n  ## Problem Statement\n\n  OSAC needs a\
+  \ storage layer for CaaS tenant clusters that:\n\n  \u2022 Presents opaque storage tiers to tenants, with no vendor details, credentials, or backend addresses exposed\n  \u2022 Supports multiple storage\
+  \ vendors (NetApp ONTAP, VAST, Pure Storage) behind a single CSI driver\n  \u2022 Enforces per-tenant policy: authorization and tier access\n  \u2022 Provides vendor credentials per-request without storing\
+  \ them on tenant clusters\n  \u2022 Maintains a volume inventory where every volume is tracked and attributed to a tenant\n  Without the storage control plane, there is no vendor abstraction (tenants\
+  \ see vendor-specific StorageClasses and\n  backend addresses), no enforcement point for storage policy, no credential isolation, and no record of what volumes\n  exist.\n\n  ## User Stories\n\n  | The\
+  \ storage control plane is an infrastructure system whose consumers are Kubernetes (kubelet, external-\n  provisioner,\n  | external-attacher), internal OSAC services, and the Volume API. The stories\
+  \ below describe independently demoable\n  | capabilities. Each story identifies the components involved so it can be assigned, built, and demoed on its own.\n\n  ### Core (required for feature completion)\n\
+  \n  These five stories together deliver the end-to-end capability: a tenant creates a PVC on their cluster, the volume\n  is\n  provisioned on the correct vendor backend through the control plane, a pod\
+  \ mounts it, and the volume is tracked in\n  inventory. The driver is automatically deployed when a cluster is provisioned.\n\n  **CSI driver core** : The CSI driver handles PVC lifecycle requests from\
+  \ Kubernetes (create, delete, attach, detach,\n  mount, unmount). The controller plugin calls the storage control plane for tier resolution, policy checks, and\n  credentials, then proxies the volume\
+  \ operation to the appropriate vendor CSI controller via TCP gRPC. The node\n  plugin routes mount/unmount requests to the correct vendor node plugin based on metadata embedded in the volume at\n  provisioning\
+  \ time, with no control plane calls from the node.\n\n  \u2022 Demo: Create a PVC with an OSAC StorageClass, show the volume provisioned on the correct vendor backend. Run a pod\n  that mounts the volume\
+  \ and reads/writes data. Delete the PVC and show the volume cleaned up on the backend.\n  \u2022 Components: osac-csi-driver (driver binary, gRPC proxy)\n  \u2022 Dependencies: Storage Internal API and\
+  \ Volume Inventory must be available (stubs OK for initial development)\n\n  **Storage internal API** : The fulfillment-service exposes private gRPC RPCs that the CSI driver calls before every\n  volume\
+  \ operation: ResolveTier (maps tenant + StorageClass to vendor backend, endpoint, and protocol using\n  StorageBackend and StorageTier data), CheckPolicy (enforces tenant authorization and tier access\
+  \ via OPA), and\n  GetCredentials (provides vendor credentials per-request without storing them outside the control plane).\n\n  \u2022 Demo: Call ResolveTier via grpcurl with a tenant and tier, show\
+  \ it returns the correct vendor backend and endpoint.\n  Call CheckPolicy for an authorized tenant (allowed) and an unauthorized tenant (denied). Call GetCredentials and\n  show credentials returned.\n\
+  \  \u2022 Components: fulfillment-service (proto definitions, storage internal server, StorageBackend + StorageTier DB, OPA\n  policies)\n  \u2022 Dependencies: None. Independently demoable.\n\n  **Volume\
+  \ inventory and private API** : Every volume provisioned through the CSI driver is registered in the\n  fulfillment database with tenant, tier, state, size, and attachment info. A private Volume API (gRPC)\
+  \ provides CRUD\n  operations for internal consumers. Volumes track state through a full lifecycle: creating, available, attached,\n  detached, deleting, deleted.\n\n  \u2022 Demo: Create a volume via\
+  \ grpcurl, Get it showing all fields populated. List all volumes for a tenant. Delete a\n  volume and show state transitions in the DB.\n  \u2022 Components: fulfillment-service (proto definitions, volumes\
+  \ server, DB table + migration)\n  \u2022 Dependencies: None. Independently demoable.\n\n  **CSI driver packaging** : The CSI driver is packaged as a Helm chart containing the controller Deployment, node\n\
+  \  DaemonSet, CSIDriver resource, RBAC, and templated StorageClasses. The osac-installer umbrella chart includes the\n  CSI\n  driver as an optional dependency.\n\n  \u2022 Demo: Run helm install on a\
+  \ cluster, show all Kubernetes resources created correctly (Deployment, DaemonSet,\n  CSIDriver, ServiceAccount, ClusterRoles, StorageClasses). Run helm uninstall and show clean removal.\n  \u2022 Components:\
+  \ osac-csi-driver (charts/csi-driver/), osac-installer (umbrella chart dependency)\n  \u2022 Dependencies: None. Independently demoable (chart install does not require a working storage backend).\n\n\
+  \  **Automated cluster storage deployment** : When a ClusterOrder provisions a tenant cluster, the post-install phase\n  triggers AAP roles that deploy the OSAC CSI driver, vendor plugins, and StorageClasses\
+  \ configured for the tenant's\n  storage tiers. Cross-cluster authentication is established between the CSI driver and the storage control plane.\n\n  \u2022 Demo: Create a ClusterOrder for a tenant.\
+  \ Show the post-install AAP job deploys the CSI driver and creates\n  StorageClasses matching the tenant's tier configuration on the new cluster.\n  \u2022 Components: osac-aap (Ansible roles), osac-operator\
+  \ (ClusterOrder controller post-install hook), osac-csi-driver\n  (Helm chart)\n  \u2022 Dependencies: CSI driver packaging must be complete. ClusterOrder provisioning must be functional.\n\n  ### Extensions\
+  \ (not required for feature completion)\n\n  These stories extend the storage control plane but are not required to call the feature complete. They will be moved\n  to separate features or future milestones.\
+  \ The candidate features listed below do not exist yet in Jira and will\n  need to be created.\n\n  **CSI certification** : The CSI driver passes conformance tests to ensure compliance with the CSI specification\
+  \ and\n  OpenShift certification requirements. This includes the csi-test sanity suite, Kubernetes E2E storage tests per\n  supported vendor, and an OLM operator bundle for Red Hat OpenShift CSI certification.\n\
+  \n  \u2022 Demo: Run the csi-test sanity suite and show all tests passing. Run Kubernetes E2E storage tests against a vendor\n  backend and show results.\n  \u2022 Components: osac-csi-driver (test/sanity/,\
+  \ test/e2e/, OLM bundle)\n  \u2022 Dependencies: CSI driver core must be functional against at least one vendor backend.\n  \u2022 Candidate feature: TBD. Scoped to osac-csi-driver.\n\n  **Quota lifecycle**\
+  \ : Quota is reserved before vendor volume creation and committed after success\n  (reserve/commit/release pattern). A reconciler releases stale reservations on failure or timeout to prevent quota\n \
+  \ leaks.\n\n  \u2022 Demo: Configure a quota for a tenant and tier. Create volumes until quota is exhausted. Show the next volume\n  creation is denied with a quota error. Simulate a failed volume creation\
+  \ and show the reconciler releases the stale\n  reservation.\n  \u2022 Components: fulfillment-service (quota logic, reconciler, integration with CheckPolicy)\n  \u2022 Dependencies: Storage Internal\
+  \ API must be functional. Can be demoed via grpcurl without the CSI driver.\n  \u2022 Candidate feature: TBD. Scoped to fulfillment-service. Targeted for v0.3.\n\n  **VMaaS storage integration** : Storage\
+  \ is provisioned through the OSAC CSI driver during the\n  ComputeInstance/DataVolume lifecycle. The tenant's storage tier is resolved from their configuration and applied to\n  the DataVolume's StorageClass.\n\
+  \n  \u2022 Demo: Create a ComputeInstance. Show its boot disk is provisioned via the OSAC CSI driver on the correct vendor\n  backend based on the tenant's tier configuration.\n  \u2022 Components: osac-operator\
+  \ (ComputeInstance controller), osac-aap , fulfillment-service , osac-csi-driver\n  \u2022 Dependencies: CSI driver core, Storage Internal API, and automated cluster storage deployment must be functional.\n\
+  \  \u2022 Candidate feature: TBD. Spans Storage and VMaaS components.\n\n  **BMaaS storage integration** : Storage integration with the BareMetalInstance lifecycle, following the same tier\n  resolution\
+  \ and policy enforcement patterns as VMaaS.\n\n  \u2022 Demo: Create a BareMetalInstance with storage. Show storage provisioned on the correct vendor backend.\n  \u2022 Components: osac-operator (BareMetalInstance\
+  \ controller), osac-aap , fulfillment-service , osac-csi-driver\n  \u2022 Dependencies: CSI driver core, Storage Internal API, and automated cluster storage deployment must be functional.\n  \u2022 Candidate\
+  \ feature: TBD. Spans Storage and BMaaS components.\n\n  **Audit logging** : Every storage policy decision and volume operation is recorded in a structured audit trail\n  capturing who (tenant, user),\
+  \ what (action, volume details), when (timestamp), and outcome (allowed, denied, error).\n\n  \u2022 Demo: Perform a series of volume operations (create, attach, policy denial). Query the audit log and\
+  \ show every\n  operation recorded with actor, action, result, and timestamp.\n  \u2022 Components: fulfillment-service (audit logging integration with Storage Internal API and Volume API)\n  \u2022 Dependencies:\
+  \ Storage Internal API or Volume API must be functional (audit logging wraps their operations).\n  \u2022 Candidate feature: TBD. Cross-cutting across storage operations.\n\n  ## Definition of Done\n\n\
+  \  ### Core (required for feature completion)\n\n  **CSI Driver Core**\n\n  [ ] Single binary with controller and node modes (selected via flag)\n  [ ] CSI Identity service reports driver name csi.osac.openshift.io\n\
+  \  [ ] CSI Controller delegates to storage control plane for tier resolution, policy, credentials, and inventory\n  [ ] CSI Controller proxies volume operations to vendor CSI controllers via TCP gRPC\n\
+  \  [ ] CSI Controller augments volume_context with routing metadata for the node plugin\n  [ ] CSI Node routes mount/unmount to the correct vendor node plugin based on volume_context\n  [ ] gRPC proxy\
+  \ manages vendor CSI controller connections (TCP, lazy connect, health check)\n  **Storage Internal API**\n  [ ] StorageInternal gRPC service implemented (ResolveTier, CheckPolicy, GetCredentials, RegisterVolume,\n\
+  \  DeRegisterVolume, UpdateVolume)\n  [ ] Tier resolution maps StorageClasses to vendor backends using StorageBackend and StorageTier data\n  [ ] Policy engine enforces tenant authorization and tier access\
+  \ via OPA\n  [ ] Credential manager provides vendor credentials per-request\n  [ ] Volume tracking: DB table, migration, full state lifecycle (creating, available, attached, detached, deleting,\n  deleted)\n\
+  \  **Private Volume API**\n  [ ] Volume CRUD (Create, Get, List, Delete) for internal consumers\n  [ ] Volume records include tenant, tier, state, size, and attachment info\n  **Packaging and Deployment**\n\
+  \  [ ] Helm chart: controller Deployment, node DaemonSet, CSIDriver resource, RBAC, templated StorageClasses\n  [ ] AAP roles deploy OSAC CSI driver, vendor plugins, and StorageClasses to clusters during\
+  \ resource provisioning\n  [ ] ClusterOrder controller triggers storage deployment in post-install phase\n  [ ] Cross-cluster authentication between CSI driver and storage control plane\n\n  ### Extensions\
+  \ (will be moved to separate features or future milestones)\n\n  **CSI Certification**\n\n  [ ] CSI conformance tests (csi-test sanity suite) pass\n  [ ] Kubernetes E2E storage tests pass per supported\
+  \ vendor\n  [ ] OLM operator bundle for OpenShift CSI certification\n  **Quota Lifecycle**\n  [ ] Reserve/commit/release quota for volume operations\n  [ ] Reconciler releases stale reservations on failure\
+  \ or timeout\n  **VMaaS Storage Integration**\n  [ ] Storage integration with ComputeInstance/DataVolume lifecycle\n  **BMaaS Storage Integration**\n  [ ] Storage integration with BareMetalInstance lifecycle\n\
+  \  **Audit Logging**\n  [ ] Structured audit trail for all storage policy decisions and volume operations\n\n  ## References\n\n  \u2022 Architecture doc: OSAC CSI Meta-Driver https://docs.google.\n \
+  \ com/document/d/1GCWco97kWNwFwfbC4TAoyXIxPSMO4CNyqFKv_lQczZU/edit?usp=sharing : Component breakdown, deployment\n  options, provisioning flows, repository structure, work breakdown\n  \u2022 Storage\
+  \ User Flows Roadmap https://docs.google.com/spreadsheets/d/1kwpUdOUeCI8qVtDN1iL1iu-M1a7N_ZSCso-\n  Rt_KpVKE/edit?usp=sharing : User flows by milestone and persona\n  \u2022 OSAC Storage and CSI Components\
+  \ Diagram https://docs.google.com/drawings/d/1-\n  e2wep_RKmJRLFtqMu1RzKPvV_7mz2ZpLHaVLHZayd8/edit?usp=sharing : Control plane and CSI driver component layout\n  \u2022 OSAC CSI Driver Flow - CaaS Diagram\
+  \ https://docs.google.\n  com/drawings/d/1QVn4y_NSfyWoHd50w8buiXV1LaQZOFYCwLwczTTvbEQ/edit?usp=sharing : Numbered CaaS provisioning flow\n  (tenant cluster to hub)\n\n  ## Out of Scope\n\n  \u2022 Public\
+  \ Volume API for tenant-facing use (covered by OSAC Volume Public API feature, OSAC-984)\n  \u2022 UI integration for volume management (covered by OSAC Volume Public API feature, OSAC-984)\n  \u2022\
+  \ Vendor REST adapters for non-CSI volume management (covered by OSAC-984)\n  \u2022 Storage metering\n\n\e[38;5;242m\e[0m\e[38;5;242m\e[0m  \e[38;5;242mView this issue on Jira: https://redhat.atlassian.net/browse/OSAC-2872\e\
+  [m                                              \e[0m\n"

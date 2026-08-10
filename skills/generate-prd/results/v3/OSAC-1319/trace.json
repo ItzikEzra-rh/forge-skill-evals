@@ -1,0 +1,188 @@
+{
+  "ticket_key": "OSAC-1319",
+  "skill": "generate-prd",
+  "model": "claude-opus-4-6",
+  "elapsed_seconds": 97.1,
+  "iterations": 8,
+  "total_input_tokens": 172880,
+  "total_output_tokens": 4365,
+  "trace": [
+    {
+      "iteration": 1,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/SKILL.md"
+          }
+        }
+      ],
+      "input_tokens": 2250,
+      "output_tokens": 74
+    },
+    {
+      "iteration": 2,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/prd-template.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/osac-context.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/section-guidance.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/scoring-rubric.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/review-patterns.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/osac-dimensions.md"
+          }
+        }
+      ],
+      "input_tokens": 3839,
+      "output_tokens": 371
+    },
+    {
+      "iteration": 3,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "glob",
+          "input": {
+            "pattern": "*",
+            "path": "/opt/forge/skills/osac/generate-prd/context/exemplars"
+          }
+        }
+      ],
+      "input_tokens": 17910,
+      "output_tokens": 86
+    },
+    {
+      "iteration": 4,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1269-prd.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1270-prd.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/generate.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/review.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/revise.md"
+          }
+        }
+      ],
+      "input_tokens": 18072,
+      "output_tokens": 325
+    },
+    {
+      "iteration": 5,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now I have all context. Let me analyze the feature and draft the PRD.\n\n**Analysis:**\n- Services: BMaaS, UI\n- Personas: Tenant Admin/Tenant User (tenant-facing UI only); Cloud Provider Admin and Cloud Infrastructure Admin are explicitly out of scope (\"Tenant-facing UI only. Cloud Provider Admin flows are out of scope\")\n- This is a UI feature for BareMetalInstance \u2014 catalog browsing, list, create form, detail/lifecycle management\n- The capabilities are tightly coupled: browsing catalog \u2192 creating instance \u2192 viewing/managing instances\n- Dependencies: The BareMetal Instance API (referenced PRs)\n\nLet me write the draft:"
+      ],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/tmp/prd-draft.md",
+            "content": "# BareMetal Instance UI\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Adrien Gentil |\n| Jira        | [OSAC-1319](https://issues.redhat.com/browse/OSAC-1319) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nTenants have no web console support for bare metal instances. To browse available hardware profiles, provision a bare metal instance, or manage its lifecycle (power state, restart, deletion), tenants must use the API or CLI directly. This forces users who prefer click-ops to learn API tooling, slows adoption of BMaaS among self-service tenants, and creates an inconsistent experience compared to ComputeInstance, which already has full UI coverage.\n\n## In Scope\n\n- Tenant-facing UI screens only \u2014 catalog browsing, instance list, instance creation, and instance detail with lifecycle actions.\n- The instance list and detail views surface provisioning state and error details so tenants can track progress and troubleshoot failures.\n- UI layout for the BareMetalInstance list is consistent with the existing ComputeInstance list.\n\n## Out of Scope\n\n- Cloud Provider Admin flows for managing catalog items and hardware profiles \u2014 admin-only via the private API.\n- CLI or API changes \u2014 this feature adds UI screens that consume existing API endpoints.\n\n## User Stories\n\n### Tenant Admin / Tenant User\n\n- As a Tenant Admin or Tenant User, I want to browse a read-only catalog of bare metal hardware profiles showing title, description, and hardware summary so that I can choose the right profile before provisioning.\n- As a Tenant Admin or Tenant User, I want to create a bare metal instance by selecting a catalog item, optionally providing an SSH public key and cloud-init user data, and choosing a run strategy (always on or halted) so that I can provision hardware through the web console.\n- As a Tenant Admin or Tenant User, I want the SSH public key field to be validated as OpenSSH format and the user data field to be limited to 64 KB so that I receive immediate feedback on input errors before submitting.\n- As a Tenant Admin or Tenant User, I want to view a list of my bare metal instances showing name, catalog item, state, and age so that I can monitor my fleet at a glance.\n- As a Tenant Admin or Tenant User, I want to view instance details including state, error conditions, spec summary (catalog item, run strategy, SSH key and user data presence), so that I can understand the current configuration and diagnose failures.\n- As a Tenant Admin or Tenant User, I want to toggle the run strategy between always-on and halted on an instance so that I can manage its power state without using the API.\n- As a Tenant Admin or Tenant User, I want to restart a running instance from the detail view so that I can recover from issues without reprovisioning.\n- As a Tenant Admin or Tenant User, I want to delete an instance with a confirmation dialog so that I am protected from accidental deletion.\n\n### Cloud Provider Admin\n\nNot affected by this feature \u2014 catalog item management is out of scope.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n## Assumptions\n\n- The BareMetal Instance fulfillment API endpoints (catalog items and instances) are available and stable before UI development begins.\n\n## Dependencies\n\n- **BareMetal Instance API (OSAC-1118):** Provides the fulfillment API endpoints for catalog items and instance lifecycle that the UI consumes. The API must be available before UI work can be completed.\n"
+          }
+        }
+      ],
+      "input_tokens": 31284,
+      "output_tokens": 1040
+    },
+    {
+      "iteration": 6,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now let me self-review against all checks:\n\n**Rubric scoring:**\n1. **WHAT (2/2):** Clear user-facing capability (UI for BareMetalInstance). Services identified (BMaaS, UI). All 4 personas addressed \u2014 Tenant Admin/User have stories, CPA and CIA marked not affected. Specific, user-observable.\n2. **WHY (2/2):** Problem statement names pain (no web console, must use API/CLI), who's affected (tenants), consequence (slows adoption, inconsistent experience).\n3. **User-Facing Focus (2/2):** No design leakage. No controllers, reconcilers, finalizers, playbooks mentioned. API endpoint paths from Jira are not named in the PRD. References to client-side validation are user-observable.\n4. **Right-Sized (2/2):** All capabilities are tightly coupled \u2014 catalog browse, create, list, detail are the standard CRUD screens for one resource.\n5. **Testability (2/2):** Every story is PM-verifiable through the UI.\n\n**Total: 10/10**\n\n**Inline checks:**\n1. **Section count:** Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies \u2014 exactly 6. \u2705\n2. **Persona coverage:** All 4 personas present in User Stories section. \u2705\n3. **Leakage scan:** No matches for reconciler, finalizer, playbook, etc. \u2705\n4. **Line count:** ~50 non-blank lines. \u2705 (within 40-80 target)\n5. **Persona ownership:** CPA manages catalog items, but that's explicitly out of scope per Jira. CIA has no involvement. \u2705\n6. **Persona-story alignment:** Tenant Admin/User stories are about self-service provisioning and lifecycle \u2014 correct. \u2705\n7. **Problem Statement solution check:** No \"introduces\", \"eliminates\", \"provides\", \"enables\" describing the feature. \u2705\n8. **Async status check:** BareMetalInstance creation is async. In Scope has status visibility bullet. User Stories has story about viewing state and error conditions. \u2705\n9. **Jira completeness:** Catalog browser \u2705, Instance list \u2705, Create form (catalog item, SSH key, user data, run strategy) \u2705, Detail view (state, conditions, spec summary, power toggle, restart, delete) \u2705, client-side validation \u2705, out of scope admin flows \u2705, consistent with ComputeInstance list \u2705. All covered.\n10. **Scope creep check:** All In Scope items trace to Jira. \u2705\n11. **Persona separation check:** Tenant Admin and Tenant User combined \u2014 they have genuinely identical capabilities in this UI feature. \u2705\n\nAll checks pass. Writing final output:"
+      ],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/dev/stdout",
+            "content": "dummy"
+          }
+        }
+      ],
+      "input_tokens": 32348,
+      "output_tokens": 745
+    },
+    {
+      "iteration": 7,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/home/user/enhancements/OSAC-1319-baremetal-instance-ui/prd.md",
+            "content": "# BareMetal Instance UI\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Adrien Gentil |\n| Jira        | [OSAC-1319](https://issues.redhat.com/browse/OSAC-1319) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nTenants have no web console support for bare metal instances. To browse available hardware profiles, provision a bare metal instance, or manage its lifecycle (power state, restart, deletion), tenants must use the API or CLI directly. This forces users who prefer click-ops to learn API tooling, slows adoption of BMaaS among self-service tenants, and creates an inconsistent experience compared to ComputeInstance, which already has full UI coverage.\n\n## In Scope\n\n- Tenant-facing UI screens only \u2014 catalog browsing, instance list, instance creation, and instance detail with lifecycle actions.\n- The instance list and detail views surface provisioning state and error details so tenants can track progress and troubleshoot failures.\n- UI layout for the BareMetalInstance list is consistent with the existing ComputeInstance list.\n\n## Out of Scope\n\n- Cloud Provider Admin flows for managing catalog items and hardware profiles \u2014 admin-only via the private API.\n- CLI or API changes \u2014 this feature adds UI screens that consume existing API endpoints.\n\n## User Stories\n\n### Tenant Admin / Tenant User\n\n- As a Tenant Admin or Tenant User, I want to browse a read-only catalog of bare metal hardware profiles showing title, description, and hardware summary so that I can choose the right profile before provisioning.\n- As a Tenant Admin or Tenant User, I want to create a bare metal instance by selecting a catalog item, optionally providing an SSH public key and cloud-init user data, and choosing a run strategy (always on or halted) so that I can provision hardware through the web console.\n- As a Tenant Admin or Tenant User, I want the SSH public key field to be validated as OpenSSH format and the user data field to be limited to 64 KB so that I receive immediate feedback on input errors before submitting.\n- As a Tenant Admin or Tenant User, I want to view a list of my bare metal instances showing name, catalog item, state, and age so that I can monitor my fleet at a glance.\n- As a Tenant Admin or Tenant User, I want to view instance details including state, error conditions, spec summary (catalog item, run strategy, SSH key and user data presence) so that I can understand the current configuration and diagnose failures.\n- As a Tenant Admin or Tenant User, I want to toggle the run strategy between always-on and halted on an instance so that I can manage its power state without using the API.\n- As a Tenant Admin or Tenant User, I want to restart a running instance from the detail view so that I can recover from issues without reprovisioning.\n- As a Tenant Admin or Tenant User, I want to delete an instance with a confirmation dialog so that I am protected from accidental deletion.\n\n### Cloud Provider Admin\n\nNot affected by this feature \u2014 catalog item management is out of scope.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n## Assumptions\n\n- The BareMetal Instance fulfillment API endpoints (catalog items and instances) are available and stable before UI development begins.\n\n## Dependencies\n\n- **BareMetal Instance API (OSAC-1118):** Provides the fulfillment API endpoints for catalog items and instance lifecycle that the UI consumes. The API must be available before UI work can be completed.\n"
+          }
+        }
+      ],
+      "input_tokens": 33112,
+      "output_tokens": 910
+    },
+    {
+      "iteration": 8,
+      "stop_reason": "end_turn",
+      "text": [
+        "# BareMetal Instance UI\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Adrien Gentil |\n| Jira        | [OSAC-1319](https://issues.redhat.com/browse/OSAC-1319) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nTenants have no web console support for bare metal instances. To browse available hardware profiles, provision a bare metal instance, or manage its lifecycle (power state, restart, deletion), tenants must use the API or CLI directly. This forces users who prefer click-ops to learn API tooling, slows adoption of BMaaS among self-service tenants, and creates an inconsistent experience compared to ComputeInstance, which already has full UI coverage.\n\n## In Scope\n\n- Tenant-facing UI screens only \u2014 catalog browsing, instance list, instance creation, and instance detail with lifecycle actions.\n- The instance list and detail views surface provisioning state and error details so tenants can track progress and troubleshoot failures.\n- UI layout for the BareMetalInstance list is consistent with the existing ComputeInstance list.\n\n## Out of Scope\n\n- Cloud Provider Admin flows for managing catalog items and hardware profiles \u2014 admin-only via the private API.\n- CLI or API changes \u2014 this feature adds UI screens that consume existing API endpoints.\n\n## User Stories\n\n### Tenant Admin / Tenant User\n\n- As a Tenant Admin or Tenant User, I want to browse a read-only catalog of bare metal hardware profiles showing title, description, and hardware summary so that I can choose the right profile before provisioning.\n- As a Tenant Admin or Tenant User, I want to create a bare metal instance by selecting a catalog item, optionally providing an SSH public key and cloud-init user data, and choosing a run strategy (always on or halted) so that I can provision hardware through the web console.\n- As a Tenant Admin or Tenant User, I want the SSH public key field to be validated as OpenSSH format and the user data field to be limited to 64 KB so that I receive immediate feedback on input errors before submitting.\n- As a Tenant Admin or Tenant User, I want to view a list of my bare metal instances showing name, catalog item, state, and age so that I can monitor my fleet at a glance.\n- As a Tenant Admin or Tenant User, I want to view instance details including state, error conditions, spec summary (catalog item, run strategy, SSH key and user data presence) so that I can understand the current configuration and diagnose failures.\n- As a Tenant Admin or Tenant User, I want to toggle the run strategy between always-on and halted on an instance so that I can manage its power state without using the API.\n- As a Tenant Admin or Tenant User, I want to restart a running instance from the detail view so that I can recover from issues without reprovisioning.\n- As a Tenant Admin or Tenant User, I want to delete an instance with a confirmation dialog so that I am protected from accidental deletion.\n\n### Cloud Provider Admin\n\nNot affected by this feature \u2014 catalog item management is out of scope.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n## Assumptions\n\n- The BareMetal Instance fulfillment API endpoints (catalog items and instances) are available and stable before UI development begins.\n\n## Dependencies\n\n- **BareMetal Instance API (OSAC-1118):** Provides the fulfillment API endpoints for catalog items and instance lifecycle that the UI consumes. The API must be available before UI work can be completed."
+      ],
+      "tool_calls": [],
+      "input_tokens": 34065,
+      "output_tokens": 814
+    }
+  ]
+}

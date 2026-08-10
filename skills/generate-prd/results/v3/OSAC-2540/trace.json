@@ -1,0 +1,190 @@
+{
+  "ticket_key": "OSAC-2540",
+  "skill": "generate-prd",
+  "model": "claude-opus-4-6",
+  "elapsed_seconds": 119.4,
+  "iterations": 8,
+  "total_input_tokens": 196703,
+  "total_output_tokens": 5263,
+  "trace": [
+    {
+      "iteration": 1,
+      "stop_reason": "tool_use",
+      "text": [
+        "\n\nI need to read the skill instructions and gather project context before generating the PRD."
+      ],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/SKILL.md"
+          }
+        }
+      ],
+      "input_tokens": 3404,
+      "output_tokens": 92
+    },
+    {
+      "iteration": 2,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/prd-template.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/osac-context.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/section-guidance.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/scoring-rubric.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/review-patterns.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/osac-dimensions.md"
+          }
+        },
+        {
+          "name": "ls",
+          "input": {
+            "path": "/opt/forge/skills/osac/generate-prd/context/exemplars"
+          }
+        }
+      ],
+      "input_tokens": 5012,
+      "output_tokens": 423
+    },
+    {
+      "iteration": 3,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1269-prd.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1270-prd.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/generate.md"
+          }
+        }
+      ],
+      "input_tokens": 19222,
+      "output_tokens": 210
+    },
+    {
+      "iteration": 4,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/review.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/revise.md"
+          }
+        }
+      ],
+      "input_tokens": 28309,
+      "output_tokens": 132
+    },
+    {
+      "iteration": 5,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now I have all the context needed. Let me analyze the feature and draft the PRD.\n\n**Analysis:**\n- **Services:** VMaaS (primary), with future BMaaS extension (OSAC-1270, out of scope)\n- **Personas:** Cloud Provider Admin (global DiskImages, catalog management), Cloud Infrastructure Admin (not affected), Tenant Admin (tenant-scoped DiskImages), Tenant User (browse/select DiskImages for VMs)\n- **Core capabilities:** DiskImage CRUD resource, two-tier visibility (global + tenant), lifecycle management (active/deprecated/obsolete/reactivation), ComputeInstance/Template/CatalogItem reference DiskImage, deletion protection, UI views\n- **This is a medium-complex feature** \u2014 ~5+ capabilities, tightly coupled\n\nLet me write the PRD:"
+      ],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/home/user/enhancements/OSAC-2540-diskimage-resource/prd.md",
+            "content": "# DiskImage Resource for Disk Image Metadata Management\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Marc Sluiter |\n| Jira        | [OSAC-2540](https://issues.redhat.com/browse/OSAC-2540) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nComputeInstances reference disk images via raw OCI artifact URLs, requiring users to know exact registry paths and tag formats before they can create a VM. There is no way to discover which images are available, no metadata (OS family, architecture, description) to help users choose the right image, and no governance to control which images tenants can use. OS type must be specified per-instance rather than per-image, adding repetitive manual input and risking misconfiguration. Without a managed image catalog, VM creation remains opaque and error-prone, and Cloud Provider Admins and Tenant Admins have no structured surface to curate, deprecate, or retire images across the platform.\n\n## In Scope\n\n- DiskImage as a managed resource with human-readable metadata (title, description, optional icon, guest OS family, architecture) wrapping an existing OCI artifact reference \u2014 replacing inline image fields on ComputeInstance and ComputeInstanceTemplate.\n- Two-tier visibility: global DiskImages managed by Cloud Provider Admins, tenant-scoped DiskImages managed by Tenant Admins.\n- Image lifecycle management: active, deprecated (warns users but allows new VM creation), obsolete (blocks new VM creation), and reactivation back to active.\n- Deletion protection: DiskImage deletion is blocked when referenced by active ComputeInstances, ComputeInstanceTemplates, or ComputeInstanceCatalogItems.\n- Image source reference is immutable after DiskImage creation.\n- Obsolete images are hidden from default listings and available via explicit filter.\n- ComputeInstanceTemplate and ComputeInstanceCatalogItem reference a DiskImage for image defaults.\n- UI views: image list page, image detail page, image picker in VM creation flow, and lifecycle management controls.\n- Users can see the lifecycle state of an image referenced by their ComputeInstance so they know when a referenced image has been deprecated or marked obsolete.\n\n## Out of Scope\n\n- Image binary upload through OSAC \u2014 DiskImages wrap existing OCI artifact references only.\n- Image scanning or CVE detection.\n- Image versioning or tagging.\n- `os_version` and minimum resource requirements fields \u2014 deferred.\n- BareMetalInstance integration \u2014 covered by [OSAC-1270](https://issues.redhat.com/browse/OSAC-1270).\n- Private registry authentication (pull credentials).\n- Tenant Admin filtering of global images \u2014 all global images are visible to all tenants.\n- Registry restriction for tenant admin image references.\n- Installation changes.\n\n## User Stories\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to register a DiskImage with a title, description, guest OS family, and architecture so that tenants can discover and select it without knowing the raw OCI reference.\n- As a Cloud Provider Admin, I want to list all registered DiskImages (global and tenant-scoped) so that I can audit what is available across the platform.\n- As a Cloud Provider Admin, I want to update or delete a global DiskImage so that I can keep the catalog accurate, with deletion blocked when the image is referenced by active resources.\n- As a Cloud Provider Admin, I want to deprecate a global DiskImage so that tenants are warned to migrate before it becomes unavailable.\n- As a Cloud Provider Admin, I want to mark a global DiskImage as obsolete so that new VM creation with that image is blocked while existing VMs remain unaffected.\n- As a Cloud Provider Admin, I want to reactivate a previously deprecated or obsolete DiskImage so that tenants can resume using it.\n- As a Cloud Provider Admin, I want to reference a DiskImage in a ComputeInstanceTemplate so that VMs created from the template use an approved image by default.\n- As a Cloud Provider Admin, I want to manage DiskImages through the UI console so that I can register, update, deprecate, and delete images without CLI or API tooling.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n### Tenant Admin\n\n- As a Tenant Admin, I want to register tenant-scoped DiskImages for my organization so that my users can select from our approved images.\n- As a Tenant Admin, I want to update or delete my tenant's DiskImages, with deletion blocked when referenced by active ComputeInstances, ComputeInstanceTemplates, or ComputeInstanceCatalogItems.\n- As a Tenant Admin, I want to deprecate, mark obsolete, and reactivate my tenant's DiskImages so that I can manage my organization's image lifecycle.\n- As a Tenant Admin, I want to reference a DiskImage in a ComputeInstanceCatalogItem so that VMs created from it use my organization's approved image by default.\n- As a Tenant Admin, I want to manage my tenant's DiskImages through the UI console so that I can register, update, and delete images without CLI or API tooling.\n\n### Tenant User\n\n- As a Tenant User, I want to browse available DiskImages with metadata (title, description, guest OS family, architecture) so that I can choose the right image for my VM.\n- As a Tenant User, I want to reference a DiskImage when creating a ComputeInstance so that the image source and OS type are resolved automatically.\n- As a Tenant User, I want to see a deprecation warning when selecting a deprecated DiskImage so that I know to choose a different image.\n- As a Tenant User, I want obsolete DiskImages hidden from the default image list, with the option to filter for them explicitly, so that I only see usable images by default.\n- As a Tenant User, I want to browse and select DiskImages in the UI when creating a ComputeInstance so that I can choose the right image visually.\n\n## Assumptions\n\n- Guest OS family is an enumerated set (e.g., Linux, Windows) on the DiskImage rather than a free-text field, replacing the per-instance boolean that exists today.\n- Architecture is a list of one or more values (e.g., amd64, arm64) on the DiskImage.\n\n## Dependencies\n\n- **OSAC-979 \u2014 VM Image Management:** DiskImage supersedes the ComputeImage resource proposed in OSAC-979. The existing enhancement proposal will be updated to reflect DiskImage once this PRD is approved.\n- **OSAC-1270 \u2014 Base OS management for bare metal instances:** Downstream consumer \u2014 will extend DiskImage to BareMetalInstance after this feature lands. [Jira: OSAC-1270]\n"
+          }
+        }
+      ],
+      "input_tokens": 32464,
+      "output_tokens": 1853
+    },
+    {
+      "iteration": 6,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now let me self-review.\n\n**Rubric Scoring:**\n\n1. **WHAT (2/2):** VMaaS service identified. All 4 personas covered \u2014 Cloud Provider Admin, Cloud Infrastructure Admin (\"Not affected\"), Tenant Admin, Tenant User each have headings with stories or note. Concrete artifacts named (DiskImage, ComputeInstance, ComputeInstanceTemplate, ComputeInstanceCatalogItem). Clear user-observable capabilities.\n\n2. **WHY (2/2):** Problem statement leads with user pain (raw OCI URLs, no discoverability, no metadata, no governance, repetitive OS type specification). Cost of inaction stated (opaque, error-prone). Concrete consequences described.\n\n3. **User-Facing Focus (2/2):** No design leakage \u2014 no controllers, reconcilers, finalizers, playbooks, CRD fields, env vars. All statements describe user-observable outcomes. Platform vocabulary used correctly.\n\n4. **Right-Sized (2/2):** All capabilities are tightly coupled \u2014 a DiskImage resource without lifecycle management or without ComputeInstance integration is incomplete. The image catalog, lifecycle states, deletion protection, and UI views are all part of one coherent feature.\n\n5. **Testability (2/2):** Every user story is PM-verifiable by using the product. \"register a DiskImage,\" \"browse available DiskImages,\" \"see a deprecation warning,\" \"deletion blocked\" \u2014 all observable outcomes.\n\n**Total: 10/10** \u2014 no zeros, all pass.\n\n**Deterministic Checks:**\n\n1. **Section count:** Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies = 6 sections. \u2705\n2. **Persona coverage:** All 4 personas present with stories or \"Not affected.\" \u2705\n3. **Design leakage scan:** No matches for reconciler, reconciliation, finalizer, playbook, env var, AAP job, CRD field, osac-operator, osac-aap, ansible role, controller. \u2705\n4. **Line count:** Let me verify."
+      ],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/home/user/enhancements/OSAC-2540-diskimage-resource/prd.md"
+          }
+        }
+      ],
+      "input_tokens": 34357,
+      "output_tokens": 562
+    },
+    {
+      "iteration": 7,
+      "stop_reason": "tool_use",
+      "text": [
+        "Non-blank lines: approximately 68. \u2705 Within 40-80 target range.\n\n**Remaining checks:**\n5. **Persona ownership check:** Cloud Infrastructure Admin is correctly \"Not affected\" \u2014 this feature is about image metadata catalog management, not core infrastructure. \u2705\n6. **Persona-story alignment:** Cloud Provider Admin manages global resources \u2705, Tenant Admin manages org-scoped resources \u2705, Tenant User does self-service \u2705. \u2705\n7. **Problem Statement solution check:** No \"introduces\", \"eliminates\", \"provides\", or \"enables\" describing the feature itself. \u2705\n8. **Async status check:** No async provisioning triggers for the DiskImage resource itself \u2014 it's metadata/catalog. The In Scope bullet about lifecycle state visibility covers the user need to see image status on their ComputeInstance. \u2705\n9. **Jira completeness check:** All Definition of Done items covered. All Out of Scope items from Jira reflected. \u2705\n10. **Scope creep check:** All In Scope items trace to Jira. \u2705\n11. **Persona separation check:** All personas have separate headings. \u2705\n\nAll checks pass. Score: 10/10. Proceeding to output.\n\nThe PRD looks clean. Let me verify no trailing whitespace issues and the file ends correctly:"
+      ],
+      "tool_calls": [
+        {
+          "name": "grep",
+          "input": {
+            "pattern": " +$",
+            "path": "/home/user/enhancements/OSAC-2540-diskimage-resource/prd.md"
+          }
+        }
+      ],
+      "input_tokens": 36757,
+      "output_tokens": 406
+    },
+    {
+      "iteration": 8,
+      "stop_reason": "end_turn",
+      "text": [
+        "No trailing whitespace. The PRD is complete and ready.\n\n# DiskImage Resource for Disk Image Metadata Management\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Marc Sluiter |\n| Jira        | [OSAC-2540](https://issues.redhat.com/browse/OSAC-2540) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nComputeInstances reference disk images via raw OCI artifact URLs, requiring users to know exact registry paths and tag formats before they can create a VM. There is no way to discover which images are available, no metadata (OS family, architecture, description) to help users choose the right image, and no governance to control which images tenants can use. OS type must be specified per-instance rather than per-image, adding repetitive manual input and risking misconfiguration. Without a managed image catalog, VM creation remains opaque and error-prone, and Cloud Provider Admins and Tenant Admins have no structured surface to curate, deprecate, or retire images across the platform.\n\n## In Scope\n\n- DiskImage as a managed resource with human-readable metadata (title, description, optional icon, guest OS family, architecture) wrapping an existing OCI artifact reference \u2014 replacing inline image fields on ComputeInstance and ComputeInstanceTemplate.\n- Two-tier visibility: global DiskImages managed by Cloud Provider Admins, tenant-scoped DiskImages managed by Tenant Admins.\n- Image lifecycle management: active, deprecated (warns users but allows new VM creation), obsolete (blocks new VM creation), and reactivation back to active.\n- Deletion protection: DiskImage deletion is blocked when referenced by active ComputeInstances, ComputeInstanceTemplates, or ComputeInstanceCatalogItems.\n- Image source reference is immutable after DiskImage creation.\n- Obsolete images are hidden from default listings and available via explicit filter.\n- ComputeInstanceTemplate and ComputeInstanceCatalogItem reference a DiskImage for image defaults.\n- UI views: image list page, image detail page, image picker in VM creation flow, and lifecycle management controls.\n- Users can see the lifecycle state of an image referenced by their ComputeInstance so they know when a referenced image has been deprecated or marked obsolete.\n\n## Out of Scope\n\n- Image binary upload through OSAC \u2014 DiskImages wrap existing OCI artifact references only.\n- Image scanning or CVE detection.\n- Image versioning or tagging.\n- `os_version` and minimum resource requirements fields \u2014 deferred.\n- BareMetalInstance integration \u2014 covered by [OSAC-1270](https://issues.redhat.com/browse/OSAC-1270).\n- Private registry authentication (pull credentials).\n- Tenant Admin filtering of global images \u2014 all global images are visible to all tenants.\n- Registry restriction for tenant admin image references.\n- Installation changes.\n\n## User Stories\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to register a DiskImage with a title, description, guest OS family, and architecture so that tenants can discover and select it without knowing the raw OCI reference.\n- As a Cloud Provider Admin, I want to list all registered DiskImages (global and tenant-scoped) so that I can audit what is available across the platform.\n- As a Cloud Provider Admin, I want to update or delete a global DiskImage so that I can keep the catalog accurate, with deletion blocked when the image is referenced by active resources.\n- As a Cloud Provider Admin, I want to deprecate a global DiskImage so that tenants are warned to migrate before it becomes unavailable.\n- As a Cloud Provider Admin, I want to mark a global DiskImage as obsolete so that new VM creation with that image is blocked while existing VMs remain unaffected.\n- As a Cloud Provider Admin, I want to reactivate a previously deprecated or obsolete DiskImage so that tenants can resume using it.\n- As a Cloud Provider Admin, I want to reference a DiskImage in a ComputeInstanceTemplate so that VMs created from the template use an approved image by default.\n- As a Cloud Provider Admin, I want to manage DiskImages through the UI console so that I can register, update, deprecate, and delete images without CLI or API tooling.\n\n### Cloud Infrastructure Admin\n\nNot affected by this feature.\n\n### Tenant Admin\n\n- As a Tenant Admin, I want to register tenant-scoped DiskImages for my organization so that my users can select from our approved images.\n- As a Tenant Admin, I want to update or delete my tenant's DiskImages, with deletion blocked when referenced by active ComputeInstances, ComputeInstanceTemplates, or ComputeInstanceCatalogItems.\n- As a Tenant Admin, I want to deprecate, mark obsolete, and reactivate my tenant's DiskImages so that I can manage my organization's image lifecycle.\n- As a Tenant Admin, I want to reference a DiskImage in a ComputeInstanceCatalogItem so that VMs created from it use my organization's approved image by default.\n- As a Tenant Admin, I want to manage my tenant's DiskImages through the UI console so that I can register, update, and delete images without CLI or API tooling.\n\n### Tenant User\n\n- As a Tenant User, I want to browse available DiskImages with metadata (title, description, guest OS family, architecture) so that I can choose the right image for my VM.\n- As a Tenant User, I want to reference a DiskImage when creating a ComputeInstance so that the image source and OS type are resolved automatically.\n- As a Tenant User, I want to see a deprecation warning when selecting a deprecated DiskImage so that I know to choose a different image.\n- As a Tenant User, I want obsolete DiskImages hidden from the default image list, with the option to filter for them explicitly, so that I only see usable images by default.\n- As a Tenant User, I want to browse and select DiskImages in the UI when creating a ComputeInstance so that I can choose the right image visually.\n\n## Assumptions\n\n- Guest OS family is an enumerated set (e.g., Linux, Windows) on the DiskImage rather than a free-text field, replacing the per-instance boolean that exists today.\n- Architecture is a list of one or more values (e.g., amd64, arm64) on the DiskImage.\n\n## Dependencies\n\n- **OSAC-979 \u2014 VM Image Management:** DiskImage supersedes the ComputeImage resource proposed in OSAC-979. The existing enhancement proposal will be updated to reflect DiskImage once this PRD is approved.\n- **OSAC-1270 \u2014 Base OS management for bare metal instances:** Downstream consumer \u2014 will extend DiskImage to BareMetalInstance after this feature lands. [Jira: OSAC-1270]"
+      ],
+      "tool_calls": [],
+      "input_tokens": 37178,
+      "output_tokens": 1585
+    }
+  ]
+}

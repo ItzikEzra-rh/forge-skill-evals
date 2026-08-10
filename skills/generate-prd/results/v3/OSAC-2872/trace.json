@@ -1,0 +1,180 @@
+{
+  "ticket_key": "OSAC-2872",
+  "skill": "generate-prd",
+  "model": "claude-opus-4-6",
+  "elapsed_seconds": 90.2,
+  "iterations": 8,
+  "total_input_tokens": 187353,
+  "total_output_tokens": 5006,
+  "trace": [
+    {
+      "iteration": 1,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/SKILL.md"
+          }
+        }
+      ],
+      "input_tokens": 5193,
+      "output_tokens": 74
+    },
+    {
+      "iteration": 2,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/prd-template.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/osac-context.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/section-guidance.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/scoring-rubric.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/review-patterns.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/osac-dimensions.md"
+          }
+        }
+      ],
+      "input_tokens": 6782,
+      "output_tokens": 371
+    },
+    {
+      "iteration": 3,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "ls",
+          "input": {
+            "path": "/opt/forge/skills/osac/generate-prd/context/exemplars"
+          }
+        }
+      ],
+      "input_tokens": 20853,
+      "output_tokens": 69
+    },
+    {
+      "iteration": 4,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1269-prd.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/context/exemplars/OSAC-1270-prd.md"
+          }
+        }
+      ],
+      "input_tokens": 20998,
+      "output_tokens": 153
+    },
+    {
+      "iteration": 5,
+      "stop_reason": "tool_use",
+      "text": [],
+      "tool_calls": [
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/generate.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/review.md"
+          }
+        },
+        {
+          "name": "read_file",
+          "input": {
+            "file_path": "/opt/forge/skills/osac/generate-prd/steps/revise.md"
+          }
+        }
+      ],
+      "input_tokens": 26271,
+      "output_tokens": 189
+    },
+    {
+      "iteration": 6,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now I have all the context. Let me analyze the feature and draft the PRD.\n\n**Analysis:**\n- Services: CaaS (primary), Storage\n- Personas: Cloud Infrastructure Admin (configures storage backends/tiers), Cloud Provider Admin (manages tenant tier access), Tenant Admin (manages org storage), Tenant User (creates PVCs on clusters)\n- The feature is complex \u2014 a storage control plane with CSI driver, internal API, volume inventory, packaging, and automated deployment\n- Core capabilities are tightly coupled \u2014 CSI driver, internal API, volume inventory, packaging, and automated deployment all require each other for end-to-end flow\n- Extensions (CSI certification, quota, VMaaS/BMaaS integration, audit logging) are explicitly out of scope per the Jira\n- Must avoid design leakage: no controller names, no reconciler, no playbook, no AAP job references, no CRD field names\n\nLet me draft the PRD:"
+      ],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/dev/stdout/draft-prd.md",
+            "content": "# OSAC Storage Control Plane\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Akshay Nadkarni |\n| Jira        | [OSAC-2872](https://redhat.atlassian.net/browse/OSAC-2872) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nCaaS tenant clusters have no vendor-abstracted storage layer. Tenants who need persistent storage must interact with vendor-specific StorageClasses that expose backend addresses, credentials, and vendor details \u2014 breaking tenant isolation and creating a security risk. There is no enforcement point for per-tenant storage policy, no credential isolation (vendor credentials must be stored on tenant clusters), and no central record of what volumes exist or which tenant owns them. Without a storage control plane, OSAC cannot offer block storage as a platform service, blocking any tenant workload that requires persistent volumes on CaaS clusters.\n\n## In Scope\n\n- Tenants consume block storage through opaque storage tiers \u2014 no vendor details, credentials, or backend addresses are exposed to tenant clusters.\n- Multiple storage vendors (NetApp ONTAP, VAST, Pure Storage) are supported behind a single CSI interface on each tenant cluster.\n- Per-tenant policy enforcement: authorization and tier access are checked before every volume operation.\n- Vendor credentials are provided per-request and are never stored on tenant clusters.\n- Every volume is tracked in a central inventory with tenant, tier, state, size, and attachment information through its full lifecycle.\n- Storage is automatically deployed and configured on tenant clusters when they are provisioned, including cross-cluster authentication between the tenant cluster and the storage control plane.\n- Tenants and admins can see whether storage is ready on a given cluster.\n\n## Out of Scope\n\n- Public tenant-facing Volume API and UI integration for volume management \u2014 covered by [OSAC-984](https://redhat.atlassian.net/browse/OSAC-984).\n- Storage quota lifecycle (reserve/commit/release pattern and stale reservation cleanup) \u2014 deferred to a future milestone.\n- VMaaS and BMaaS storage integration (ComputeInstance/DataVolume and BareMetalInstance storage provisioning) \u2014 deferred to separate features.\n- CSI certification and conformance testing (csi-test sanity suite, Kubernetes E2E storage tests, OLM operator bundle) \u2014 deferred to a separate feature.\n- Audit logging of storage policy decisions and volume operations \u2014 deferred to a separate feature.\n- Storage metering.\n- Vendor REST adapters for non-CSI volume management \u2014 covered by [OSAC-984](https://redhat.atlassian.net/browse/OSAC-984).\n\n## User Stories\n\n### Cloud Infrastructure Admin\n\n- As a Cloud Infrastructure Admin, I want to configure storage backends and tiers so that tenant clusters can consume block storage from the appropriate vendor without tenants seeing vendor details.\n- As a Cloud Infrastructure Admin, I want to define which storage tiers are available to which tenants so that storage access is governed by policy.\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to see the volume inventory across all tenants \u2014 including tenant, tier, state, size, and attachment information \u2014 so that I can track storage consumption and attribution.\n- As a Cloud Provider Admin, I want to see whether storage is ready on any tenant cluster so that I can verify successful deployment.\n\n### Tenant Admin\n\n- As a Tenant Admin, I want to see which storage tiers are available to my organization so that I can plan workload placement.\n\n### Tenant User\n\n- As a Tenant User, I want to create a PVC using a StorageClass on my CaaS cluster so that my workload has persistent storage without needing to know the storage vendor or backend.\n- As a Tenant User, I want to see whether storage is available and ready on my cluster so that I know when I can create persistent volumes.\n- As a Tenant User, I want volumes to be cleaned up on the backend when I delete a PVC so that storage is properly released.\n\n## Assumptions\n\n- At least one storage vendor (NetApp ONTAP, VAST, or Pure Storage) is reachable from the hub cluster and has been configured by a Cloud Infrastructure Admin before tenants can provision volumes.\n- Vendor CSI node plugins are available on tenant clusters for mount operations to be routed locally without requiring calls back to the storage control plane.\n\n## Dependencies\n\n- **ClusterOrder provisioning:** Storage deployment on tenant clusters is triggered as part of the cluster provisioning lifecycle. ClusterOrder provisioning must be functional before automated storage deployment can occur.\n"
+          }
+        }
+      ],
+      "input_tokens": 34240,
+      "output_tokens": 1338
+    },
+    {
+      "iteration": 7,
+      "stop_reason": "tool_use",
+      "text": [
+        "Now let me self-review against the rubric and inline checks:\n\n**Rubric Scoring:**\n1. WHAT (2/2): Clear capabilities, services identified (CaaS, Storage), all 4 personas have stories or headings.\n2. WHY (2/2): Concrete pain (vendor exposure, credential risk, no inventory), consequence (blocks persistent workloads), strategic tie (tenant isolation, security).\n3. User-Facing Focus (2/2): No controllers, reconcilers, finalizers, playbooks, AAP references. All outcomes are user-observable.\n4. Right-Sized (2/2): The 5 core capabilities (CSI driver, internal API, volume inventory, packaging, automated deployment) are tightly coupled \u2014 they cannot function independently. A CSI driver without the control plane is useless; the control plane without the driver has no consumer.\n5. Testability (2/2): Every story is PM-verifiable (create PVC, see storage readiness, view inventory, configure backends).\n\n**Inline Checks:**\n1. Section count: Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies \u2014 exactly 6. \u2705\n2. Persona coverage: All 4 personas present with stories. \u2705\n3. Leakage check: No reconciler, finalizer, playbook, env var, AAP job, CRD field, osac-operator, osac-aap, ansible role, controller. \u2705\n4. Line count: ~60 non-blank lines. \u2705 (within 40-80 target)\n5. Persona ownership: CIA configures storage backends (their role), CPA manages tenants/inventory, TA/TU consume storage. \u2705\n6. Persona-story alignment: CIA has infrastructure stories, CPA has cross-tenant visibility, TA has org-level, TU has self-service. \u2705\n7. Problem Statement solution check: No \"introduces\", \"eliminates\", \"provides\" describing the feature. \u2705\n8. Async status check: Storage deployment is async \u2192 In Scope has \"Tenants and admins can see whether storage is ready\" + User Stories has status visibility stories for both CPA and TU. \u2705\n9. Jira completeness: Core stories covered (CSI driver, internal API, volume inventory, packaging, automated deployment). Extensions properly in Out of Scope. Out of scope items match Jira. \u2705\n10. Scope creep: All In Scope items trace to Jira. \u2705\n11. Persona separation: All 4 personas have separate headings. \u2705\n\nTotal: 10/10, no zeros, all inline checks pass. Proceeding to output."
+      ],
+      "tool_calls": [
+        {
+          "name": "write_file",
+          "input": {
+            "file_path": "/dev/output/enhancements/OSAC-2872-storage-control-plane/prd.md",
+            "content": "# OSAC Storage Control Plane\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Akshay Nadkarni |\n| Jira        | [OSAC-2872](https://redhat.atlassian.net/browse/OSAC-2872) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nCaaS tenant clusters have no vendor-abstracted storage layer. Tenants who need persistent storage must interact with vendor-specific StorageClasses that expose backend addresses, credentials, and vendor details \u2014 breaking tenant isolation and creating a security risk. There is no enforcement point for per-tenant storage policy, no credential isolation (vendor credentials must be stored on tenant clusters), and no central record of what volumes exist or which tenant owns them. Without a storage control plane, OSAC cannot offer block storage as a platform service, blocking any tenant workload that requires persistent volumes on CaaS clusters.\n\n## In Scope\n\n- Tenants consume block storage through opaque storage tiers \u2014 no vendor details, credentials, or backend addresses are exposed to tenant clusters.\n- Multiple storage vendors (NetApp ONTAP, VAST, Pure Storage) are supported behind a single CSI interface on each tenant cluster.\n- Per-tenant policy enforcement: authorization and tier access are checked before every volume operation.\n- Vendor credentials are provided per-request and are never stored on tenant clusters.\n- Every volume is tracked in a central inventory with tenant, tier, state, size, and attachment information through its full lifecycle.\n- Storage is automatically deployed and configured on tenant clusters when they are provisioned, including cross-cluster authentication between the tenant cluster and the storage control plane.\n- Tenants and admins can see whether storage is ready on a given cluster.\n\n## Out of Scope\n\n- Public tenant-facing Volume API and UI integration for volume management \u2014 covered by [OSAC-984](https://redhat.atlassian.net/browse/OSAC-984).\n- Storage quota lifecycle (reserve/commit/release pattern and stale reservation cleanup) \u2014 deferred to a future milestone.\n- VMaaS and BMaaS storage integration (ComputeInstance/DataVolume and BareMetalInstance storage provisioning) \u2014 deferred to separate features.\n- CSI certification and conformance testing (csi-test sanity suite, Kubernetes E2E storage tests, OLM operator bundle) \u2014 deferred to a separate feature.\n- Audit logging of storage policy decisions and volume operations \u2014 deferred to a separate feature.\n- Storage metering.\n- Vendor REST adapters for non-CSI volume management \u2014 covered by [OSAC-984](https://redhat.atlassian.net/browse/OSAC-984).\n\n## User Stories\n\n### Cloud Infrastructure Admin\n\n- As a Cloud Infrastructure Admin, I want to configure storage backends and tiers so that tenant clusters can consume block storage from the appropriate vendor without tenants seeing vendor details.\n- As a Cloud Infrastructure Admin, I want to define which storage tiers are available to which tenants so that storage access is governed by policy.\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to see the volume inventory across all tenants \u2014 including tenant, tier, state, size, and attachment information \u2014 so that I can track storage consumption and attribution.\n- As a Cloud Provider Admin, I want to see whether storage is ready on any tenant cluster so that I can verify successful deployment.\n\n### Tenant Admin\n\n- As a Tenant Admin, I want to see which storage tiers are available to my organization so that I can plan workload placement.\n\n### Tenant User\n\n- As a Tenant User, I want to create a PVC using a StorageClass on my CaaS cluster so that my workload has persistent storage without needing to know the storage vendor or backend.\n- As a Tenant User, I want to see whether storage is available and ready on my cluster so that I know when I can create persistent volumes.\n- As a Tenant User, I want volumes to be cleaned up on the backend when I delete a PVC so that storage is properly released.\n\n## Assumptions\n\n- At least one storage vendor (NetApp ONTAP, VAST, or Pure Storage) is reachable from the hub cluster and has been configured by a Cloud Infrastructure Admin before tenants can provision volumes.\n- Vendor CSI node plugins are available on tenant clusters for mount operations to be routed locally without requiring calls back to the storage control plane.\n\n## Dependencies\n\n- **ClusterOrder provisioning:** Storage deployment on tenant clusters is triggered as part of the cluster provisioning lifecycle. ClusterOrder provisioning must be functional before automated storage deployment can occur.\n"
+          }
+        }
+      ],
+      "input_tokens": 35604,
+      "output_tokens": 1767
+    },
+    {
+      "iteration": 8,
+      "stop_reason": "end_turn",
+      "text": [
+        "# OSAC Storage Control Plane\n\n| Field       | Value   |\n|-------------|---------|\n| Author(s)   | Akshay Nadkarni |\n| Jira        | [OSAC-2872](https://redhat.atlassian.net/browse/OSAC-2872) |\n| Date        | 2026-08-10 |\n\n## Problem Statement\n\nCaaS tenant clusters have no vendor-abstracted storage layer. Tenants who need persistent storage must interact with vendor-specific StorageClasses that expose backend addresses, credentials, and vendor details \u2014 breaking tenant isolation and creating a security risk. There is no enforcement point for per-tenant storage policy, no credential isolation (vendor credentials must be stored on tenant clusters), and no central record of what volumes exist or which tenant owns them. Without a storage control plane, OSAC cannot offer block storage as a platform service, blocking any tenant workload that requires persistent volumes on CaaS clusters.\n\n## In Scope\n\n- Tenants consume block storage through opaque storage tiers \u2014 no vendor details, credentials, or backend addresses are exposed to tenant clusters.\n- Multiple storage vendors (NetApp ONTAP, VAST, Pure Storage) are supported behind a single CSI interface on each tenant cluster.\n- Per-tenant policy enforcement: authorization and tier access are checked before every volume operation.\n- Vendor credentials are provided per-request and are never stored on tenant clusters.\n- Every volume is tracked in a central inventory with tenant, tier, state, size, and attachment information through its full lifecycle.\n- Storage is automatically deployed and configured on tenant clusters when they are provisioned, including cross-cluster authentication between the tenant cluster and the storage control plane.\n- Tenants and admins can see whether storage is ready on a given cluster.\n\n## Out of Scope\n\n- Public tenant-facing Volume API and UI integration for volume management \u2014 covered by [OSAC-984](https://redhat.atlassian.net/browse/OSAC-984).\n- Storage quota lifecycle (reserve/commit/release pattern and stale reservation cleanup) \u2014 deferred to a future milestone.\n- VMaaS and BMaaS storage integration (ComputeInstance/DataVolume and BareMetalInstance storage provisioning) \u2014 deferred to separate features.\n- CSI certification and conformance testing (csi-test sanity suite, Kubernetes E2E storage tests, OLM operator bundle) \u2014 deferred to a separate feature.\n- Audit logging of storage policy decisions and volume operations \u2014 deferred to a separate feature.\n- Storage metering.\n- Vendor REST adapters for non-CSI volume management \u2014 covered by [OSAC-984](https://redhat.atlassian.net/browse/OSAC-984).\n\n## User Stories\n\n### Cloud Infrastructure Admin\n\n- As a Cloud Infrastructure Admin, I want to configure storage backends and tiers so that tenant clusters can consume block storage from the appropriate vendor without tenants seeing vendor details.\n- As a Cloud Infrastructure Admin, I want to define which storage tiers are available to which tenants so that storage access is governed by policy.\n\n### Cloud Provider Admin\n\n- As a Cloud Provider Admin, I want to see the volume inventory across all tenants \u2014 including tenant, tier, state, size, and attachment information \u2014 so that I can track storage consumption and attribution.\n- As a Cloud Provider Admin, I want to see whether storage is ready on any tenant cluster so that I can verify successful deployment.\n\n### Tenant Admin\n\n- As a Tenant Admin, I want to see which storage tiers are available to my organization so that I can plan workload placement.\n\n### Tenant User\n\n- As a Tenant User, I want to create a PVC using a StorageClass on my CaaS cluster so that my workload has persistent storage without needing to know the storage vendor or backend.\n- As a Tenant User, I want to see whether storage is available and ready on my cluster so that I know when I can create persistent volumes.\n- As a Tenant User, I want volumes to be cleaned up on the backend when I delete a PVC so that storage is properly released.\n\n## Assumptions\n\n- At least one storage vendor (NetApp ONTAP, VAST, or Pure Storage) is reachable from the hub cluster and has been configured by a Cloud Infrastructure Admin before tenants can provision volumes.\n- Vendor CSI node plugins are available on tenant clusters for mount operations to be routed locally without requiring calls back to the storage control plane.\n\n## Dependencies\n\n- **ClusterOrder provisioning:** Storage deployment on tenant clusters is triggered as part of the cluster provisioning lifecycle. ClusterOrder provisioning must be functional before automated storage deployment can occur."
+      ],
+      "tool_calls": [],
+      "input_tokens": 37412,
+      "output_tokens": 1045
+    }
+  ]
+}
