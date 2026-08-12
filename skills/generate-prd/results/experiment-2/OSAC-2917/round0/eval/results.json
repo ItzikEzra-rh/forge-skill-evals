@@ -1,0 +1,119 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "/home/iezra/Documents/agetns_playground/osac-workspace/artifacts/experiment-2/OSAC-2917/round0/dev/stdout/enhancements/OSAC-2917-gpu-enabled-instancetypes/prd.md",
+  "gold_path": "/home/iezra/Documents/agetns_playground/osac-workspace/artifacts/eval-dataset-v2/cases/OSAC-2917/gold-prd.md",
+  "overall_pass": false,
+  "grade": "C",
+  "total_passed": 7,
+  "total_criteria": 8,
+  "total_score": 14,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All 4 personas are explicitly addressed: Cloud Provider Admin has stories, Cloud Infrastructure Admin has 'Not affected' note, Tenant Admin has 'Not affected' note, and Tenant User has stories.",
+      "quotes": [
+        "### Cloud Infrastructure Admin\n\nNot affected by this feature.",
+        "### Tenant Admin\n\nNot affected by this feature.",
+        "### Cloud Provider Admin\n\n- As a Cloud Provider Admin"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories are correctly attributed: Cloud Provider Admin handles InstanceType definition/management, Tenant User handles self-service provisioning and visibility, Cloud Infrastructure Admin is correctly noted as not affected, and no internal system stories exist.",
+      "quotes": [
+        "As a Cloud Provider Admin, I want to create InstanceTypes that include a GPU type",
+        "As a Tenant User, I want to create a ComputeInstance using a GPU-enabled InstanceType",
+        "Cloud Infrastructure Admin: Not affected by this feature."
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All Out of Scope items from the gold standard are present in the generated document, all In Scope items are accurately represented, and the minor additions (like 'Single VMaaS cluster' in scope and 'Tenant Users can see GPU InstanceTypes' as in scope) align with gold standard content.",
+      "quotes": [
+        "GPU discovery API",
+        "Per-tenant GPU quotas",
+        "MIG / vGPU partitioning",
+        "GPU type validation \u2014 the system does not validate"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document's Dependencies section contains design leakage: it references 'Ansible-level GPU passthrough plumbing', 'osac-aap', 'provisioning template', 'GPU devices parameter', and 'KubeVirt host device passthrough' \u2014 internal implementation details that don't belong in a PRD.",
+      "quotes": [
+        "Ansible-level GPU passthrough plumbing in `osac-aap`",
+        "provisioning template already supports a GPU devices parameter",
+        "KubeVirt host device passthrough"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain (no GPU support, forced to work outside platform, losing benefits) and cost of inaction (cannot serve AI/ML use cases, blocking adoption) without describing the solution or how the feature works.",
+      "quotes": [
+        "there is no way to request GPU hardware",
+        "must work outside the self-service platform",
+        "blocking adoption for tenants with GPU-dependent workloads"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly addresses async status visibility in the User Stories section with a dedicated story about seeing current status and provisioning progress.",
+      "quotes": [
+        "As a Tenant User, I want to see the current status of my GPU-enabled ComputeInstance so that I can track provisioning progress and troubleshoot issues."
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) plus the optional Assumptions and Dependencies sections, with no extra sections outside the template spec.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Assumptions",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all substantive capabilities from the gold standard: GPU fields in InstanceTypes, same lifecycle/networking model, out-of-scope items, all user stories, assumptions about passthrough infrastructure, and both dependencies.",
+      "quotes": [
+        "GPU type is a free-text string with no platform-side validation",
+        "GPU ComputeInstances follow the same lifecycle operations",
+        "OSAC-42 (GPU passthrough plumbing)"
+      ]
+    }
+  ]
+}

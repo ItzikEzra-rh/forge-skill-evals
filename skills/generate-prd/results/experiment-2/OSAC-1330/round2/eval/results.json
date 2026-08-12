@@ -1,0 +1,117 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "artifacts/experiment-2/osac-1330/round2/prd.md",
+  "gold_path": "artifacts/eval-dataset-v2/cases/OSAC-1330/gold-prd.md",
+  "overall_pass": true,
+  "grade": "B",
+  "total_passed": 7,
+  "total_criteria": 8,
+  "total_score": 14,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All four OSAC personas are explicitly addressed with user stories: Cloud Provider Admin (3 stories), Cloud Infrastructure Admin (2 stories), Tenant Admin (1 story), and Tenant User (4 stories), plus an 'All Personas' section.",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "### Tenant Admin",
+        "### Tenant User",
+        "### Cloud Provider Admin"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories correctly match their personas: Cloud Provider Admin has tenant/catalog management, Cloud Infrastructure Admin has infrastructure ops, Tenant Admin has org config, Tenant User has self-service provisioning, and no sanitization stories are misattributed or internal system stories present.",
+      "quotes": [
+        "Cloud Provider Admin, I want to create a cluster catalog item",
+        "Cloud Infrastructure Admin, I want to manage external IP pools",
+        "Tenant User, I want to create a compute instance"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All In Scope and Out of Scope items match the gold standard exactly; the generated doc added an Assumptions section not in the gold, but it doesn't misplace any scope items.",
+      "quotes": [
+        "No backward-compatible transition period",
+        "Migration from identifier-based to (tenant, project, name)-based",
+        "Changes to how resources are identified internally"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details such as controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; platform vocabulary used is appropriate.",
+      "quotes": [
+        "ClusterOrder",
+        "BareMetalInstance",
+        "BMaaS, CaaS, VMaaS, MaaS, Enclave"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain (opaque strings, runtime failures, no cross-tenant context) with no solution language or feature descriptions.",
+      "quotes": [
+        "Users discover invalid or mismatched references only at runtime",
+        "both are opaque strings",
+        "users cannot reference shared resources...without out-of-band knowledge"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "This feature involves synchronous validation at request time, not asynchronous resource creation, so the criterion about async status visibility is not applicable; however, since there is no asynchronous resource creation involved, the criterion cannot be meaningfully scored as present or absent \u2014 but the feature explicitly states 'immediate validation of references at request time' making it synchronous, meaning async status visibility is not relevant and thus not addressed.",
+      "quotes": [
+        "Immediate validation of references at request time with clear error messages"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All four required sections are present and no extra sections outside the allowed template appear in the generated document.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all the same substantive content as the gold standard; the only differences are minor metadata (date) and the addition of an Assumptions section not in the gold, which is an addition rather than a gap.",
+      "quotes": [
+        "Name-based, type-safe resource references replacing opaque identifier strings",
+        "Both local references...and full references",
+        "Migration from identifier-based to (tenant, project, name)-based resource identification"
+      ]
+    }
+  ]
+}

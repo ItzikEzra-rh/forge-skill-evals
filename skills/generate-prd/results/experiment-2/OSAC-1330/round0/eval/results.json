@@ -1,0 +1,121 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "artifacts/experiment-2/osac-1330/round0/dev/stdout/enhancements/OSAC-1330-type-safe-resource-references/prd.md",
+  "gold_path": "artifacts/eval-dataset-v2/cases/OSAC-1330/gold-prd.md",
+  "overall_pass": false,
+  "grade": "C",
+  "total_passed": 5,
+  "total_criteria": 8,
+  "total_score": 12,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All 4 OSAC personas are explicitly addressed with user stories, and Cloud Infrastructure Admin has stories covering their infrastructure management tasks.",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "### Cloud Provider Admin",
+        "### Tenant Admin",
+        "### Tenant User"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document mostly aligns personas to correct capabilities, but is missing the 'All Personas' section entirely and has fewer/different user stories per persona than the gold standard, reducing coverage quality.",
+      "quotes": [
+        "Cloud Infrastructure Admin... references between infrastructure resources",
+        "Tenant User... auto-populate missing reference fields",
+        "Cloud Provider Admin... reject a resource creation request"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "Multiple critical scope errors: generated doc includes backward-compatible id field and auto-resolution logic which gold explicitly marks Out of Scope ('No backward-compatible transition period \u2014 clean replacement'); generated doc excludes UI/CLI updates from In Scope when gold explicitly includes them; generated doc adds test coverage item not in gold; generated doc omits 'No backward compatibility' and 'Changes to internal identification/database schema' Out of Scope items from gold.",
+      "quotes": [
+        "No backward-compatible transition period \u2014 clean replacement",
+        "UI, CLI, and API all updated to support the new reference format",
+        "Backward compatibility with the previous string-based reference format"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details such as controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; platform vocabulary like ClusterOrder and template references are acceptable.",
+      "quotes": [
+        "typed reference messages for each resource type",
+        "Automatic server-side validation that referenced objects exist",
+        "Replacement of all existing raw string reference fields"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain (opaque string references, no type indication, invalid references caught late) and cost of inaction, with no solution language or feature descriptions.",
+      "quotes": [
+        "invalid references are only caught deep in the provisioning flow rather than at request time",
+        "API consumers must rely on documentation to know what a string field means",
+        "This lack of structure makes the API error-prone"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document addresses async status visibility through immediate validation at request time and clear error messages for invalid references, both in In Scope and User Stories.",
+      "quotes": [
+        "Automatic server-side validation that referenced objects exist, with descriptive errors when they do not",
+        "I receive a clear error instead of discovering the problem during provisioning",
+        "I want a clear error when I provide both an id and a name that refer to different objects"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) and only the optional Assumptions and Dependencies sections \u2014 no extra sections outside the template spec.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Assumptions",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Generated doc covers core concepts but has several substantive gaps: it omits UI/CLI update requirements (gold explicitly includes them as in-scope), lacks specific service coverage enumeration (BMaaS, CaaS, VMaaS, MaaS, Enclave), adds a backwards-compatible id field and auto-resolution mechanism not present in gold (which explicitly states no backward compatibility), and misses the 'All Personas' user stories covering UI name display and CLI name support.",
+      "quotes": [
+        "UI, CLI, and API all updated to support the new reference format",
+        "No backward-compatible transition period \u2014 clean replacement",
+        "As any user, I want references displayed in the UI to show the referenced resource's name"
+      ]
+    }
+  ]
+}
