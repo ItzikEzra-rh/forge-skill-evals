@@ -1,0 +1,158 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1/case-004-osac-1269-cluster-version/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-004-osac-1269-cluster-version/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 10,
+  "total_criteria": 11,
+  "total_score": 20,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections are present including Summary, Motivation with Goals/Non-Goals, Proposal with Workflow Description/API Extensions, Implementation Details, Security Considerations, Failure Handling and Recovery, RBAC/Tenancy, Observability and Monitoring, Risks and Mitigations, Drawbacks, Alternatives (Not Implemented), Test Plan with Unit/Integration/E2E subsections, Graduation Criteria, and YAML frontmatter with all required fields (title, authors, creation-date, tracking-link, prd).",
+      "quotes": [
+        "title: cluster-version-api",
+        "tracking-link:\n  - https://issues.redhat.com/browse/OSAC-1269",
+        "prd:\n  - \"prd.md\""
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains well-formed proto code blocks matching the gold standard's structure: ClusterVersion with id/Metadata/Spec/Status, ClusterVersionSpec with matching fields (image, enabled, is_default, state, deprecation, version, allowed_upgrades), correct enums, and a gRPC service with full CRUD using google.api.http annotations and gRPC error codes.",
+      "quotes": [
+        "message ClusterVersion {\n  string id = 1;\n  Metadata metadata = 2;\n  ClusterVersionSpec spec = 3;\n  ClusterVersionStatus status = 4;\n}",
+        "option (google.api.http) = {\n      post: \"/v1/clusterversions\"",
+        "CLUSTER_VERSION_STATE_ACTIVE = 1;\n  CLUSTER_VERSION_STATE_DEPRECATED = 2;\n  CLUSTER_VERSION_STATE_OBSOLETE = 3;"
+      ]
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document references the PRD via 'See [PRD](prd.md)', aligns design decisions with PRD scope, marks unverified decisions as [Assumption], and covers all major PRD requirements including FR-2, FR-4, FR-5, FR-6, FR-7, FR-8, FR-9, FR-10, FR-11, FR-13, FR-14 without silently dropping them or introducing unflagged scope creep.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[PRD: FR-11]",
+        "[Assumption: warning surfaced via metadata annotation; exact mechanism to be confirmed during implementation]"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard's implementation depth across all key areas: proto schemas with field-level comments, specific SQLSTATE codes (Z0001/Z0002/Z0003) mapped to gRPC codes, named database triggers with exact firing conditions, controller reconciliation steps with specific error conditions, and concrete CLI commands with column names.",
+      "quotes": [
+        "SQLSTATE | gRPC Code | Scenario",
+        "Z0002 | INVALID_ARGUMENT | Reference to non-existent, disabled, or obsolete version",
+        "fires before INSERT or UPDATE on clusters, cluster_templates, cluster_catalog_items"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document defines all four OSAC actors, enumerates steps from defined starting states, covers full CRUD lifecycle, includes detailed error paths with gRPC codes, and uses Mermaid diagrams for multi-step interactions, matching or exceeding the gold standard.",
+      "quotes": [
+        "#### Actor Definitions",
+        "Cloud Provider Admin | Manages the global version catalog",
+        "| Scenario | API behavior | gRPC code |",
+        "```mermaid\nsequenceDiagram"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document covers more concrete failure modes than the gold standard but misses the gold's explicit failure mode for 'referenced version deleted between validation and persistence' as a distinct race condition, and the gold's failure modes are more concisely mapped; however the generated doc adds controller restart, fulfillment-service unavailability, and translateError gap failures not in the gold, making it partially but not fully aligned.",
+      "quotes": [
+        "Controller cannot resolve ClusterVersion during reconciliation (transient API error)",
+        "Two requests race to set different default versions",
+        "A referenced version is deleted between validation and persistence"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists highly specific, concrete test scenarios across all three test categories, matching the gold standard's specificity and exceeding it in detail.",
+      "quotes": [
+        "spec.version validation: accepts valid SemVer strings; rejects strings exceeding 256 characters",
+        "Delete protection: CreateCluster referencing a ClusterVersion; DeleteClusterVersion returns FAILED_PRECONDITION",
+        "Obsolete version rejection: Tenant Admin attempts to create a cluster on an obsolete version; request is rejected with a clear error message"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes three substantive alternatives with honest rejection rationales based on real trade-offs, matching the gold standard's depth.",
+      "quotes": [
+        "Keep a single release_image string \u2014 rejected because it preserves validation problems",
+        "Project ClusterVersion to hub clusters \u2014 deferred as simpler approach delivers core value",
+        "Model release images as an architecture-keyed array \u2014 not needed for v0.2"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly addresses tenant isolation by stating ClusterVersion is platform-global with tenant='shared', explains why osac.openshift.io/tenant and osac.openshift.io/owner-reference annotations don't apply, mentions OPA policy enforcement for role-based access, and provides a detailed RBAC table - matching the gold standard's equivalent coverage.",
+      "quotes": [
+        "No per-resource tenant annotations: Because ClusterVersion is not tenant-scoped, the osac.openshift.io/tenant and osac.openshift.io/owner-reference annotations do not apply.",
+        "OPA policies enforce access by role rather than by tenant annotation.",
+        "ClusterVersion is platform-global. All records use tenant = \"shared\" and project = \"\""
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same technical decisions as the gold standard: ClusterVersion proto schema, ClusterSpec/ClusterTemplateSpecDefaults changes, database triggers (delete protection, inbound reference validation, immutability), controller-side resolution, event plumbing, CLI changes, public/private API split, translateError gap fix, and CatalogItem considerations.",
+      "quotes": [
+        "Replace `ClusterSpec.release_image` (field 6) with `ClusterSpec.version_name`",
+        "translateError Gap Fix",
+        "Delete protection trigger fires: checks `clusters`, `cluster_templates`, and `cluster_catalog_items`",
+        "Controller-Side Changes (osac-operator)"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Generated doc matches PRD scope well but introduces scope creep with detailed CLI command tables, failure handling matrices, support procedures, and observability sections that go beyond the gold standard's depth, plus some Non-Goals alignment differences (gold standard includes 'Hub-projected ClusterVersion CRD' and 'multi-architecture release-image arrays' as non-goals; generated doc omits these).",
+      "quotes": [
+        "No new observability changes. Existing monitoring mechanisms apply.",
+        "osac create clusterversion [--version 4.17.0] [--image quay.io/...] [--state active] [--default]",
+        "Auto-sync with ACM ClusterImageSet \u2014 versions are admin-managed in v0.2"
+      ]
+    }
+  ]
+}

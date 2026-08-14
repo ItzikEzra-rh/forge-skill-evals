@@ -1,0 +1,4 @@
+expected_score: 6  # out of 8
+expected_pass: true
+gold_design_path: "enhancement-proposals/enhancements/OSAC-1269-cluster-version-api/design.md"
+notes: "API design for managing cluster versions with lifecycle states. Clean abstraction over release images. 459 lines."

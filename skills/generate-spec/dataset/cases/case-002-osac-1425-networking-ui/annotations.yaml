@@ -1,0 +1,4 @@
+expected_score: 7  # out of 8
+expected_pass: true
+gold_design_path: "enhancement-proposals/enhancements/OSAC-1425-networking-ui-vmaas-scope/design.md"
+notes: "UI design for networking section with React 19 and PatternFly 6. Comprehensive wizard integration. 882 lines."

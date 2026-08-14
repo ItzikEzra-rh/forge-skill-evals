@@ -1,0 +1,4 @@
+expected_score: 7  # out of 8
+expected_pass: true
+gold_design_path: "enhancement-proposals/enhancements/OSAC-1110-storage-tier/design.md"
+notes: "Private API design for storage tier management with QoS properties. Strong integration with storage backend system. 534 lines."

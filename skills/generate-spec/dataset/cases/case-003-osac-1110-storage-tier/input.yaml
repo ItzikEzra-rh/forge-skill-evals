@@ -1,0 +1,15 @@
+jira_key: OSAC-1110
+title: "StorageTier API"
+priority: "High"
+prompt: "# OSAC-1110: Storage Tier Definition & Private API\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Undefined\n- **Assignee**: Roy Golan\n- **Reporter**: Akshay Nadkarni\n- **Components**:\
+  \ Storage\n- **Labels**: None\n\n## Description\n\n## Summary\n\n  Private API for defining and managing storage tiers (e.g., fast, standard, archive) in OSAC. Cloud Provider Admins\n  use this API to\
+  \ create tiers that represent different storage quality-of-service levels, each associated with a\n  registered StorageBackend.\n\n  The API serves as the registration and catalog layer. Integration with\
+  \ the operator and AAP provisioning path (so\n  that tier definitions drive StorageClass provisioning at runtime) is tracked separately under the Backend & Tier API\n  Integration epic.\n\n  ## Demo\n\
+  \n  1. Create a storage tier: POST /api/private/v1/storage_tiers (description, backend association with protocol,\n  bandwidth limits, quota, encryption)\n  2. List tiers: GET /api/private/v1/storage_tiers\n\
+  \  3. Get a specific tier: GET /api/private/v1/storage_tiers/{id}\n  4. Update tier configuration\n  5. Attempt to create a tier referencing a non-existent backend (rejected)\n  6. Delete a tier\n\n \
+  \ ## UI\n\n  StorageTier CRUD screens (list, detail, create, edit, delete). Cloud Provider Admin facing. See OSAC-1252 for\n  existing UI ticket.\n\n  Form fields (from storage_tier_type.proto):\n\n \
+  \ \u2022 spec.description (string)\n  \u2022 spec.backends[] (repeated BackendAssociation):\n  \u2022 backend_id (reference to registered StorageBackend)\n  \u2022 protocol (enum: NFS, BLOCK)\n  \u2022\
+  \ max_read_bandwidth_mbs / max_write_bandwidth_mbs (int32)\n  \u2022 quota_gib (int64)\n  \u2022 encryption_enabled (bool)\n\n  v0.1 limitation: only one backend association per tier.\n\n  ## Acceptance\
+  \ Criteria\n\n  [x] Enhancement Proposal published and approved\n  [x] StorageTier CRUD API (Create, Get, List, Update, Delete) in fulfillment-service\n  [x] DB storage with referential integrity (referenced\
+  \ backends must exist)\n  [x] Protobuf restructured to follow project spec/status conventions (OSAC-2396)\n  [ ] UI: StorageTier CRUD screens (OSAC-1252)\n\n  ## Enhancement Proposal\n\n  \u2022 StorageTier\
+  \ PRD & Design https://github.com/osac-project/enhancement-proposals/tree/main/enhancements/storage-tier-\n  OSAC-1110\n\n## Linked Issues\n\n- **OSAC-1123** (In Progress): CaaS Tenant Storage Setup\n"

@@ -1,0 +1,19 @@
+jira_key: OSAC-1332
+title: "CaaS Cluster Storage"
+priority: "High"
+prompt: "# OSAC-1332: CaaS Cluster Storage (v0.1)\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Undefined\n- **Assignee**: Akshay Nadkarni\n- **Reporter**: Akshay Nadkarni\n- **Components**:\
+  \ CaaS, Storage\n- **Labels**: None\n\n## Description\n\n## Feature Goal\n\n  Enable persistent storage on CaaS tenant clusters. Once a CaaS cluster reaches ClusterOrderPhaseReady, OSAC installs\n  the\
+  \ CSI driver and per-tenant, per-tier StorageClasses so that tenant workloads can consume persistent storage. The\n  VAST storage provider is made CaaS-ready by fixing storage paths, locking down CSI\
+  \ credentials with RBAC, and adding\n  CaaS provisioning targets. A global VIP Pool is shared by all tenants in v0.1.\n\n  When this feature is complete:\n\n  \u2022 Per-tenant, per-cluster, per-tier\
+  \ views are created on VAST\n  \u2022 CSI driver and per-tenant, per-tier StorageClasses are automatically installed on CaaS clusters once\n  ClusterOrderPhaseReady\n  \u2022 Storage readiness is tracked\
+  \ on the ClusterOrder CR, visible to Cloud Provider Admins\n  \u2022 The VAST storage provider supports CaaS clusters (tenant-UID paths, RBAC-scoped credentials, hcp_data_plane\n  provisioning target)\n\
+  \  \u2022 Tenant users can create PVCs targeting the correct tier\n\n  ## Problem Statement\n\n  1. No storage on CaaS clusters. CaaS tenant clusters are provisioned without persistent storage. Tenant\
+  \ workloads\n  cannot create PVCs until a CSI driver and StorageClasses are installed, and there is no automation to do this after\n  cluster provisioning.\n  2. VAST provider not CaaS-ready. The existing\
+  \ VAST provider works for VMaaS but has three gaps: storage paths use\n  mutable tenant names (breaking volumes on rename), CSI credentials are overprivileged (the Tenant Manager can bypass\n  Ansible-managed\
+  \ QoS controls), and there is no CaaS provisioning target.\n\n  ## User Stories\n\n  ### Cloud Provider Admin\n\n  \u2022 As a Cloud Provider Admin, when a CaaS cluster is provisioned, the CSI driver\
+  \ and StorageClasses are automatically\n  installed, so that I don't need to manually set up storage per cluster\n  \u2022 As a Cloud Provider Admin, I can see storage readiness on the ClusterOrder CR\
+  \ independently from compute readiness,\n  so that I know when tenant workloads can consume storage\n\n  ### Tenant User\n\n  \u2022 As a Tenant User, I can create PVCs using the appropriate StorageClass\
+  \ for my desired tier (e.g., fast, standard,\n  archive), so that my workloads get the storage performance I need\n\n  ## Definition of Done\n\n  \u2022 Per-tenant, per-cluster, per-tier views created\
+  \ on VAST\n  \u2022 VAST provider supports CaaS clusters (tenant-UID paths, RBAC-scoped credentials, hcp_data_plane target)\n  \u2022 CSI driver and per-tenant, per-tier StorageClasses automatically installed\
+  \ on CaaS clusters once\n  ClusterOrderPhaseReady\n  \u2022 Storage readiness tracked on ClusterOrder CR\n  \u2022 Tenant users can create PVCs targeting the correct tier\n  \u2022 Cluster-side storage\
+  \ resources cleaned up on cluster deletion\n  \u2022 E2E validation against a live VAST cluster\n"

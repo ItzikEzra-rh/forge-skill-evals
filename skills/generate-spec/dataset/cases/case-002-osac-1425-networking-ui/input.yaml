@@ -1,0 +1,13 @@
+jira_key: OSAC-1425
+title: "OSAC Tenant UI: Networking Section"
+priority: "High"
+prompt: "# OSAC-1425: Tenant UI: Networking section spec for VirtualNetwork, Subnet, SecurityGroup, and PublicIP management\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Undefined\n- **Assignee**:\
+  \ Elay Aharoni\n- **Reporter**: Dan Manor\n- **Components**: Connectivity&Fabric, UI\n- **Labels**: OSAC-UI, OSAC-UX\n\n## Description\n\nDesign the UI specification for a **Networking** section in the\
+  \ tenant sidebar that allows tenant users to manage\n  networking resources via the fulfillment API.\n\n  ## Scope\n\n  The Networking section should provide CRUD operations for the following resources:\n\
+  \n  ### VirtualNetworks\n\n  \u2022 Create a new virtual network (name, CIDR, etc.)\n  \u2022 Edit an existing virtual network\n  \u2022 Delete a virtual network\n  \u2022 List virtual networks for the\
+  \ tenant\n\n  ### Subnets (scoped within a VirtualNetwork)\n\n  \u2022 Create a subnet inside a virtual network\n  \u2022 Edit a subnet\n  \u2022 Delete a subnet\n  \u2022 List subnets within a virtual\
+  \ network\n\n  ### SecurityGroups (scoped within a VirtualNetwork)\n\n  \u2022 Create a security group inside a virtual network\n  \u2022 Edit security group rules\n  \u2022 Delete a security group\n\
+  \  \u2022 List security groups within a virtual network\n\n  ### PublicIPs\n\n  \u2022 Allocate a public IP from a pool\n  \u2022 Release an allocated public IP\n  \u2022 List allocated public IPs\n \
+  \ \u2022 **Note:** This covers allocation/release only \u2014 attaching/detaching IPs to compute instances is out of scope for\n  this task\n\n  ## Deliverables\n\n  \u2022 UI wireframes or mockups for\
+  \ the Networking section\n  \u2022 Navigation structure (sidebar placement, resource hierarchy)\n  \u2022 Interaction flows for each CRUD operation\n  \u2022 Error states and validation rules\n  \u2022\
+  \ Mapping of UI actions to fulfillment API endpoints\n"

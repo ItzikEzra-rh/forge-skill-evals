@@ -1,0 +1,153 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1/case-006-osac-1319-bare-metal-ui/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-006-osac-1319-bare-metal-ui/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 22,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required OSAC template sections are present in the generated document, including Summary, Motivation with Goals and Non-Goals, Proposal with Workflow Description and API Extensions, Implementation Details, Security Considerations, Failure Handling and Recovery, RBAC/Tenancy, Observability and Monitoring, Risks and Mitigations, Drawbacks, Alternatives (Not Implemented), Test Plan with Unit/Integration/E2E subsections, and Graduation Criteria, plus complete YAML frontmatter with all required fields.",
+      "quotes": [
+        "title: osac-1319-bare-metal-instance-ui",
+        "tracking-link:",
+        "### Unit Tests",
+        "### E2E Tests"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "No proto schemas expected (gold standard has none)",
+      "quotes": []
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly references the PRD in the Summary, traces design decisions to PRD scope with inline markers, flags unverified decisions as [Assumption], adds no untraced requirements, and covers all PRD items present in the gold standard.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[PRD: Out of Scope]",
+        "[Assumption: no `resources` array on `BareMetalInstanceCatalogItem`]"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard's implementation depth across all key areas: specific file paths, TypeScript interfaces, Yup validation code, API endpoints, state transition tables, action disabled-state logic, and component naming conventions are all precisely specified.",
+      "quotes": [
+        "SSH key validation (Yup, applied only when field is non-empty): .matches(/^(ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp\\d+)\\s+\\S+/",
+        "PATCH { restart_requested_at: new Date().toISOString() } \u2014 only enabled when state is RUNNING",
+        "| Hook | Method | Endpoint |"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same workflows as the gold standard, including all lifecycle operations (create, read, update/patch, delete), error paths, actor definitions, and a Mermaid diagram for multi-step interactions.",
+      "quotes": [
+        "Actors: Tenant User and Tenant Admin (identical UI flows)",
+        "Submit \u2192 POST /api/fulfillment/v1/baremetal_instances. On success \u2192 navigate to /bare-metal/:id",
+        "DELETE fails | Error message within the confirmation modal",
+        "sequenceDiagram"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same failure modes as the gold standard and adds plausible concrete ones (version skew/unreachable fulfillment-service, catalog item NOT_FOUND on POST) with specific what-happens, recovery, and user-observable details.",
+      "quotes": [
+        "Create form `POST` fails (catalog item no longer published, `NOT_FOUND`) | Inline error on the Review step",
+        "Fulfillment-service unreachable (version skew or outage) | TanStack Query error states on all pages",
+        "PATCH (power toggle or restart) fails | Inline error alert near the action buttons | User retries the action"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists concrete, specific test scenarios under Unit Tests, Integration Tests, and E2E Tests with named components, specific behaviors, and exact conditions being tested.",
+      "quotes": [
+        "SSH validation rejects strings not matching OpenSSH format; accepts ssh-rsa, ssh-ed25519",
+        "user data size: rejects payloads where Blob([v]).size > 65536; accepts exactly 65536 bytes",
+        "FAILED instance: Tenant User observes a FAILED instance \u2014 Start and Stop are disabled, conditions list shows the failure reason"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes three substantive alternatives with honest rejection rationales based on real trade-offs: separate catalog page (UX fragmentation), bespoke create form (duplication of wizard infrastructure), and inline toggle vs. discrete buttons (PatternFly pattern and disabled-state communication).",
+      "quotes": [
+        "Rejected because the existing `CatalogPage` already supports multi-type filtering",
+        "Rejected because bare metal provisioning has the same multi-step shape",
+        "Rejected because the toggle's intermediate/loading state is harder to communicate"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly states 'No new RBAC or tenancy changes' with justification that tenant isolation is enforced server-side by the fulfillment-service, matching the gold standard's equivalent brief statement.",
+      "quotes": [
+        "No new RBAC or tenancy changes. The UI is accessible to `tenantUser` and `tenantAdmin` roles enforced by the existing `RoleRoute` guard",
+        "Tenant isolation is enforced server-side by the fulfillment-service \u2014 the UI carries no tenant isolation logic."
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same components, architectural decisions, API hooks, file layouts, action semantics, validation logic, and integration points as the gold standard, with additional detail in several areas.",
+      "quotes": [
+        "useCreateBareMetalInstance, usePatchBareMetalInstance, useDeleteBareMetalInstance",
+        "kind === 'bm' branch for bare metal CTA",
+        "BareMetalNoNetworkingStep component is passed to satisfy the interface"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches the PRD scope with no significant scope creep or reduction; Non-Goals align with the gold standard, and all required features are fully covered.",
+      "quotes": [
+        "Tenant Admin catalog item CRUD (create/edit/delete tenant-scoped `BareMetalInstanceCatalogItem`). [PRD: Out of Scope]",
+        "No new API extensions. The feature consumes the existing `BareMetalInstance`",
+        "All four screens (catalog browser, list, create, detail) functional end-to-end"
+      ]
+    }
+  ]
+}

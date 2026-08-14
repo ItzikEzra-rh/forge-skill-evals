@@ -1,0 +1,193 @@
+skill: generate-spec
+description: "Design document (EP) quality criteria for the OSAC generate-spec skill"
+
+gold_standard_file: gold-design.md
+generated_file_patterns:
+  - "enhancements/*/design.md"
+  - ".artifacts/design/*/design.md"
+  - "design.md"
+
+judge_model: claude-sonnet-4-6
+
+criteria:
+  - id: template-compliance
+    name: "Template Compliance"
+    weight: critical
+    prompt: |
+      The OSAC design template requires these sections (all must be present,
+      even if marked N/A with justification):
+        Summary, Motivation (with Goals and Non-Goals subsections), Proposal
+        (with Workflow Description and API Extensions subsections),
+        Implementation Details/Notes/Constraints, Security Considerations,
+        Failure Handling and Recovery, RBAC / Tenancy, Observability and
+        Monitoring, Risks and Mitigations, Drawbacks, Alternatives
+        (Not Implemented), Test Plan (with Unit Tests, Integration Tests,
+        E2E Tests subsections), Graduation Criteria.
+      Also required: YAML frontmatter with title, authors, creation-date,
+      tracking-link, and prd fields.
+      Check the GENERATED document for missing required sections and missing
+      frontmatter fields. Do not penalize for optional sections (Open Questions,
+      UX Alignment, Infrastructure Needed, Upgrade/Downgrade, Version Skew,
+      Support Procedures) being absent.
+
+  - id: proto-schema-quality
+    name: "Proto Schema Quality"
+    weight: critical
+    prompt: |
+      FIRST: check the gold standard document for proto/protobuf code blocks.
+      If the gold standard contains NO proto schemas (e.g., UI-only features,
+      controller-only changes with no new API resources), this criterion
+      automatically PASSES with score 2 — the feature does not require proto
+      schemas. Return {"pass": true, "score": 2, "reasoning": "No proto
+      schemas expected (gold standard has none)", "quotes": []}.
+
+      If the gold standard DOES contain proto schemas, evaluate the generated
+      document's proto quality against OSAC conventions:
+        - Standard object shape: id, Metadata, {Type}Spec, {Type}Status
+        - Spec = desired state (user-controlled), Status = observed state
+        - Conditions preferred over phase enums for lifecycle state
+        - gRPC service with standard CRUD (Create, Get, List, Update, Delete)
+        - REST transcoding via google.api.http annotations
+        - Error codes are gRPC codes (NOT_FOUND, ALREADY_EXISTS, etc.),
+          not HTTP status codes
+      Compare the generated proto schemas against the gold standard. Are the
+      field names, types, and structure consistent? Are proto code blocks
+      actually present (not just described in prose)?
+
+  - id: prd-traceability
+    name: "PRD Traceability"
+    weight: critical
+    prompt: |
+      Every design decision should trace to the PRD. Check:
+      1. Does the Summary reference the PRD? ("See [PRD](prd.md)")
+      2. Do design decisions align with PRD scope (In Scope / Out of Scope)?
+      3. Are unverified decisions marked [Assumption]?
+      4. Does the design invent requirements NOT in the PRD without flagging
+         them? This is scope creep.
+      5. Does the design silently drop PRD requirements? Compare the gold
+         standard's coverage of PRD items against the generated document's.
+      Focus on substantive traceability gaps, not formatting of markers.
+
+  - id: implementation-depth
+    name: "Implementation Depth"
+    weight: important
+    prompt: |
+      A design document must have enough detail for an implementer to start
+      coding. Check for vague/hand-wavy language:
+        - "Handle errors appropriately" → should name specific error codes
+        - "Implement validation" → should list specific validation rules
+        - "Standard error handling" → should define the error taxonomy
+        - "Appropriate caching" → should specify cache strategy
+      Compare the level of detail in the generated vs gold standard. Does the
+      generated document describe controller reconciliation logic, database
+      schema, state transitions, and integration points with the same
+      specificity as the gold?
+
+  - id: workflow-completeness
+    name: "Workflow Completeness"
+    weight: important
+    prompt: |
+      The Workflow Description should:
+      1. Define actors using OSAC personas (Cloud Provider Admin, Cloud
+         Infrastructure Admin, Tenant Admin, Tenant User)
+      2. Enumerate steps from a defined starting state
+      3. Cover all lifecycle operations (create, read, update, delete)
+      4. Include error paths and alternative outcomes
+      5. Use diagrams (Mermaid) for multi-step interactions
+      Compare against the gold standard. Does the generated document cover
+      the same workflows? Are there missing lifecycle operations or error
+      paths that the gold includes?
+
+  - id: failure-handling
+    name: "Failure Handling"
+    weight: important
+    prompt: |
+      The Failure Handling and Recovery section should enumerate CONCRETE
+      failure modes — not generic categories. For each:
+        - What happens (the failure)
+        - How the system recovers (retry, rollback, human intervention)
+        - What the user observes (error message, status condition)
+      Check for: controller reconciliation failures, API-side errors,
+      integration failures (AAP job failures, network provisioning timeouts),
+      and concurrent modification conflicts.
+      Compare against the gold standard. Does the generated document cover
+      the same failure modes? Does it add plausible ones the gold missed?
+
+  - id: test-plan-specificity
+    name: "Test Plan Specificity"
+    weight: important
+    prompt: |
+      The Test Plan must list CONCRETE test scenarios under Unit Tests,
+      Integration Tests, and E2E Tests — not generic strategy.
+      Anti-patterns to flag:
+        - "Unit and integration tests will be added"
+        - "Tests will cover all CRUD operations"
+        - "Standard test coverage"
+      Good patterns:
+        - "Validation rejects overlapping CIDRs"
+        - "Creating a VirtualNetwork reconciles namespace and network resources"
+        - "Tenant creates ComputeInstance attached to Subnet and reaches it via PublicIP"
+      Compare against the gold standard for similar specificity and coverage.
+
+  - id: alternatives-quality
+    name: "Alternatives Quality"
+    weight: important
+    prompt: |
+      The Alternatives section should include at least one REAL alternative
+      with honest pros/cons and a clear rejection rationale. Check:
+      1. Is there at least one substantive alternative? (not just "do nothing")
+      2. Are the alternatives plausible approaches that were genuinely considered?
+      3. Is the rejection rationale based on real trade-offs?
+      4. Are strawman alternatives (obviously bad options listed to make the
+         proposal look good) avoided?
+      Compare against the gold standard. Does the generated document consider
+      similar alternatives with similar depth?
+
+  - id: tenant-isolation
+    name: "Tenant Isolation"
+    weight: important
+    prompt: |
+      For features involving new resources or multi-tenant access, the design
+      MUST address tenant isolation:
+        - osac.openshift.io/tenant annotation for tenant scoping
+        - osac.openshift.io/owner-reference annotation for resource hierarchy
+        - OPA policies for runtime enforcement
+      Check the RBAC/Tenancy and Security Considerations sections. For
+      features that don't introduce new tenant-visible resources, a brief
+      "no tenancy changes required" with justification is acceptable.
+      Compare against the gold standard for equivalent coverage.
+
+  - id: content-completeness
+    name: "Content Completeness"
+    weight: important
+    prompt: |
+      Compare the SUBSTANCE of the generated design against the gold standard.
+      Focus on whether the same technical decisions, component changes, and
+      architectural patterns are covered — NOT on section structure or
+      formatting differences.
+      Key areas to compare:
+        - Same components identified as affected
+        - Same database changes described
+        - Same controller/server changes covered
+        - Same integration points addressed
+        - Similar level of cross-component analysis
+      Flag substantive content gaps. Ignore stylistic differences.
+
+  - id: scope-discipline
+    name: "Scope Discipline"
+    weight: important
+    prompt: |
+      The design should match the PRD's scope — no more, no less.
+      Check for:
+      1. Scope creep: does the design introduce features or components
+         NOT required by the PRD? (e.g., adding observability dashboards
+         when the PRD doesn't mention monitoring)
+      2. Scope reduction: does the design silently defer PRD requirements
+         using language like "simplified version", "v2", "placeholder",
+         or "future enhancement"?
+      3. Non-Goals alignment: do the design's Non-Goals match the PRD's
+         Out of Scope items?
+      Compare against the gold standard's scope coverage.
+
+pass_threshold: 7
+fail_on_critical: true

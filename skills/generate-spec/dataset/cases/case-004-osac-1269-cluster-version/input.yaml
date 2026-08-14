@@ -1,0 +1,18 @@
+jira_key: OSAC-1269
+title: "ClusterVersion API"
+priority: "High"
+prompt: "# OSAC-1269: Managed Cluster Versions\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Critical\n- **Assignee**: Ilya Skornyakov\n- **Reporter**: Elad Tabak\n- **Components**: CaaS\n\
+  - **Labels**: None\n\n## Description\n\nCluster creation currently requires users to provide a full OCI release image URL (e.g., quay.io/openshift-release-\n  dev/ocp-release:4.17.0-multi ). This leaks\
+  \ infrastructure details into the user-facing API \u2014 users must know exact\n  registry paths and tag formats, typos are caught only at provisioning time, and there is no way to discover which\n  versions\
+  \ are available, deprecated, or end-of-life.\n\n  This feature introduces a managed list of cluster versions. Users select a version by number (e.g., \"4.17.0\")\n  instead of pasting URLs. The platform\
+  \ resolves the image internally, validates the version's lifecycle state before\n  provisioning begins, and prevents deletion of in-use versions.\n\n  **What this enables:**\n\n  \u2022 Tenants create\
+  \ clusters self-service by selecting a version number \u2014 no out-of-band coordination with admins for\n  release image URLs\n  \u2022 Admins govern which OCP versions tenants can provision, with lifecycle\
+  \ states that signal deprecation and block\n  obsolete versions\n  \u2022 Version validation at API time catches errors before provisioning begins, eliminating wasted build cycles from\n  invalid or stale\
+  \ references\n  \u2022 Deprecated versions surface warnings with replacement guidance, helping tenants plan ahead\n  \u2022 Delete protection prevents accidental removal of versions backing active clusters\n\
+  \  \u2022 Establishes the version management approach that cluster upgrade operations (OSAC-1415) and ACM version auto-sync\n  will build on\n  **Goals:**\n  \u2022 Users specify an OpenShift version\
+  \ by number instead of a raw OCI release image URL when creating a cluster\n  \u2022 Users receive immediate, descriptive feedback when specifying an invalid, obsolete, or deprecated version \u2014 before\n\
+  \  any provisioning begins\n  \u2022 Cloud Provider Admins manage available cluster versions through the CLI and UI console\n  \u2022 Tenant Users can discover and select from available versions when\
+  \ creating a cluster \u2014 in the CLI, UI, and API\n  **Non-Goals:**\n  \u2022 Cluster upgrade operations and channel propagation to the hosted cluster (OSAC-1415). Channels are stored as\n  version\
+  \ catalog metadata but not propagated in v0.2\n  \u2022 ACM ClusterImageSet auto-sync \u2014 versions are admin-managed in v0.2\n  \u2022 VM image management \u2014 separate resource under OSAC-979\n\
+  \  \u2022 In-place upgrade migration \u2014 OSAC does not support in-place upgrades; this feature assumes fresh deployment\n\n## Linked Issues\n\n- **OSAC-1423** (In Progress): Replace release_image URL\
+  \ with OpenShift version in Cluster API\n- **OSAC-1834** (In Progress): CaaS UX: Surface bare metal machine availability to tenants during cluster creation\n"

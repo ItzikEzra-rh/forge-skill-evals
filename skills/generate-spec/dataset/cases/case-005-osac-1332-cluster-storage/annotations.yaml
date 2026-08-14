@@ -1,0 +1,4 @@
+expected_score: 6  # out of 8
+expected_pass: true
+gold_design_path: "enhancement-proposals/enhancements/OSAC-1332-caas-cluster-storage/design.md"
+notes: "Controller design for provisioning storage on CaaS clusters. Integration with AAP and HyperShift. 364 lines."

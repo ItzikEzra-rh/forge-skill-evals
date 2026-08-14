@@ -1,0 +1,17 @@
+jira_key: OSAC-1567
+title: "Secret Management"
+priority: "High"
+prompt: "# OSAC-1567: Secret Management \u2014 Encrypted Storage with Pluggable Backends\n\n## Metadata\n\n- **Status**: In Progress\n- **Priority**: Critical\n- **Assignee**: Dakota Crowder\n- **Reporter**:\
+  \ Oved Ourfali\n- **Components**: Core, Storage\n- **Labels**: customer, customer:moc\n\n## Description\n\n## Feature Goal\n\n  Provide a dedicated secret management subsystem in the OSAC API with encrypted\
+  \ storage, pluggable backends, and a\n  uniform interface for accessing secrets across all services (CaaS kubeconfigs, IdP client secrets, storage\n  credentials, SSH keys).\n\n  ## Problem Statement\n\
+  \n  Secrets are currently stored as unencrypted fields within resource database tables (e.g., kubeconfig in Hub spec,\n  IdP secrets in org config). This means no encryption at rest, no separation of\
+  \ secret lifecycle from resource\n  lifecycle, no uniform access pattern, and no key rotation capability.\n\n  ## User Stories\n\n  \u2022 As a Cloud Infrastructure Admin, I need secrets encrypted at\
+  \ rest so that database access does not expose\n  sensitive credentials\n  \u2022 As a Cloud Infrastructure Admin, I need to rotate encryption keys without re-encrypting all data simultaneously\n  \u2022\
+  \ As a Tenant User, I need a uniform way to retrieve secrets (kubeconfigs, passwords) instead of ad-hoc per-resource\n  RPCs\n  \u2022 As a Cloud Provider Admin, I need pluggable secret backends so I\
+  \ can choose between database storage and external\n  secret stores\n\n  ## Definition of Done\n\n  [ ] Secret resource type with full CRUD service\n\n  [ ] Envelope encryption (RSA + AES) for database-backed\
+  \ secrets\n\n  [ ] SecretClass type for pluggable backends (database, hub/Kubernetes)\n\n  [ ] Hub secret backend \u2014 on-demand data fetch from Kubernetes clusters\n\n  [ ] Data-stripping on List (only\
+  \ Get returns secret payload)\n\n  [ ] SecretReference integration replacing ad-hoc RPCs (GetKubeconfig, GetPassword)\n\n  [ ] OPA policies for secret access control and tenant isolation\n\n  [ ] CLI\
+  \ flags for encryption key configuration\n\n  ## Out of Scope\n\n  \u2022 External secret manager integration (HashiCorp Vault) \u2014 future enhancement\n  \u2022 Secret rotation automation \u2014 future\
+  \ enhancement\n  \u2022 SSH key cloud-init injection (VMaaS-specific, see OSAC-51)\n\n  ## Related\n\n  \u2022 OSAC-1337: Implementation epic\n  \u2022 OSAC-1330: Type-safe resource references (provides\
+  \ SecretReference type)\n  \u2022 OSAC-51: SSH key management for VMs (VMaaS-specific consumer of this feature)\n\n## Linked Issues\n\n- **OSAC-2389** (In Progress): Per-Project Encryption Key Management\
+  \ (KMS)\n"

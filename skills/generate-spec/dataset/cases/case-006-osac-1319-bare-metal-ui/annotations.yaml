@@ -1,0 +1,4 @@
+expected_score: 6  # out of 8
+expected_pass: true
+gold_design_path: "enhancement-proposals/enhancements/OSAC-1319-bare-metal-instance-ui/design.md"
+notes: "UI design for bare metal instance management. Reuses existing catalog and wizard patterns. 325 lines."

@@ -1,0 +1,153 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1/case-005-osac-1332-cluster-storage/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-005-osac-1332-cluster-storage/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 22,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections are present including Summary, Motivation with Goals/Non-Goals, Proposal with Workflow Description/API Extensions, Implementation Details, Security Considerations, Failure Handling and Recovery, RBAC/Tenancy, Observability and Monitoring, Risks and Mitigations, Drawbacks, Alternatives (Not Implemented), Test Plan with Unit/Integration/E2E Tests, and Graduation Criteria; frontmatter contains all required fields (title, authors, creation-date, tracking-link, prd).",
+      "quotes": [
+        "title: caas-cluster-storage",
+        "tracking-link:\n  - https://redhat.atlassian.net/browse/OSAC-1332",
+        "### Integration Tests"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "No proto schemas expected (gold standard has none)",
+      "quotes": []
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document references the PRD in the Summary, traces design decisions to PRD items with inline markers, marks unverified decisions with [Assumption], respects In/Out of Scope boundaries, and covers all PRD requirements present in the gold standard without silent omissions.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[PRD: In Scope item 1]",
+        "[Assumption \u2014 StorageTier API OSAC-1110 not yet available]"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard's implementation depth, providing specific condition reasons, exact Go RBAC annotations, named error codes, concrete reconciliation steps, specific AAP YAML parameter syntax, and detailed failure mode tables with the same specificity as the gold.",
+      "quotes": [
+        "Condition reasons: KubeConfigNotAvailable, ProvisionFailed, MultipleFound, ClusterStorageProvisioned",
+        "kubeconfig: \"{{ _remote_kubeconfig | default(omit) }}\"",
+        "mapClusterOrderToTenant currently stubs out and returns nil. This function will be implemented to..."
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same workflows as the gold standard, including both provisioning and teardown with Mermaid diagrams, all four OSAC personas, error paths, and lifecycle operations (create, read, update, delete via finalizer).",
+      "quotes": [
+        "CaaS Storage Provisioning",
+        "CaaS Storage Teardown",
+        "HostedControlPlane already gone",
+        "Controller restarts mid-provisioning"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all six failure modes from the gold standard and adds two plausible additional ones (controller restart mid-provisioning and race condition on concurrent deletion), each with concrete behavior, recovery mechanism, and user-observable outcome.",
+      "quotes": [
+        "AAP provisioning job fails | ClusterStorageReady=False, reason ProvisionFailed",
+        "Controller restarts mid-provisioning (AAP job in-flight) | Controller reads ClusterStorageJobs from status and resumes polling",
+        "Race: ClusterOrder deleted while provisioning in progress | Finalizer already added at provisioning start"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists concrete, named test scenarios with specific behaviors to verify under Unit Tests, Integration Tests, and E2E Tests, matching or exceeding the gold standard's specificity.",
+      "quotes": [
+        "mapClusterOrderToTenant: Verify correct Tenant lookup from osac.openshift.io/tenant annotation. Cover: annotation missing (return nil)",
+        "Duplicate StorageClass detection: Inject two StorageClasses for the same tier and tenant label. Verify DuplicateStorageClass warning event",
+        "Tenant isolation: Two tenants each with one CaaS cluster. Verify StorageClasses on Tenant A's cluster are not visible on Tenant B's cluster"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes three substantive alternatives with honest pros/cons and clear rejection rationale matching the gold standard in depth and quality.",
+      "quotes": [
+        "Separate `CaaSStorageReconciler`...Duplicates provisioning lifecycle logic (AAP job triggering, polling, status, finalizer). Two controllers writing to `Tenant.status.clusterStorage` introduces ordering ambiguity",
+        "`ClusterOrder` Controller Owns Storage Provisioning...Reverses the storage/compute separation introduced by OSAC-1001",
+        "Storage Readiness Gates `ClusterOrder Phase=Ready`...Blocks compute availability on storage provisioning"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully addresses tenant isolation with osac.openshift.io/tenant annotation mapping, label-based filtering enforcement, OPA policy justification, and owner-reference via finalizer mechanics.",
+      "quotes": [
+        "Tenant isolation is enforced at two layers: 1. Label filtering \u2014 storage_tier_resolution.go returns only StorageClasses labeled osac.openshift.io/tenant=<tenantName>",
+        "No new OPA policies are required. Storage provisioning is triggered by the platform (storage controller watch), not by a tenant API call",
+        "Controller-level isolation: The storage controller uses the osac.openshift.io/tenant annotation to map ClusterOrder objects to their owning Tenant"
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same components, database/API changes, controller changes, and architectural patterns as the gold standard, with additional detail in most sections.",
+      "quotes": [
+        "osac-operator, osac-aap, fulfillment-service, osac-installer",
+        "ClusterStorageReady condition and osac.openshift.io/cluster-storage finalizer",
+        "mapClusterOrderToTenant, handleUpdate, kubeconfig retrieval"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches the gold standard's scope precisely: same Non-Goals (StorageTier API, VAST provider changes, dynamic tier addition, Storage UI, dedicated AAP ServiceAccount, storage backend provisioning), no additional features beyond what the PRD requires, and no deferred requirements using scope-reduction language.",
+      "quotes": [
+        "StorageTier API integration ([OSAC-1110]",
+        "Storage UI ([OSAC-1252]",
+        "No new controllers, CRDs, or fulfillment-service changes are required"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1/case-003-osac-1110-storage-tier/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-003-osac-1110-storage-tier/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 22,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections are present including Summary, Motivation with Goals/Non-Goals, Proposal with Workflow Description/API Extensions, Implementation Details, Security Considerations, Failure Handling and Recovery, RBAC/Tenancy, Observability and Monitoring, Risks and Mitigations, Drawbacks, Alternatives (Not Implemented), Test Plan with Unit/Integration/E2E subsections, Graduation Criteria, and YAML frontmatter with all required fields.",
+      "quotes": [
+        "title: storage-tier-api",
+        "tracking-link:",
+        "prd:",
+        "### Unit Tests",
+        "### E2E Tests"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "Generated document contains complete proto code blocks with correct field names, types, and structure matching the gold standard, plus adds spec/status sub-messages and REST transcoding annotations consistent with OSAC conventions.",
+      "quotes": [
+        "message StorageTier {\n  string            id       = 1;\n  Metadata          metadata = 2;\n  StorageTierSpec   spec     = 3;\n  StorageTierStatus status   = 4;\n}",
+        "service StorageTiers {\n  rpc List(StorageTiersListRequest)     returns (StorageTiersListResponse)",
+        "option (google.api.http) = {get: \"/api/private/v1/storage_tiers\"}"
+      ]
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document references the PRD in the Summary, traces design decisions to PRD items with explicit tags (e.g., [PRD: FR-7], [PRD: NFR-2]), marks unverified decisions with [Assumption], and covers all major PRD requirements without silently dropping them or adding unflagged scope.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[PRD: FR-7, FR-10]",
+        "[Assumption] The DB schema and proto are already multi-backend capable"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard's implementation depth, providing specific error codes for all CRUD operations, exact SQL trigger functions with JSONB paths, concrete validation rules (exactly one backend in v0.1, non-empty name, non-UNSPECIFIED protocol), specific gRPC error codes per condition, and detailed workflow sequences.",
+      "quotes": [
+        "Assert `len(request.Object.Spec.GetBackends()) == 1` \u2192 `INVALID_ARGUMENT(\"exactly one backend association is required in v0.1\")`",
+        "errcode = 'Z0002', message = format('StorageBackend ''%s'' does not exist or has been deleted'",
+        "DAO compares `metadata.version` against the DB row's current version \u2192 `ABORTED` on mismatch"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully covers all workflow lifecycle operations (create, read, update, delete), defines actors using OSAC personas, enumerates steps from defined starting states, includes comprehensive error paths, and provides a Mermaid diagram matching the gold standard's coverage.",
+      "quotes": [
+        "Actors: Cloud Provider Admin",
+        "Workflow 1: Create a StorageTier",
+        "Workflow 4: Delete a StorageTier",
+        "Failure path (backend referenced by tier",
+        "sequenceDiagram"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all concrete failure modes from the gold standard and adds several plausible ones (immutable field violation, TOCTOU race via Z0002, fulfillment-service unavailability from operator perspective, materialization trigger failure) with specific error codes, recovery actions, and user-visible messages.",
+      "quotes": [
+        "DB-layer backend validation fails (Z0002, TOCTOU race) | check_storage_tier_backend_refs trigger raises Z0002; transaction rolls back",
+        "fulfillment-service unavailable (operator perspective) | resolveAndInjectTierContext() catches error; logs Warning event",
+        "Optimistic lock conflict on Update | DAO compares metadata.version; mismatch returns ABORTED"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists highly specific, concrete test scenarios matching the gold standard's level of detail and exceeding it with additional named scenarios.",
+      "quotes": [
+        "Create \u2014 empty backends: Asserts INVALID_ARGUMENT when spec.backends is empty",
+        "TOCTOU protection: Concurrently issue StorageBackend delete and StorageTier create for the same backend ID",
+        "Backend deletion protection (cross-service E2E): Cloud Provider Admin creates a StorageBackend and a StorageTier referencing it; Cloud Infrastructure Admin attempts to delete the backend \u2192 assert FAILED_PRECONDITION"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes four substantive alternatives with honest pros/cons and real rejection rationales, matching the gold standard in depth and covering the same options.",
+      "quotes": [
+        "Free-form JSON for QoS properties...Rejected because typed proto fields provide better developer experience",
+        "Server-side-only referential integrity...Rejected because the trigger approach matches the established VirtualNetwork/Subnet pattern",
+        "CRD-backed StorageTier with an operator controller...Rejected because StorageTier has no reconciliation logic",
+        "Keep STORAGE_TIERS environment variable...Rejected because OSAC-23 requires the fulfillment-service API"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully addresses tenant isolation with explicit coverage of osac.openshift.io/tenant annotation set to SharedTenant, osac.openshift.io/owner-reference noted as not applicable for platform-scoped entities, and existing OPA policies confirmed sufficient.",
+      "quotes": [
+        "osac.openshift.io/tenant annotation is set by attributionLogic to the shared platform tenant",
+        "osac.openshift.io/owner-reference is not applicable (no parent resource in the hierarchy for platform-scoped entities)",
+        "No new OPA policies needed. The existing private API admin-only gate (osac.private.v1.*) is sufficient."
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same technical decisions as the gold standard: identical proto schema design, same server implementation pattern, same database migrations with identical trigger logic, same cross-resource backend deletion guard, same osac-operator integration, and same referential integrity approach.",
+      "quotes": [
+        "check_storage_backend_not_in_use_by_tier",
+        "materialize_storage_tier_backends",
+        "GenericServer[*privatev1.StorageTier]",
+        "storage_tier_backends helper table"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches PRD scope closely: Non-Goals align with PRD Out-of-Scope items, no significant scope creep beyond reasonable implementation detail, and deferred items are explicitly noted with tracking references rather than silently dropped.",
+      "quotes": [
+        "**`DEPRECATED` state for StorageTier** \u2014 deferred to a later milestone. [PRD: FR-9]",
+        "The tenant-reference trigger (`check_storage_tier_not_in_use`) that prevents deleting a `StorageTier` while tenants reference it is **deferred to a follow-up migration shipping with OSAC-23**",
+        "**Automatic StorageClass creation or refresh on QoS change** \u2014 responsibility of the OSAC Storage Controller (OSAC-23)"
+      ]
+    }
+  ]
+}
