@@ -1,0 +1,159 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1-feedback/case-002-osac-1425-networking-ui/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-002-osac-1425-networking-ui/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 22,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections are present including Summary, Motivation with Goals/Non-Goals, Proposal with Workflow Description/API Extensions/Implementation Details, Security Considerations, Failure Handling, RBAC/Tenancy, Observability, Risks/Mitigations, Drawbacks, Alternatives, Test Plan with Unit/Integration/E2E subsections, and Graduation Criteria; YAML frontmatter contains all required fields (title, authors, creation-date, tracking-link, prd).",
+      "quotes": [
+        "title: osac-tenant-ui-networking-section",
+        "tracking-link:",
+        "## Failure Handling and Recovery",
+        "### Unit Tests",
+        "## Graduation Criteria"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "No proto schemas expected (gold standard has none)",
+      "quotes": []
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document references the PRD in the Summary ('See [PRD](prd.md)'), aligns with PRD scope (same In/Out-of-scope items), marks uncertain items as [Assumption], and covers all substantive PRD requirements without significant gaps or unexplained additions.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[Assumption: stuck resources are a support/operational concern, not a UI concern]",
+        "No new fulfillment-service API endpoints, proto messages, database tables, or controllers"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches the gold standard's implementation depth with identical code snippets for mutation hooks, identical routing structures, identical validation rules with specific error messages, identical state\u2192StatusKind mappings, identical refetchInterval logic, and equally specific API request bodies and error sub-flows.",
+      "quotes": [
+        "mutationFn: async (vn: VirtualNetworkInput) =>",
+        "refetchInterval: (data) => { const hasNonTerminalState = data?.some(",
+        "spec.ipv4_cidr: required, valid CIDR notation, prefix length between /16 and /24"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same workflows as the gold standard, defines all four OSAC personas, enumerates steps from defined starting states, covers full CRUD lifecycle operations, includes error paths and alternative outcomes, and includes a Mermaid sequence diagram.",
+      "quotes": [
+        "Actor definitions",
+        "Tenant Admin",
+        "Tenant User",
+        "Cloud Infrastructure Admin",
+        "Cloud Provider Admin",
+        "Error sub-flow \u2014 duplicate name",
+        "Error sub-flow \u2014 CIDR not a subset",
+        "sequenceDiagram"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all failure modes from the gold standard (provisioning failures with FAILED state/inline alert, delete failures with 400/500 handling, network fetch errors with retry, double-submission prevention, concurrent modification last-write-wins, controller reconciliation stuck-PENDING, token expiry, service unavailable) and adds plausible extras (pool exhausted on PublicIP, delete blocked by resource state with FAILED_PRECONDITION, fulfillment-service unavailable as distinct from network errors).",
+      "quotes": [
+        "Controller reconciliation failures",
+        "If DELETE returns 500: toast 'Failed to delete. Please try again.' Optimistic update is rolled back",
+        "Concurrent modification...second PATCH overwrites the first"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists concrete, specific test scenarios matching gold standard patterns: named hooks, specific behaviors, specific workflows, and specific error conditions under Unit, Integration, and E2E categories.",
+      "quotes": [
+        "test Yup schemas for VirtualNetwork, Subnet, SecurityGroup, PublicIP. Verify error messages for invalid inputs (DNS names, CIDR ranges, port ranges)",
+        "Wizard inline creation: open VN create modal from wizard, submit form, verify modal closes and wizard VN dropdown refetches and auto-selects new VN",
+        "attempt to delete VN with subnets, verify error modal appears with correct message"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document's Alternatives section includes four substantive, plausible alternatives with honest pros/cons and clear rejection rationales based on real trade-offs, matching the gold standard's depth and quality.",
+      "quotes": [
+        "Alternative 2: Dedicated top-level page for Subnets...Rejection rationale: PRD requirement FR-13 explicitly states",
+        "Alternative 3: Client-side batching for SecurityGroup rule edits...Rejection rationale: Increases UI complexity",
+        "Alternative 4: Optimistic updates without refetch after create...Rejection rationale: Risk of stale cache"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully addresses tenant isolation with explicit mention of osac.openshift.io/tenant annotation, osac.openshift.io/owner-reference annotations, OPA policies, and RBAC table in the RBAC/Tenancy section.",
+      "quotes": [
+        "all networking resources carry `osac.openshift.io/tenant` annotation (injected server-side)",
+        "Parent-child relationships (VirtualNetwork \u2192 Subnets, VirtualNetwork \u2192 SecurityGroups) use `osac.openshift.io/owner-reference` annotations",
+        "All API-level enforcement is performed by the fulfillment-service and OPA policies"
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same technical decisions, components, API hooks, wizard integrations, database models, routing changes, validation rules, error handling patterns, RBAC, observability, and architectural patterns as the gold standard with equivalent or greater depth.",
+      "quotes": [
+        "mutation hooks (`useCreateVirtualNetwork`, `useDeleteVirtualNetwork`, `usePatchSecurityGroup`, etc.)",
+        "Routing changes in `apps/app-frontend/src/shell` add a \"Networking\" section",
+        "No new API extensions...The fulfillment API already provides the required gRPC services"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches the gold standard's scope \u2014 it covers all PRD requirements without significant creep or reduction, and Non-Goals align well (both exclude provider-only management, baremetal/cluster networking, topology view migration, and multi-NIC support).",
+      "quotes": [
+        "Provider-only resource management (NetworkClass CRUD, PublicIPPool CRUD, NATGateway, ExternalIPAttachment)",
+        "Multi-region VirtualNetwork support, cross-VN NIC attachments, and multi-NIC support (deferred to future phase)",
+        "No new fulfillment-service API endpoints, proto messages, database tables, or controllers"
+      ]
+    }
+  ]
+}

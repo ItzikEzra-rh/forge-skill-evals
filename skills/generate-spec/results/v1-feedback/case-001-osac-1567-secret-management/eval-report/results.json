@@ -1,0 +1,171 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1-feedback/case-001-osac-1567-secret-management/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-001-osac-1567-secret-management/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 22,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections and frontmatter fields are present in the generated document.",
+      "quotes": [
+        "title: secret-management",
+        "## Summary",
+        "### Goals",
+        "### Non-Goals",
+        "### Workflow Description",
+        "### API Extensions",
+        "## Implementation Details/Notes/Constraints",
+        "### Security Considerations",
+        "### Failure Handling and Recovery",
+        "### RBAC / Tenancy",
+        "### Observability and Monitoring",
+        "### Risks and Mitigations",
+        "### Drawbacks",
+        "## Alternatives (Not Implemented)",
+        "## Test Plan",
+        "## Graduation Criteria"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains identical proto code blocks matching the gold standard exactly, including the Secret message, SecretSpec, SecretBackend enum, and Secrets service RPC definitions.",
+      "quotes": [
+        "message Secret { string id = 1; Metadata metadata = 2; SecretSpec spec = 3; }",
+        "service Secrets { rpc List(SecretsListRequest) returns (SecretsListResponse);",
+        "SECRET_BACKEND_VAULT = 1; SECRET_BACKEND_HUB = 2;"
+      ]
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes the PRD reference in the Summary, aligns with PRD scope (CLI/API only, no UI, no rotation automation), marks no decisions as [Assumption] that aren't also absent from the gold standard, and covers all the same PRD items as the gold standard without introducing unflagged scope creep.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "UI support \u2014 secret management is CLI and API only for 0.2",
+        "[PRD: Out of Scope \u2014 UI]"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches the gold standard nearly verbatim with identical implementation depth across all sections including proto schemas, database schema, server reconciliation logic, state transitions, failure handling tables, Vault auth paths, and integration points.",
+      "quotes": [
+        "Per-operation behavior table with specific gRPC status codes like `FAILED_PRECONDITION`",
+        "bound_claims: {\"organization\": [\"<tenant_name>\"]}",
+        "Vault write \u2192 insert metadata \u2192 commit"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same workflows as the gold standard, including all four lifecycle operations (create, read, update, delete), error paths with per-operation failure tables, the Mermaid sequence diagram, and all OSAC persona-based workflows.",
+      "quotes": [
+        "Cloud Infrastructure Admin: Configure the Secret Store",
+        "Tenant User: Create and Retrieve a Secret",
+        "Error Handling",
+        "| **Delete (Vault)** | Delete metadata \u2192 authenticate to tenant namespace \u2192 Vault metadata delete"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document's Failure Handling section covers exactly the same concrete failure modes as the gold standard: Vault write failure with no DB record created, DB commit failure leaving Vault orphan, namespace missing returning FAILED_PRECONDITION, auth failures, and the per-operation table with identical rows and recovery actions.",
+      "quotes": [
+        "Namespace missing: `FAILED_PRECONDITION`. Auth or Vault failure: no record created. Commit failure: orphan in Vault (no metadata).",
+        "Auth or Vault failure: rollback restores metadata, secret intact. Commit failure: retry (Vault metadata delete is idempotent on non-existent paths).",
+        "If the Vault write fails, no database record is created \u2014 the request fails cleanly."
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document's Test Plan matches the gold standard nearly verbatim with concrete, named scenarios across all three test categories.",
+      "quotes": [
+        "Vault write failure returns error with no DB record",
+        "verify bound_claims rejection for mismatched organization",
+        "Automatic secret creation during cluster provisioning"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all four alternatives from the gold standard with identical rejection rationales and depth: Database Envelope Encryption, Parent-Namespace Service Token, Path-based Tenant Isolation, and Full Backwards Compatibility.",
+      "quotes": [
+        "### Database Envelope Encryption",
+        "### Parent-Namespace Service Token (Single Credential)",
+        "### Path-based Tenant Isolation (No Namespaces)",
+        "### Full Backwards Compatibility with Existing Data Fields"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully addresses tenant isolation with OPA policies, dedicated Vault namespaces per tenant, Keycloak JWT bound_claims enforcement, and explicit RBAC/Tenancy section matching the gold standard.",
+      "quotes": [
+        "Each tenant's secrets are stored in a dedicated namespace with its own KV v2 engine",
+        "bound_claims: {\"organization\": [\"<tenant>\"]}",
+        "OPA policy additions...has_client_permissions"
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same technical decisions, components, database changes, server implementation, CLI commands, secret references, credential migration, security considerations, RBAC, and alternatives as the gold standard with identical substance.",
+      "quotes": [
+        "Same proto schema, database schema, Vault configuration flags",
+        "Same 7-resource credential reference table (Cluster, ClusterTemplate, Hub, IdentityProvider x2, StorageBackend, Tenant)",
+        "Same failure handling table with identical per-operation rows"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches the gold standard's scope precisely \u2014 same Non-Goals, same features, no added or deferred requirements.",
+      "quotes": [
+        "Non-Goals",
+        "Secret rotation automation",
+        "UI support \u2014 secret management is CLI and API only for 0.2"
+      ]
+    }
+  ]
+}
