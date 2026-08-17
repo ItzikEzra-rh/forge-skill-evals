@@ -1,0 +1,119 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/results/v3-blind-feedback/OSAC-1330/prd.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/dataset/cases/OSAC-1330/gold-prd.md",
+  "overall_pass": false,
+  "grade": "C",
+  "total_passed": 5,
+  "total_criteria": 8,
+  "total_score": 11,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All four OSAC personas are addressed with at least one user story each, and Cloud Infrastructure Admin has a story about auditing cross-tenant resource references.",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "### Cloud Provider Admin",
+        "### Tenant Admin",
+        "### Tenant User"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document includes a migration/backward-compatibility story under Tenant User ('provide either the legacy ID or the name during the migration period') and frames the entire feature around ID-to-name migration support, while the gold standard explicitly scopes out backward compatibility; more critically, no misattribution of sanitization exists but the Cloud Infrastructure Admin story ('audit which resources are referenced') doesn't match the gold standard's infrastructure ops persona stories, and the generated document lacks the 'All Personas' category entirely, misrepresenting cross-cutting UI/CLI stories under wrong or absent personas.",
+      "quotes": [
+        "As a Cloud Infrastructure Admin, I want to be able to audit which resources are referenced",
+        "As a Tenant User, I want to provide either the legacy ID or the name of a referenced resource during the migration period",
+        "No backward-compatible transition period \u2014 clean replacement"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document critically misrepresents scope: it includes a backward-compatible migration period (accepting legacy ID-based references) which the gold standard explicitly places Out of Scope, and omits gold's Out of Scope item 'Backward compatibility with the previous string-based reference format'. It also omits UI/CLI updates from In Scope (gold includes them), misses 'No backward-compatible transition period \u2014 clean replacement' as an In Scope item, and adds scope-creep items like cross-tenant audit and inconsistent-ID validation not in the gold.",
+      "quotes": [
+        "No backward-compatible transition period \u2014 clean replacement of the current format",
+        "Backward compatibility with the previous string-based reference format",
+        "UI, CLI, and API all updated to support the new reference format"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details such as controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; platform vocabulary used is acceptable.",
+      "quotes": [
+        "ClusterOrder",
+        "ClusterTemplate, VirtualNetwork, Subnet, SecurityGroup",
+        "cross-cutting capability across all services"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain points (invalid references caught at provisioning time, unclear cross-tenant semantics, unmanageable migration) without describing the solution or how the feature works.",
+      "quotes": [
+        "Invalid or mistyped references are only caught at provisioning time \u2014 not at submission \u2014 leading to failed operations",
+        "The API also cannot express whether a reference targets an object in the same tenant",
+        "reference fields cannot evolve without breaking every existing API consumer"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document addresses async status visibility indirectly through submission-time validation and descriptive errors, but this feature is primarily synchronous validation, not async resource creation, so the criterion is adequately met.",
+      "quotes": [
+        "References are validated at submission time: invalid references...are rejected with descriptive errors",
+        "I receive immediate feedback instead of discovering errors at provisioning time",
+        "reject my request with a descriptive error if the ID and name I provide...do not refer to the same object"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains exactly the allowed sections: Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, and Dependencies \u2014 all required sections are present and no extra sections appear.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Generated document adds migration/backward-compatibility content not in gold (legacy ID acceptance, inconsistent ID+name validation), while missing key gold standard items: UI/CLI updates, 'All Personas' user stories, clean replacement with no backward-compatibility period, and specific user stories about name-based references for catalog items and network resources.",
+      "quotes": [
+        "No backward-compatible transition period \u2014 clean replacement",
+        "UI, CLI, and API all updated to support the new reference format",
+        "As any user, I want references displayed in the UI to show the referenced resource's name"
+      ]
+    }
+  ]
+}

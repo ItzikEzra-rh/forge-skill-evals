@@ -1,0 +1,118 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/results/v3-blind-feedback/OSAC-2872/prd.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/dataset/cases/OSAC-2872/gold-prd.md",
+  "overall_pass": false,
+  "grade": "C",
+  "total_passed": 5,
+  "total_criteria": 8,
+  "total_score": 11,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Cloud Infrastructure Admin has stories in the generated doc, but the gold standard does NOT include a Cloud Infrastructure Admin section \u2014 it merges Tenant Admin/User and omits Cloud Infrastructure Admin as a separate persona; the generated doc also lacks explicit 'Not affected' notes and misses the gold standard's combined Tenant Admin/User treatment, but all 4 personas do appear with stories.",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "### Tenant Admin",
+        "### Tenant User",
+        "### Cloud Provider Admin"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories in the generated document correctly match their personas: infrastructure ops (storage backends, tiers, cluster readiness) under Cloud Infrastructure Admin, cross-tenant visibility and lifecycle tracking under Cloud Provider Admin, org-level tier visibility under Tenant Admin, and self-service provisioning under Tenant User, with no internal system stories.",
+      "quotes": [
+        "Cloud Infrastructure Admin...configure storage backends and tiers",
+        "Cloud Provider Admin...volume inventory across all tenants",
+        "Tenant User...request persistent storage for my workload"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document is missing several Out of Scope items (volume resize, volume snapshots/clones) and incorrectly combines Public Volume API and UI integration as one item; In Scope items diverge significantly by adding unsupported vendors (NetApp, Pure Storage) while gold limits v0.2 to VAST only, and adds scope creep items like storage tier visibility for Tenant Admin and cluster storage readiness status.",
+      "quotes": [
+        "v0.2 supports VAST as the only vendor backend",
+        "Volume resize",
+        "Volume snapshots and clones",
+        "Multiple storage vendors (NetApp ONTAP, VAST, Pure Storage)"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; platform vocabulary like ClusterOrder and BareMetalInstance is acceptable.",
+      "quotes": [
+        "ClusterOrder provisioning must be functional",
+        "BareMetalInstance storage provisioning"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated Problem Statement contains solution language, explicitly stating 'The X eliminates...' equivalent phrases like 'the storage control plane eliminates' and solution descriptions mixed in.",
+      "quotes": [
+        "Without a storage control plane, OSAC cannot offer block storage",
+        "no vendor-abstracted storage layer"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "Both In Scope and User Stories explicitly address status/progress visibility for async storage deployment, including ready states and failure visibility.",
+      "quotes": [
+        "Tenants and admins can see whether storage is ready on a given cluster.",
+        "I want to see whether storage is ready on any tenant cluster",
+        "I want to see whether storage is available and ready on my cluster"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) plus the optional Assumptions and Dependencies sections, with no extra sections outside the allowed template.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Generated covers most key capabilities but has notable gaps: missing volume resize/snapshots/clones as explicit out-of-scope items, omits v0.2 VAST-only vendor constraint, lacks the specific user story about unconfigured StorageClass staying Pending, and doesn't reference OSAC-917/OSAC-1001/OSAC-1332 dependencies. Generated adds multi-vendor support framing and attachment state details not in gold.",
+      "quotes": [
+        "v0.2 supports VAST as the only vendor backend",
+        "OSAC-917 (Storage Framework): Delivers StorageBackend and StorageTier entities",
+        "PVC referencing an unconfigured StorageClass to stay Pending"
+      ]
+    }
+  ]
+}

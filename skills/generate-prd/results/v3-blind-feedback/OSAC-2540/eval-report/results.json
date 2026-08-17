@@ -1,0 +1,121 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/results/v3-blind-feedback/OSAC-2540/prd.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/dataset/cases/OSAC-2540/gold-prd.md",
+  "overall_pass": true,
+  "grade": "B",
+  "total_passed": 8,
+  "total_criteria": 8,
+  "total_score": 14,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All four personas are explicitly addressed with user stories or an 'Not affected' note, including Cloud Infrastructure Admin which correctly has 'Not affected by this feature.'",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "Not affected by this feature.",
+        "### Tenant Admin",
+        "### Tenant User"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories are correctly attributed to their respective personas: Cloud Provider Admin handles catalog/lifecycle management, Cloud Infrastructure Admin is noted as not affected, Tenant Admin handles org-scoped image management, and Tenant User handles self-service provisioning\u2014no sanitization/hardware stories are misattributed, and no internal system stories exist.",
+      "quotes": [
+        "Cloud Infrastructure Admin: Not affected by this feature.",
+        "As a Cloud Provider Admin, I want to register a DiskImage",
+        "As a Tenant Admin, I want to register tenant-scoped DiskImages"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Most In Scope and Out of Scope items match, but the generated doc adds 'API reference documentation as a required deliverable' and 'Users can see lifecycle state of referenced image' as In Scope items not in the gold, and misses 'search and filter by guest OS family, architecture, or name' user story and several gold Assumptions; no items are misplaced between sections.",
+      "quotes": [
+        "API reference documentation as a required deliverable of this feature",
+        "Tenant admin filtering of global images \u2014 all global images are visible to all tenants",
+        "Image scanning or CVE detection"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, CRD field names, or agent/InfraEnv terminology; platform vocabulary used appropriately.",
+      "quotes": [
+        "DiskImage as a managed resource",
+        "ComputeInstances reference disk images",
+        "BareMetalInstance integration"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain and cost of inaction with no solution language, feature introductions, or descriptions of how the feature works.",
+      "quotes": [
+        "no way to discover which images are available",
+        "OS type must be specified per-instance rather than per-image",
+        "VM creation remains opaque and error-prone"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document addresses async status visibility through explicit user stories and in-scope items covering lifecycle state visibility for ComputeInstance users.",
+      "quotes": [
+        "Users can see the lifecycle state of an image referenced by their ComputeInstance",
+        "I want to see the lifecycle state of the DiskImage referenced by my existing ComputeInstance",
+        "deprecated or marked obsolete"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains all four required sections (Problem Statement, In Scope, Out of Scope, User Stories) and only the optional Assumptions and Dependencies sections \u2014 no extra disallowed sections are present.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Assumptions",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Generated covers most key capabilities but misses several substantive items: tenant user story about seeing only their tenant's images (visibility isolation), search/filter by OS family/architecture/name user story, assumptions about backward compatibility and OCI validation behavior, and the OSAC-2921 dependency on standardized Metadata fields.",
+      "quotes": [
+        "As a Tenant User, I want to see only images available to my tenant",
+        "As a Tenant User, I want to search and filter images by guest OS family",
+        "OSAC does not validate the accessibility of the OCI artifact"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/results/v3-blind-feedback/OSAC-1567/prd.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/dataset/cases/OSAC-1567/gold-prd.md",
+  "overall_pass": false,
+  "grade": "C",
+  "total_passed": 4,
+  "total_criteria": 8,
+  "total_score": 10,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document is missing the Cloud Provider Admin persona entirely \u2014 no user stories and no 'Not affected' note for that role.",
+      "quotes": [
+        "### Cloud Infrastructure Admin",
+        "### Tenant Admin",
+        "### Tenant User",
+        "Cloud Provider Admin"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All user stories in the generated document correctly match their persona roles: Cloud Infrastructure Admin handles encryption/key rotation/CLI config/backend selection (infrastructure ops), Tenant Admin handles org-scoped secret management and tenant isolation (org config), and Tenant User handles self-service credential retrieval; no misattributed sanitization stories or internal system stories exist.",
+      "quotes": [
+        "Cloud Infrastructure Admin, I want secrets encrypted at rest",
+        "Tenant Admin, I want to create, update, and delete secrets scoped to my organization",
+        "Tenant User, I want to retrieve cluster kubeconfigs"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document's In Scope section differs fundamentally from the gold standard \u2014 it omits major gold In Scope items (installation, E2E testing, documentation, automatic secret creation during provisioning, tenant-scoped privilege isolation, service scope across BMaaS/CaaS/VMaaS/MaaS/Enclave) and adds items not in gold (SecretClass resource, envelope encryption details, CLI key config, OPA policies). The Out of Scope section incorrectly includes external secret manager integration and SSH key injection as out of scope items, while the gold explicitly includes a Vault-compatible store as In Scope (installation prerequisite), making this a direct contradiction.",
+      "quotes": [
+        "Installation \u2014 cloud provider must deploy and configure a Vault-compatible secret store as a prerequisite",
+        "External secret manager integration (e.g., HashiCorp Vault) \u2014 deferred to a future enhancement",
+        "E2E testing \u2014 secret CRUD, automatic secret creation during provisioning, and tenant isolation require coverage"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details like controller names, reconciler logic, finalizer behavior, or CRD field names; 'SecretClass' and 'SecretReference' are used as platform/API vocabulary rather than internal implementation artifacts.",
+      "quotes": [
+        "A `SecretClass` resource type that defines and configures available secret backends",
+        "typed secret references",
+        "OSAC-1330 \u2014 Type-safe resource references"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The Problem Statement describes only user pain (unencrypted credentials, database exposure, no uniform access pattern) and cost of inaction (database compromise exposes all tenant credentials), with no solution language.",
+      "quotes": [
+        "stored as unencrypted fields within resource database tables",
+        "any database compromise exposes all tenant credentials",
+        "each consuming service must independently implement ad-hoc"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "Neither the generated document's In Scope nor User Stories address async status visibility\u2014there is no mention of users being able to see current state or failure reasons for asynchronous operations.",
+      "quotes": [
+        "Dedicated secret resource with full CRUD operations",
+        "Automatic secret creation during resource provisioning",
+        "On-demand credential retrieval for provisioned resources"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains exactly the required sections (Problem Statement, In Scope, Out of Scope, User Stories, Assumptions, Dependencies) and no extra sections.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories",
+        "## Assumptions",
+        "## Dependencies"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated doc covers encryption at rest, pluggable backends, uniform API, and tenant isolation, but misses several gold standard items: explicit multi-service scope (BMaaS, CaaS, VMaaS, MaaS, Enclave), automatic secret creation during resource provisioning, tenant RBAC control over secret access, E2E testing coverage requirement, documentation requirement, UI explicitly out of scope, Cloud Provider Admin persona, and Vault-compatible store as the backend paradigm.",
+      "quotes": [
+        "Applies to all OSAC services (BMaaS, CaaS, VMaaS, MaaS, Enclave)",
+        "Automatic secret creation during resource provisioning",
+        "E2E testing \u2014 secret CRUD, automatic secret creation during provisioning"
+      ]
+    }
+  ]
+}

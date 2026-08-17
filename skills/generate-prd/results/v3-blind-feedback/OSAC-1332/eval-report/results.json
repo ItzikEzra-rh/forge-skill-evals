@@ -1,0 +1,116 @@
+{
+  "skill": "generate-prd",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/results/v3-blind-feedback/OSAC-1332/prd.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-prd/dataset/cases/OSAC-1332/gold-prd.md",
+  "overall_pass": false,
+  "grade": "D",
+  "total_passed": 3,
+  "total_criteria": 8,
+  "total_score": 9,
+  "max_score": 16,
+  "results": [
+    {
+      "id": "persona-coverage",
+      "name": "Persona Coverage",
+      "weight": "critical",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Cloud Infrastructure Admin is marked 'Not affected' but the feature requires VIP Pool pre-configuration they perform, so they must have user stories per the criterion.",
+      "quotes": [
+        "Not affected \u2014 VIP Pool pre-configuration is a prerequisite handled outside this feature's scope.",
+        "A global VIP Pool has been pre-configured by the Cloud Infrastructure Admin before CaaS clusters are provisioned"
+      ]
+    },
+    {
+      "id": "persona-alignment",
+      "name": "Persona-Story Alignment",
+      "weight": "critical",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document places sanitization/cleanup stories ('storage resources to be automatically removed when a CaaS cluster is deleted') under Cloud Provider Admin, when cleanup is an infrastructure ops concern; more critically, self-service provisioning and storage readiness stories belong to Tenant Admin/Tenant User but are misattributed to Cloud Provider Admin, while Tenant Admin is listed as 'Not affected.'",
+      "quotes": [
+        "As a Cloud Provider Admin...storage resources to be automatically removed",
+        "Tenant Admin\nNot affected by this feature.",
+        "As a Tenant User, I want to create PVCs"
+      ]
+    },
+    {
+      "id": "scope-accuracy",
+      "name": "In Scope / Out of Scope Accuracy",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "Critical scope inversion: the generated document places 'Storage provider changes for CaaS support' (VAST backend changes) In Scope, but the gold standard explicitly lists 'Storage provider changes for CaaS support' as Out of Scope; additionally, the generated document omits gold's Out of Scope items 'Storage UI' and 'Storage backend provisioning for a tenant'.",
+      "quotes": [
+        "Storage provider changes for CaaS support",
+        "The VAST storage backend is made CaaS-ready",
+        "Storage UI"
+      ]
+    },
+    {
+      "id": "design-leakage",
+      "name": "Design Leakage",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains no internal implementation details such as controller names, reconciler logic, finalizer behavior, playbook parameters, CRD field names, or agent/InfraEnv terminology; platform vocabulary like ClusterOrder is used acceptably.",
+      "quotes": [
+        "Storage readiness tracked independently from compute readiness on the ClusterOrder",
+        "Per-tenant, per-cluster, per-tier storage views created on the VAST storage backend",
+        "A global VIP Pool is shared by all tenants for storage connectivity"
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "name": "Problem Statement Quality",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The Problem Statement mostly describes pain correctly, but the second paragraph contains solution-adjacent language describing what fixes are needed ('storage paths use tenant UIDs', 'CSI credentials are scoped to least-privilege', 'a CaaS provisioning target is added'), which crosses into solution description.",
+      "quotes": [
+        "storage paths use tenant UIDs to prevent breakage on rename",
+        "CSI credentials are scoped to least-privilege to prevent QoS bypass",
+        "a CaaS provisioning target is added"
+      ]
+    },
+    {
+      "id": "status-visibility",
+      "name": "Async Status Visibility",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly addresses async status visibility in both In Scope ('Storage readiness tracked independently from compute readiness on the ClusterOrder') and User Stories ('I want to see storage readiness on a ClusterOrder independently from compute readiness').",
+      "quotes": [
+        "Storage readiness tracked independently from compute readiness on the ClusterOrder",
+        "I want to see storage readiness on a ClusterOrder independently from compute readiness"
+      ]
+    },
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All four required sections are present and no extra sections (Risks, Acceptance Criteria, Open Questions, etc.) appear in the generated document.",
+      "quotes": [
+        "## Problem Statement",
+        "## In Scope",
+        "## Out of Scope",
+        "## User Stories"
+      ]
+    },
+    {
+      "id": "completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "Generated doc covers core capabilities but has significant gaps: gold marks 'Storage provider changes for CaaS support' as Out of Scope while generated includes VAST backend changes as In Scope; gold's Tenant Admin user stories are missing (replaced with 'Not affected'); gold dependency on 'Tenant Storage Onboarding' is absent; gold's out-of-scope item 'Storage UI' is missing.",
+      "quotes": [
+        "Storage provider changes for CaaS support",
+        "As a Tenant Admin or Tenant User, I want persistent storage",
+        "Tenant Storage Onboarding: Provides the storage automation framework"
+      ]
+    }
+  ]
+}
