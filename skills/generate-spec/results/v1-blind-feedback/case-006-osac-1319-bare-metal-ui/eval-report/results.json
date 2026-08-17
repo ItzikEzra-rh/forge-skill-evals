@@ -1,0 +1,155 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1-blind-feedback/case-006-osac-1319-bare-metal-ui/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-006-osac-1319-bare-metal-ui/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 22,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections are present including Summary, Motivation with Goals/Non-Goals, Proposal with Workflow Description and API Extensions, Implementation Details, Security Considerations, Failure Handling and Recovery, RBAC/Tenancy, Observability and Monitoring, Risks and Mitigations, Drawbacks, Alternatives, Test Plan with Unit/Integration/E2E subsections, Graduation Criteria, and all required frontmatter fields (title, authors, creation-date, tracking-link, prd).",
+      "quotes": [
+        "## Summary",
+        "### Goals",
+        "### Non-Goals",
+        "### Unit Tests",
+        "### Integration Tests",
+        "### E2E Tests"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "No proto schemas expected (gold standard has none)",
+      "quotes": []
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document references the PRD in the Summary, traces decisions to PRD scope with inline markers, marks unverified decisions as [Assumption], covers all PRD requirements present in the gold standard, and flags scope decisions consistently without silent drops or uninventoried additions.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[PRD: Out of Scope]",
+        "[Assumption: no `resources` array on `BareMetalInstanceCatalogItem`]"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard in implementation depth, providing specific state machine tables with exact button visibility rules, precise API field mappings with rationale, concrete Yup validation regexes, specific error codes (NOT_FOUND, INVALID_ARGUMENT), polling constants, kebab vs toolbar variant details, and route ordering constraints.",
+      "quotes": [
+        "| `PROVISIONING` | any | Hidden | Hidden | Disabled | Enabled |",
+        ".matches(/^(ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp\\d+)\\s+\\S+/",
+        "BM_REFETCH_INTERVAL_MS = 10_000"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same workflows as the gold standard, including all lifecycle operations (create, read, update/patch, delete), error paths, actor definitions, starting states, and Mermaid diagrams.",
+      "quotes": [
+        "Actors: Tenant User and Tenant Admin (identical UI flows)",
+        "POST /api/fulfillment/v1/baremetal_instances",
+        "DELETE fails | Error message within the confirmation modal",
+        "sequenceDiagram"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all failure modes from the gold standard and adds several concrete plausible ones (version skew/unreachable service, catalog item NOT_FOUND on POST, INVALID_ARGUMENT errors) with specific API calls, user-visible messages, and recovery behaviors for each.",
+      "quotes": [
+        "Create form `POST` fails (catalog item no longer published, `NOT_FOUND`) | Inline error on the Review step",
+        "PATCH (power toggle or restart) fails | Inline error alert near the action buttons | User retries the action; no state corruption",
+        "Fulfillment-service unreachable (version skew or outage) | TanStack Query error states on all pages"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists concrete, specific test scenarios under Unit Tests, Integration Tests, and E2E Tests with exact component names, state values, and behaviors tested.",
+      "quotes": [
+        "Start shown and disabled when FAILED with `run_strategy: HALTED`",
+        "`buildCreatePayload` produces correct wire-format body; `image.sourceType` is hardcoded to `'registry'`",
+        "Tenant User stops a RUNNING instance (state transitions to HALTED run_strategy), starts it again"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes three substantive alternatives with honest rejection rationales based on real trade-offs: separate catalog page (fragments UX, duplicates implementations), bespoke create form (avoids wizard but duplicates multi-step navigation), and inline toggle vs Start/Stop buttons (loading state communication difficulty).",
+      "quotes": [
+        "Rejected because the existing `CatalogPage` already supports multi-type filtering",
+        "Rejected as the primary path because bare metal provisioning has the same multi-step shape",
+        "Rejected because the toggle's intermediate/loading state is harder to communicate"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document's RBAC/Tenancy section explicitly states no new RBAC or tenancy changes are needed, explains that tenant isolation is enforced server-side by the fulfillment-service, and the Security Considerations section confirms OPA authorization is enforced server-side \u2014 matching the gold standard's equivalent coverage for a UI-only feature.",
+      "quotes": [
+        "No new RBAC or tenancy changes. The UI is accessible to `tenantUser` and `tenantAdmin` roles enforced by the existing `RoleRoute` guard",
+        "OPA authorization is enforced server-side \u2014 the UI makes no authorization decisions. Tenant isolation is enforced by the fulfillment-service."
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same technical decisions, components, API hooks, file layouts, state machine logic, and architectural patterns as the gold standard, with additional detail in several areas (e.g., explicit state machine table, polling interval constant, more detailed failure table) that expand rather than contradict the gold standard.",
+      "quotes": [
+        "New API mutation hooks added to `libs/ui-components/src/api/v1/baremetal-instance.ts`",
+        "BareMetalRoutes.tsx handles the following routes",
+        "The implementation extends three areas of the codebase"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches the PRD scope closely \u2014 all four required screens are covered, non-goals align with PRD out-of-scope items, and additions like the detailed state machine table and open questions are elaborations rather than scope creep.",
+      "quotes": [
+        "Non-Goals alignment: Tenant Admin catalog item CRUD",
+        "Cloud Provider Admin flows",
+        "No new API extensions"
+      ]
+    }
+  ]
+}

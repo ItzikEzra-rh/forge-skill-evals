@@ -1,0 +1,159 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1-blind-feedback/case-002-osac-1425-networking-ui/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-002-osac-1425-networking-ui/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 22,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections are present including Summary, Motivation with Goals and Non-Goals, Proposal with Workflow Description and API Extensions, Implementation Details, Security Considerations, Failure Handling and Recovery, RBAC/Tenancy, Observability and Monitoring, Risks and Mitigations, Drawbacks, Alternatives (Not Implemented), Test Plan with Unit/Integration/E2E subsections, and Graduation Criteria; YAML frontmatter includes all required fields (title, authors, creation-date, tracking-link, prd).",
+      "quotes": [
+        "title: osac-tenant-ui-networking-section",
+        "tracking-link:",
+        "prd:",
+        "## Graduation Criteria",
+        "### Unit Tests",
+        "### E2E Tests"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "No proto schemas expected (gold standard has none)",
+      "quotes": []
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly references the PRD in the Summary ('See [PRD](prd.md)'), aligns with PRD in/out-of-scope items with citations (e.g., '[PRD: Out of Scope]', '[PRD \u00a72.2]', '[PRD FR-13]'), marks unverified decisions with [Assumption], and covers all major PRD functional requirements without silently dropping or inventing uncalled-out scope.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "No NATGateway management UI (future scope). [PRD \u00a72.2]",
+        "[Assumption] Role-gating in the UI mirrors the existing pattern"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard in implementation specificity: it provides concrete TanStack Query hook signatures with exact API URLs, file structure, routing paths, specific validation rules with regex patterns, exact error codes (Z0003, ALREADY_EXISTS, FAILED_PRECONDITION, ABORTED), state machine transitions, proto-to-TypeScript field mapping tables, and detailed workflow steps with specific API call sequences.",
+      "quotes": [
+        "useSubnets | GET /api/fulfillment/v1/subnets?filter=spec.virtual_network.id==\"{id}\"",
+        "Server returns `ALREADY_EXISTS`. Modal displays: \"A Virtual Network with this name already exists.\"",
+        "refetchInterval to 5000 ms when any resource in the list is in a transitional state (`PENDING`, `DELETING`, `PROVISIONING`)"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully covers all workflow lifecycle operations (create, read, update, delete), defines actors using OSAC personas, includes error paths, uses Mermaid diagrams, and matches the gold standard's workflow coverage with additional detail on error sub-flows.",
+      "quotes": [
+        "Tenant Admin \u2014 a user with the `tenant-admin` Keycloak role",
+        "loop Poll every 5s while state=PENDING",
+        "Error sub-flow \u2014 duplicate name:",
+        "Workflow 10: Tenant Admin releases a PublicIP"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all concrete failure modes from the gold standard (network errors, provisioning failures, delete-with-dependents Z0003, ALREADY_EXISTS, ABORTED concurrent modification, INVALID_ARGUMENT, pool exhaustion, token expiry, FAILED state) and adds plausible additional ones (attached instances blocking subnet/SG/PublicIP delete, optimistic locking rollback details).",
+      "quotes": [
+        "Delete rejected due to dependent children (Z0003)",
+        "Optimistic locking conflict (ABORTED)",
+        "Delete rejected due to attached instances (Subnet / SecurityGroup)",
+        "Token expiry mid-session"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains highly specific, concrete test scenarios across all three categories matching the gold standard's specificity level.",
+      "quotes": [
+        "Rejects IPv4 CIDR outside /16 to /24 range",
+        "VirtualNetwork delete with existing Subnets returns FAILED_PRECONDITION with correct error message",
+        "Full networking provisioning flow: Tenant Admin logs in \u2192 creates VirtualNetwork \u2192 creates Subnet from VN detail page \u2192 creates SecurityGroup with inbound rule \u2192 allocates PublicIP \u2192 attaches PublicIP to a ComputeInstance"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes four substantive alternatives with plausible technical trade-offs and explicit PRD-based or design-based rejection rationales, matching the gold standard's depth.",
+      "quotes": [
+        "Alternative 1: Inline Networking within Compute Instance forms only",
+        "Alternative 2: Read-only networking dashboard (no create/update/delete)",
+        "Alternative 3: Single combined \"Networking\" list page with mixed resource types",
+        "Alternative 4: Subnets as a top-level sidebar entry"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document explicitly addresses tenant isolation with fulfillment-service enforcement, OPA policies, osac.openshift.io/tenant annotation, and osac.openshift.io/owner-reference annotations, matching the gold standard's coverage.",
+      "quotes": [
+        "OPA policies (existing) enforce that a tenant can only create, read, update, and delete resources in their own namespace",
+        "all networking resources carry `metadata.tenant` set by the fulfillment-service on create",
+        "Parent-child relationships (VirtualNetwork \u2192 Subnets, VirtualNetwork \u2192 SecurityGroups) use `osac.openshift.io/owner-reference` annotations"
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all the same components, API endpoints, hooks, file structures, workflows, and architectural patterns as the gold standard, with equivalent or greater detail across all key areas.",
+      "quotes": [
+        "No new fulfillment-service API endpoints, proto messages, database tables, or controllers",
+        "useCreateVirtualNetwork, useDeleteVirtualNetwork, usePatchSecurityGroup",
+        "VmNetworkingStep.tsx: inline VirtualNetwork creation modal"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document's scope closely matches the gold standard: same Non-Goals (no NATGateway, no NetworkClass CRUD, no BaremetalInstance/Cluster networking, no multi-NIC, no pagination as separate concern), same resources covered, no silent deferrals, and no scope creep beyond what the PRD requires.",
+      "quotes": [
+        "No NATGateway management UI (future scope)",
+        "No NetworkClass management UI",
+        "No BaremetalInstance or Cluster networking (out of scope for VMaaS phase)",
+        "No pagination on list pages \u2014 tracked as a separate Jira"
+      ]
+    }
+  ]
+}

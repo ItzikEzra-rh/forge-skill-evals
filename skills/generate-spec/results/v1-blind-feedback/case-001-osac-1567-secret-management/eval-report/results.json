@@ -1,0 +1,158 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1-blind-feedback/case-001-osac-1567-secret-management/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-001-osac-1567-secret-management/gold-design.md",
+  "overall_pass": true,
+  "grade": "C",
+  "total_passed": 7,
+  "total_criteria": 11,
+  "total_score": 15,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 1,
+      "reasoning": "Most required sections are present but the YAML frontmatter is malformed (nested yaml code block with extra '---' lines), and the 'Security Considerations' and 'Failure Handling and Recovery' sections appear as subsections under 'Implementation Details' rather than as top-level sections as required by the template.",
+      "quotes": [
+        "## Implementation Details/Notes/Constraints",
+        "### Security Considerations",
+        "### Failure Handling and Recovery"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document contains a complete protobuf schema with standard OSAC object shape (id, Metadata, SecretSpec, SecretStatus), gRPC service with full CRUD methods, REST transcoding via google.api.http annotations, and gRPC error codes \u2014 matching the gold standard's proto structure and conventions.",
+      "quotes": [
+        "message Secret { string id = 1; Metadata metadata = 2; SecretSpec spec = 3; SecretStatus status = 4; }",
+        "service SecretService { rpc CreateSecret... rpc GetSecret... rpc ListSecrets... rpc UpdateSecret... rpc DeleteSecret",
+        "option (google.api.http) = { post: \"/v1/tenants/{tenant_id}/secrets\""
+      ]
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document references the PRD in the Summary ('See [PRD](prd.md)'), aligns design decisions with PRD scope (marking Out of Scope items like rotation, UI, Vault deployment), and flags unverified decisions with [Assumption]. It does not silently invent requirements without flagging or drop critical PRD requirements without explanation.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[PRD: Out of Scope]",
+        "[Assumption \u2014 all system credentials are retrievable from the management cluster by the operator]"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard in implementation depth, providing specific gRPC error codes (INVALID_ARGUMENT, ALREADY_EXISTS, FAILED_PRECONDITION, ABORTED, NOT_FOUND, UNAVAILABLE), explicit DB schema with trigger SQLSTATE codes (Z0001, Z0003), detailed Vault atomicity protocol with numbered steps, concrete Go interface definitions, per-operation CRUD tables, and exhaustive failure mode tables with recovery procedures.",
+      "quotes": [
+        "translateError maps DB SQLSTATE Z0001 to INVALID_ARGUMENT for immutable field violations",
+        "vault_orphans tracks Vault paths written when the subsequent DB INSERT failed",
+        "SecretBackend interface in Go is introduced in fulfillment-service"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document covers create/read/update/delete lifecycle and error paths but lacks the Mermaid sequence diagram present in the gold standard, uses different/simpler actor workflows (missing Cloud Infrastructure Admin configuration workflow as a distinct numbered workflow), and omits the Hub backend entirely\u2014a major workflow difference since the gold standard defines two backends with distinct behaviors.",
+      "quotes": [
+        "sequenceDiagram",
+        "Cloud Infrastructure Admin: Configure the Secret Store",
+        "Two secret backends exist for 0.2: **Vault** \u2014 ... **Hub** \u2014"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": false,
+      "score": 1,
+      "reasoning": "The generated document covers many concrete failure modes with good detail (Vault unreachable, DB failures, compensating delete failures, orphan reconciliation, concurrent update conflicts, token expiry, controller restart), but misses the gold standard's key failure modes: tenant namespace not yet existing returning FAILED_PRECONDITION, Keycloak token exchange failures, and the specific rollback-on-Vault-delete-failure pattern for Delete operations.",
+      "quotes": [
+        "Namespace missing: `FAILED_PRECONDITION`. Auth or Vault failure: no record created.",
+        "If per-tenant auth fails (e.g., invalid JWT claims, Keycloak token exchange failure",
+        "Delete (Vault)... Auth or Vault failure: rollback restores metadata, secret intact"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists highly specific, concrete test scenarios across all three test categories matching the gold standard's specificity level.",
+      "quotes": [
+        "SecretSpec validation rejects empty payload with INVALID_ARGUMENT",
+        "GetSecret with a secret ID belonging to a different tenant returns NOT_FOUND",
+        "Tenant User retrieves kubeconfig for a provisioned ClusterOrder via GetSecret(include_payload=true) and authenticates against the cluster"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes four substantive alternatives with honest trade-offs and clear rejection rationales based on real architectural concerns, similar in depth to the gold standard's alternatives.",
+      "quotes": [
+        "Alternative 1 \u2014 Encrypt payloads in PostgreSQL using pgcrypto",
+        "Rejected because: Encryption keys must be stored somewhere",
+        "Alternative 4 \u2014 Vault leases as orphan cleanup mechanism",
+        "Rejected because: KV v2 does not support leases on static secrets"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully addresses tenant isolation with osac.openshift.io/tenant and osac.openshift.io/owner-reference annotations, OPA policies for runtime enforcement, and per-tenant Vault scoping via dedicated AppRole credentials.",
+      "quotes": [
+        "osac.openshift.io/tenant | Tenant ID",
+        "osac.openshift.io/owner-reference | Owner resource ID (for system-created secrets)",
+        "OPA policies enforce that a caller may only operate on Secret resources where osac.openshift.io/tenant matches their authenticated tenant claim"
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document describes a fundamentally different architecture than the gold standard: it uses AppRole auth with per-tenant tokens and an orphan-table reconciler, while the gold standard uses Keycloak JWT forwarding with Vault namespaces and per-namespace auth. The generated doc has no Hub backend (for kubeconfigs from hub clusters), no credential migration binary for existing inline fields, no tenant namespace lifecycle management, no Keycloak token exchange for controllers, and misses the complete set of affected resources (Cluster, Hub, IdentityProvider, StorageBackend, Tenant) with their reference field migrations.",
+      "quotes": [
+        "Two secret backends exist for 0.2: Vault... Hub",
+        "Keycloak-brokered auth... controller SA token exchange",
+        "Credential Migration... A Go binary moves existing inline credentials",
+        "GetKubeconfig and GetPassword RPCs are deprecated then removed"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": false,
+      "score": 0,
+      "reasoning": "The generated document introduces significant scope creep (AppRole auth instead of Keycloak JWT auth, a custom `vault_orphans` table/reconciler mechanism, different proto schema with `SecretType` enum and `include_payload` flag) and silently defers PRD requirements present in the gold standard (Hub backend for system secrets, credential migration binary, tenant namespace lifecycle management, Keycloak token exchange for controllers, secret references on existing resources, CLI commands, `osac-aap` treated as out of scope).",
+      "quotes": [
+        "No new observability changes beyond what is described here",
+        "No AAP playbooks are required for this EP",
+        "A new `SecretBackend` interface in Go is introduced...with a Vault adapter as the first implementation"
+      ]
+    }
+  ]
+}

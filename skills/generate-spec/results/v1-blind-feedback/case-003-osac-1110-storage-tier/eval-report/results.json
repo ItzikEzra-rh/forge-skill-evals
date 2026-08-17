@@ -1,0 +1,161 @@
+{
+  "skill": "generate-spec",
+  "generated_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/results/v1-blind-feedback/case-003-osac-1110-storage-tier/design.md",
+  "gold_path": "/opt/forge-eval/forge-skill-evals/skills/generate-spec/dataset/cases/case-003-osac-1110-storage-tier/gold-design.md",
+  "overall_pass": true,
+  "grade": "A",
+  "total_passed": 11,
+  "total_criteria": 11,
+  "total_score": 21,
+  "max_score": 22,
+  "results": [
+    {
+      "id": "template-compliance",
+      "name": "Template Compliance",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "All required sections are present in the generated document, including Summary, Motivation with Goals and Non-Goals, Proposal with Workflow Description and API Extensions, Implementation Details/Notes/Constraints, Security Considerations, Failure Handling and Recovery, RBAC/Tenancy, Observability and Monitoring, Risks and Mitigations, Drawbacks, Alternatives (Not Implemented), Test Plan with Unit Tests and Integration Tests subsections, and YAML frontmatter with all required fields (title, authors, creation-date, tracking-link, prd).",
+      "quotes": [
+        "## Summary",
+        "### Goals",
+        "### Non-Goals",
+        "## Alternatives (Not Implemented)",
+        "### Unit Tests"
+      ]
+    },
+    {
+      "id": "proto-schema-quality",
+      "name": "Proto Schema Quality",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "Generated document contains complete proto code blocks with correct OSAC conventions: standard id/Metadata/Spec/Status shape, typed fields, full gRPC CRUD service with REST transcoding annotations, and gRPC error codes (NOT_FOUND, ALREADY_EXISTS, ABORTED, FAILED_PRECONDITION).",
+      "quotes": [
+        "message StorageTier {\n  string            id       = 1;\n  Metadata          metadata = 2;\n  StorageTierSpec   spec     = 3;\n  StorageTierStatus status   = 4;\n}",
+        "option (google.api.http) = {get: \"/api/private/v1/storage_tiers\"}",
+        "rpc Signal(StorageTiersSignalRequest) returns (StorageTiersSignalResponse) {}"
+      ]
+    },
+    {
+      "id": "prd-traceability",
+      "name": "PRD Traceability",
+      "weight": "critical",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document references the PRD via 'See [PRD](prd.md)', traces design decisions to PRD items (FR-1 through FR-10, NFR-2, NFR-3), marks unverified decisions as [Assumption], and covers all major PRD requirements including the deferred tenant-reference trigger (FR-6), immutable name (FR-8), and deprecated state reservation (FR-9) without silent drops.",
+      "quotes": [
+        "See [PRD](prd.md) for detailed requirements",
+        "[PRD: FR-7, FR-10]",
+        "[PRD: Non-Goal 2.3]",
+        "[Assumption] The DB schema and proto are already multi-backend capable"
+      ]
+    },
+    {
+      "id": "implementation-depth",
+      "name": "Implementation Depth",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document matches or exceeds the gold standard in implementation depth, providing specific error codes for every validation condition, complete SQL migration DDL, trigger function bodies, proto field definitions with semantics, named DB error codes (Z0002/Z0003), state transition logic, and integration points with the same or greater specificity.",
+      "quotes": [
+        "INVALID_ARGUMENT if missing",
+        "check_storage_tier_backend_refs (BEFORE INSERT trigger): re-validates backend existence with FOR SHARE locking \u2192 raises Z0002",
+        "case *privatev1.StorageTier: event.SetStorageTier(object)"
+      ]
+    },
+    {
+      "id": "workflow-completeness",
+      "name": "Workflow Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully covers all workflow lifecycle operations (create, read, update, delete), defines actors using OSAC personas, includes error paths, and uses Mermaid diagrams matching the gold standard's coverage.",
+      "quotes": [
+        "Actors: Cloud Provider Admin \u2014 creates, updates, deletes, and lists StorageTier",
+        "Failure path (backend referenced by tier, admin attempts backend delete)",
+        "sequenceDiagram participant Admin as Cloud Provider Admin"
+      ]
+    },
+    {
+      "id": "failure-handling",
+      "name": "Failure Handling",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all failure modes in the gold standard and adds several concrete ones the gold missed, including negative bandwidth validation, TOCTOU race protection, immutable field violation, materialization trigger failure, and fulfillment-service unavailability from the operator perspective.",
+      "quotes": [
+        "Go-layer backend validation fails on Create/Update",
+        "DB-layer backend validation fails (Z0002, TOCTOU race)",
+        "Optimistic lock conflict on Update (`lock=true`)",
+        "fulfillment-service unavailable (operator perspective)"
+      ]
+    },
+    {
+      "id": "test-plan-specificity",
+      "name": "Test Plan Specificity",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document lists highly specific, concrete test scenarios across all three tiers matching the gold standard's intent and exceeding its specificity.",
+      "quotes": [
+        "Create \u2014 negative bandwidth: Asserts INVALID_ARGUMENT when max_read_bandwidth_mbs or max_write_bandwidth_mbs is negative",
+        "TOCTOU protection: Concurrently issue StorageBackend delete and StorageTier create for the same backend ID",
+        "JSONB key casing assertion: After Create, directly query data->'spec'->'backends'->0->>'backendId'"
+      ]
+    },
+    {
+      "id": "alternatives-quality",
+      "name": "Alternatives Quality",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document includes all four substantive alternatives from the gold standard with honest pros/cons and rejection rationales, matching the gold standard's depth and structure.",
+      "quotes": [
+        "Free-form JSON for QoS properties... Rejected because typed proto fields provide better developer experience",
+        "Server-side-only referential integrity (no DB triggers)... Rejected because the trigger approach matches the established VirtualNetwork/Subnet pattern",
+        "CRD-backed StorageTier with an operator controller... Rejected because StorageTier has no reconciliation logic",
+        "Keep STORAGE_TIERS environment variable... Rejected because OSAC-23 requires the fulfillment-service API"
+      ]
+    },
+    {
+      "id": "tenant-isolation",
+      "name": "Tenant Isolation",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document fully addresses tenant isolation with explicit mentions of osac.openshift.io/tenant annotation, osac.openshift.io/owner-reference annotation, OPA policy enforcement, and platform-scoped tenant handling matching the gold standard.",
+      "quotes": [
+        "osac.openshift.io/tenant annotation is set by attributionLogic to the shared platform tenant",
+        "osac.openshift.io/owner-reference is not applicable",
+        "OPA policies restrict the private API to admin roles. No new OPA rules are required"
+      ]
+    },
+    {
+      "id": "content-completeness",
+      "name": "Content Completeness",
+      "weight": "important",
+      "passed": true,
+      "score": 2,
+      "reasoning": "The generated document covers all substantive technical content from the gold standard: same proto schema, same server implementation pattern, same database migrations with identical trigger logic, same cross-resource backend deletion guard, same referential integrity approach, same component interactions, and same alternatives analysis.",
+      "quotes": [
+        "private_storage_tiers_server.go follows the established private server pattern",
+        "check_storage_backend_not_in_use_by_tier",
+        "storage_tier_backends helper table enables efficient reverse lookup"
+      ]
+    },
+    {
+      "id": "scope-discipline",
+      "name": "Scope Discipline",
+      "weight": "important",
+      "passed": true,
+      "score": 1,
+      "reasoning": "The generated document mostly matches PRD scope but introduces several additions not in the gold standard: three separate migrations vs two, additional proto restructuring (spec/status sub-messages vs flat fields), AAP payload mapping section, osac-operator integration details, cross-repository changes table, and more elaborate failure handling. However, the generated doc also silently defers the `DEPRECATED` state (FR-9) and the tenant-reference trigger with hedging language, matching PRD scope reduction.",
+      "quotes": [
+        "STORAGE_TIER_STATE_DEPRECATED = 2; reserved for future use (PRD: FR-9)",
+        "deferred to a follow-up migration shipping with OSAC-23",
+        "AAP Payload Mapping"
+      ]
+    }
+  ]
+}
